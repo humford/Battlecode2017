@@ -8,18 +8,18 @@ public class Globals {
     static Random myRand;
     
     // Keep broadcast channels
-    static int ARCHON_CHANNEL = 4; 	
-    static int GARDENER_CHANNEL = 5;
-    static int LUMBERJACK_CHANNEL = 6;
-	static int LUMBER_ALIVE_CHANNEL = 7;
+    static final int ARCHON_CHANNEL = 4; 	
+    static final int GARDENER_CHANNEL = 5;
+    static final int LUMBERJACK_CHANNEL = 6;
+	static final int LUMBER_ALIVE_CHANNEL = 7;
     
     //LOC_CHANNELS use next integer channel as well
-    static int ARCHON_LOC_CHANNEL = 1;
+    static final int ARCHON_LOC_CHANNEL = 1;
     
     //FLAG_CHANNELS
-    static int CHARGE_CHANNEL = 10;
-    static int DEFENSE_CHANNEL = 11;
-    static int DETECTED_CHANNEL = 12;
+    static final int CHARGE_CHANNEL = 10;
+    static final int DEFENSE_CHANNEL = 11;
+    static final int DETECTED_CHANNEL = 12;
 
     // Keep important numbers here
     static Team myTeam, them;
