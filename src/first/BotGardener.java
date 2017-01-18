@@ -52,11 +52,11 @@ public class BotGardener extends Globals {
             	else wander();
                 
                 
-                if (rc.getRoundNum() < 500) {
-                    int prevNumGard = rc.readBroadcast(LUMBERJACK_CHANNEL);
+                if (rc.getRoundNum() < ROUND_CHANGE) {
+                    int prevNumGard = rc.readBroadcast(LUMBER_ALIVE_CHANNEL);
                     if (prevNumGard < LUMBERJACK_MAX && rc.canBuildRobot(RobotType.LUMBERJACK, dir)) {
                         rc.buildRobot(RobotType.LUMBERJACK, dir);
-                        rc.broadcast(LUMBERJACK_CHANNEL, prevNumGard + 1);
+                        rc.broadcast(LUMBER_ALIVE_CHANNEL, prevNumGard + 1);
                     }
                     
                     else if (rc.canPlantTree(dir)) {

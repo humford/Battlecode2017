@@ -9,8 +9,10 @@ public class Globals {
     static Random myRand;
     
     // Keep broadcast channels
-    static int GARDENER_CHANNEL = 5;
+   static int ARCHON_CHANNEL = 4; 	
+static int GARDENER_CHANNEL = 5;
     static int LUMBERJACK_CHANNEL = 6;
+	static int LUMBER_ALIVE_CHANNEL = 7;
     
     //LOC_CHANNELS use next integer channel as well
     static int ARCHON_LOC_CHANNEL = 1;
@@ -24,8 +26,10 @@ public class Globals {
     static int VICTORY_CASH = 400;
     static int GARDENER_MAX = 6;
     static int LUMBERJACK_MAX = 5;
+static int ROUND_CHANGE = 500;
     
 	
+
     public static void init(RobotController theRC) {
 
     	RobotPlayer.rc = theRC;
