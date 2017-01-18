@@ -1,78 +1,85 @@
 package first;
 import battlecode.common.*;
 
+enum GardenerState {
+	PLANTING,
+	WATERING,
+	PRODUCING
+}
+
 public class BotGardener extends Globals {
+	public static final int MAX_WANDER_TURNS = 5;
+	
 	public static void loop() throws GameActionException {
-        while (true) {
-            try {
-                Pathfinding.dodge();
-                int prev = rc.readBroadcast(GARDENER_CHANNEL);
-                rc.broadcast(GARDENER_CHANNEL, prev+1);            
-                Direction dir = randomDirection();
-                
-                TreeInfo[] closeTrees = rc.senseNearbyTrees(1, myTeam);
-                
-                if(rc.canWater() && closeTrees.length != 0)
-                {     		
-            		float minHealth = closeTrees[0].getHealth();
-            		TreeInfo lowHealthTree = closeTrees[0];
-
-            		for(TreeInfo tree : closeTrees)
-            		{
-            			if(minHealth > tree.getHealth());
-            			{
-            				lowHealthTree = tree; 
-            				minHealth = tree.getHealth();
-            			}
-            			
-            		}
-            		
-            		rc.water(lowHealthTree.getID());
-                }
-                
-                TreeInfo[] trees = rc.senseNearbyTrees(-1, myTeam);
-                
-            	if(trees.length != 0 && rc.getLocation().distanceTo(rc.getInitialArchonLocations(myTeam)[0]) > 5)
-            	{
-            		float minHealth = trees[0].getHealth();
-            		TreeInfo lowHealthTree = trees[0];
-            		for(TreeInfo tree : trees)
-            		{
-            			if(minHealth > tree.getHealth());
-            			{
-            				lowHealthTree = tree; 
-            				minHealth = tree.getHealth();
-            			}
-            			
-            		}
-            		
-            		Pathfinding.tryMove(rc.getLocation().directionTo(lowHealthTree.getLocation())); 
-            	}
-            	
-            	else Pathfinding.wander();
-                
-                
-                if (rc.getRoundNum() < ROUND_CHANGE) {
-                    int prevNumGard = rc.readBroadcast(LUMBER_ALIVE_CHANNEL);
-                    if (prevNumGard < LUMBERJACK_MAX && rc.canBuildRobot(RobotType.LUMBERJACK, dir)) {
-                        rc.buildRobot(RobotType.LUMBERJACK, dir);
-                        rc.broadcast(LUMBER_ALIVE_CHANNEL, prevNumGard + 1);
-                    }
-                    
-                    else if (rc.canPlantTree(dir)) {
-                        rc.plantTree(dir); 
-                    }
-                }
-                else {
-                    if (rc.canBuildRobot(RobotType.SOLDIER, Direction.getEast())) {
-                        rc.buildRobot(RobotType.SOLDIER, Direction.getEast());
-                    }
-                }
-
-                Clock.yield();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+		for (int i = 0; i < MAX_WANDER_TURNS; i++) {
+			MapLocation location = rc.getLocation();
+			if (rc.isCircleOccupiedExceptByThisRobot(location, 3.8f));
+				macro();
+			Clock.yield();
+		}
+		macro();
+	}
+	
+	static MapLocation myLocation;
+	static Direction treeDirs[];
+	static Direction productionDirs;
+	
+	public static MapLocation getTreeSpot(int idx) {
+		return rc.getLocation().add(treeDirs[idx], 2);
+	}
+	
+	public static MapLocation getProductionSpot() {
+		return rc.getLocation().add(productionDirs, 2);
+	}
+	
+	public static void init() throws GameActionException {
+		myLocation = rc.getLocation();
+		treeDirs = new Direction[5];
+		Direction dir = Direction.NORTH;
+		for (int i = 0; i < 5; i++) {
+			treeDirs[i] = dir;
+			dir = dir.rotateLeftDegrees(60);
+		}
+	}
+	
+	public static TreeInfo getLowHealthTree() {
+		TreeInfo ret = null;
+		float minHealth = GameConstants.BULLET_TREE_MAX_HEALTH;
+		for (TreeInfo tree : rc.senseNearbyTrees()) {
+			if (!tree.team.equals(myTeam)) continue;
+			if (tree.health < minHealth) {
+				minHealth = tree.health;
+				ret = tree;
+			}
+		}
+		return ret;
+	}
+	
+	static void macro() throws GameActionException {
+		init();
+		while (true) {
+			// Plant missing trees
+			for (int i = 0; i < 5; i++) {
+				MapLocation treeSpot = getTreeSpot(i);
+				System.out.println("Looking at tree in spot " + treeSpot.toString());
+				if (rc.isLocationOccupiedByTree(treeSpot)){
+					System.out.println("Occupied");
+					continue;
+				}
+				if (rc.canPlantTree(treeDirs[i])) {
+					System.out.println("Planting tree in direcion " + Integer.toString(i));
+					rc.plantTree(treeDirs[i]);
+					break;
+				}
+			}
+			// Water the lowest health tree
+			TreeInfo lowHealthTree = getLowHealthTree();
+			if (lowHealthTree != null) {
+				MapLocation treeSpot = lowHealthTree.getLocation();
+				if (rc.canWater(treeSpot))
+					rc.water(treeSpot);
+			}
+			Clock.yield();
+		}
 	}
 }
