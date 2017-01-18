@@ -1,4 +1,4 @@
-package first;
+package do_nothing;
 import battlecode.common.*;
 
 class BotArchon extends Globals {
