@@ -17,7 +17,7 @@ class BotArchon extends Globals {
             	
             	locateArchon();
             	
-            	wander();
+            	Pathfinding.wander();
                 Direction dir = randomDirection();
                 int prevNumGard = rc.readBroadcast(GARDENER_CHANNEL);
                 rc.broadcast(GARDENER_CHANNEL, 0);

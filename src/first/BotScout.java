@@ -22,7 +22,7 @@ public class BotScout extends Globals {
 		while (true) {
 			switch (state) {
 			case WANDER:
-				Globals.wander();
+				Pathfinding.wander();
 				break;
 			case FOLLOW_ARCHON:
 				follow_archon();
@@ -55,12 +55,12 @@ public class BotScout extends Globals {
 		if (rc.getLocation().distanceTo(lastKnownArchonLocation) > 0.001)
 		{
 			System.out.println("Attempting to move to (" + lastKnownArchonLocation.toString() + ")");
-			Globals.tryMove(rc.getLocation().directionTo(lastKnownArchonLocation));
+			Pathfinding.tryMove(rc.getLocation().directionTo(lastKnownArchonLocation));
 		}
 		else // We've lost track of the archon
 		{
 			System.out.println("Wandering");
-			Globals.wander();
+			Pathfinding.wander();
 		}
 	}
 }

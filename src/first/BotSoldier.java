@@ -7,13 +7,13 @@ public class BotSoldier extends Globals {
             try {
             	locateArchon();
             	
-                dodge();
+                Pathfinding.dodge();
                 RobotInfo[] bots = rc.senseNearbyRobots();
                 for (RobotInfo b : bots) {
                     if (b.getTeam() != myTeam && rc.canStrike()) {
                         rc.strike();
                         Direction chase = rc.getLocation().directionTo(b.getLocation());
-                        tryMove(chase);
+                        Pathfinding.tryMove(chase);
                         break;
                     }
                 }

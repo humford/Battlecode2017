@@ -5,7 +5,7 @@ public class BotGardener extends Globals {
 	public static void loop() throws GameActionException {
         while (true) {
             try {
-                dodge();
+                Pathfinding.dodge();
                 int prev = rc.readBroadcast(GARDENER_CHANNEL);
                 rc.broadcast(GARDENER_CHANNEL, prev+1);            
                 Direction dir = randomDirection();
@@ -46,10 +46,10 @@ public class BotGardener extends Globals {
             			
             		}
             		
-            		tryMove(rc.getLocation().directionTo(lowHealthTree.getLocation())); 
+            		Pathfinding.tryMove(rc.getLocation().directionTo(lowHealthTree.getLocation())); 
             	}
             	
-            	else wander();
+            	else Pathfinding.wander();
                 
                 
                 if (rc.getRoundNum() < ROUND_CHANGE) {
