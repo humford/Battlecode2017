@@ -8,8 +8,8 @@ public class Globals {
     static Random myRand;
     
     // Keep broadcast channels
-   static int ARCHON_CHANNEL = 4; 	
-static int GARDENER_CHANNEL = 5;
+    static int ARCHON_CHANNEL = 4; 	
+    static int GARDENER_CHANNEL = 5;
     static int LUMBERJACK_CHANNEL = 6;
 	static int LUMBER_ALIVE_CHANNEL = 7;
     
@@ -87,7 +87,6 @@ static int GARDENER_CHANNEL = 5;
     	float x = ((float) rc.readBroadcast(CHANNEL)) / 1000;
     	float y = ((float) rc.readBroadcast(CHANNEL+1)) / 1000;
     	
-    	System.out.println(x + "  " + y);
     	
     	return new MapLocation(x,y);
     }
@@ -117,12 +116,10 @@ static int GARDENER_CHANNEL = 5;
 			if(rc.readBroadcast(DETECTED_CHANNEL) == 1)
 			{
 				Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(ARCHON_LOC_CHANNEL)));
-				System.out.println(recieveLocation(ARCHON_LOC_CHANNEL));
 			}
 			else
 			{
 				Pathfinding.tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(myTeam.opponent())[0]));
-				System.out.println("FUCK");
 			}
 		}
 		else Pathfinding.wander();
