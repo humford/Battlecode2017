@@ -5,6 +5,8 @@ public class BotSoldier extends Globals {
 	public static void loop() throws GameActionException {
 		while (true) {
             try {
+            	locateArchon();
+            	
                 dodge();
                 RobotInfo[] bots = rc.senseNearbyRobots();
                 for (RobotInfo b : bots) {
@@ -23,7 +25,7 @@ public class BotSoldier extends Globals {
                     }
                 }
                 if (! rc.hasAttacked()) {
-                	tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(myTeam.opponent())[0]));
+                	moveTwardArchon();
                 }
                 Clock.yield();
             } catch (Exception e) {

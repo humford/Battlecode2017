@@ -14,10 +14,7 @@ public class BotGardener extends Globals {
                 TreeInfo[] closeTrees = rc.senseNearbyTrees(1, myTeam);
                 
                 if(rc.canWater() && closeTrees.length != 0)
-                {
-                	TreeInfo[] trees = rc.senseNearbyTrees(-1, myTeam);
-
-            		
+                {     		
             		float minHealth = closeTrees[0].getHealth();
             		TreeInfo lowHealthTree = closeTrees[0];
 

@@ -5,6 +5,8 @@ class BotArchon extends Globals {
 	public static void loop() throws GameActionException {
         while (true) {
             try {
+            	locateArchon();
+            	
             	wander();
                 Direction dir = randomDirection();
                 int prevNumGard = rc.readBroadcast(GARDENER_CHANNEL);
