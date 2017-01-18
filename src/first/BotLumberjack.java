@@ -2,13 +2,14 @@ package first;
 import battlecode.common.*;
 
 public class BotLumberjack extends Globals {
+	
 	public static void loop() throws GameActionException {
         while (true) {
             try {
                 dodge();
                 RobotInfo[] bots = rc.senseNearbyRobots();
                 for (RobotInfo b : bots) {
-                    if (b.getTeam() != rc.getTeam() && rc.canStrike()) {
+                    if (b.getTeam() != myTeam && rc.canStrike()) {
                         rc.strike();
                         Direction chase = rc.getLocation().directionTo(b.getLocation());
                         tryMove(chase);
@@ -17,13 +18,13 @@ public class BotLumberjack extends Globals {
                 }
                 TreeInfo[] trees = rc.senseNearbyTrees();
                 for (TreeInfo t : trees) {
-                    if (rc.canChop(t.getLocation())) {
+                    if (t.getTeam() != myTeam && rc.canChop(t.getLocation())) {
                         rc.chop(t.getLocation());
                         break;
                     }
                 }
                 if (! rc.hasAttacked()) {
-                    wander();
+                	tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(myTeam.opponent())[0]));
                 }
                 Clock.yield();
             } catch (Exception e) {

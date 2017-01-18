@@ -5,6 +5,7 @@ import java.util.Random;
 public class Globals {
 	
 	static RobotController rc;
+	static Team myTeam;
     static Random myRand;
     
     // Keep broadcast channels
@@ -12,12 +13,14 @@ public class Globals {
     static int LUMBERJACK_CHANNEL = 6;
 
     // Keep important numbers here
-    static int GARDENER_MAX = 4;
+    static int GARDENER_MAX = 6;
     static int LUMBERJACK_MAX = 10;
 	
     public static void init(RobotController theRC) {
 
-    	rc = theRC;
+    	RobotPlayer.rc = theRC;
+    	myTeam = rc.getTeam();
+        myRand = new Random(rc.getID());
     }
     
     public static void wander() throws GameActionException {
