@@ -5,7 +5,6 @@ import java.util.Random;
 public class Globals {
 	
 	static RobotController rc;
-	static Team myTeam;
     static Random myRand;
     
     // Keep broadcast channels
@@ -23,17 +22,26 @@ static int GARDENER_CHANNEL = 5;
     static int DETECTED_CHANNEL = 12;
 
     // Keep important numbers here
+    static Team myTeam, them;
+    static MapLocation initialArchonLocations[];
+
     static int VICTORY_CASH = 400;
+
     static int GARDENER_MAX = 6;
     static int LUMBERJACK_MAX = 5;
-static int ROUND_CHANGE = 500;
+    static int ROUND_CHANGE = 500;
     
 	
 
     public static void init(RobotController theRC) {
 
-    	RobotPlayer.rc = theRC;
+    	rc = theRC;
+    	
     	myTeam = rc.getTeam();
+    	them = myTeam.opponent();
+    	initialArchonLocations = rc.getInitialArchonLocations(them);
+
+    	RobotPlayer.rc = theRC;
         myRand = new Random(rc.getID());
     }
     
