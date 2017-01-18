@@ -24,7 +24,7 @@ public class BotLumberjack extends Globals {
                 }
                 TreeInfo[] trees = rc.senseNearbyTrees();
                 for (TreeInfo t : trees) {
-                	if(rc.canShake(t.getLocation())){
+                	if(rc.canShake(t.getLocation()) && t.containedBullets > 0){
                 		rc.shake(t.getLocation());
                         break;
                 	}
