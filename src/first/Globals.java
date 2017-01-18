@@ -9,7 +9,8 @@ public class Globals {
     static Random myRand;
     
     // Keep broadcast channels
-    static int GARDENER_CHANNEL = 5;
+   static int ARCHON_CHANNEL = 4; 	
+static int GARDENER_CHANNEL = 5;
     static int LUMBERJACK_CHANNEL = 6;
 	static int LUMBER_ALIVE_CHANNEL = 7;
     
