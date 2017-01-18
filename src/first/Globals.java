@@ -27,7 +27,8 @@ public class Globals {
 
     static int VICTORY_CASH = 400;
 
-    static int GARDENER_MAX = 6;
+    static int TREE_GARDENER_MAX = 15;
+	static int UNIT_GARDENER_MAX = 6;
     static int LUMBERJACK_MAX = 5;
     static int ROUND_CHANGE = 500;
     
