@@ -6,7 +6,6 @@ public class BotGardener extends Globals {
         while (true) {
             try {
                 dodge();
-                System.out.println(Clock.getBytecodesLeft());
                 int prev = rc.readBroadcast(GARDENER_CHANNEL);
                 rc.broadcast(GARDENER_CHANNEL, prev+1);            
                 Direction dir = randomDirection();
@@ -54,10 +53,10 @@ public class BotGardener extends Globals {
                 
                 
                 if (rc.getRoundNum() < ROUND_CHANGE) {
-                    int prevNumGard = rc.readBroadcast(LUMBERJACK_CHANNEL);
+                    int prevNumGard = rc.readBroadcast(LUMBER_ALIVE_CHANNEL);
                     if (prevNumGard < LUMBERJACK_MAX && rc.canBuildRobot(RobotType.LUMBERJACK, dir)) {
                         rc.buildRobot(RobotType.LUMBERJACK, dir);
-                        rc.broadcast(LUMBERJACK_CHANNEL, prevNumGard + 1);
+                        rc.broadcast(LUMBER_ALIVE_CHANNEL, prevNumGard + 1);
                     }
                     
                     else if (rc.canPlantTree(dir)) {

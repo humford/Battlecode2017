@@ -8,24 +8,29 @@ public class Globals {
     static Random myRand;
     
     // Keep broadcast channels
-    static int GARDENER_CHANNEL = 5;
+   static int ARCHON_CHANNEL = 4; 	
+static int GARDENER_CHANNEL = 5;
     static int LUMBERJACK_CHANNEL = 6;
 	static int LUMBER_ALIVE_CHANNEL = 7;
     
     //LOC_CHANNELS use next integer channel as well
     static int ARCHON_LOC_CHANNEL = 1;
+    
+    //FLAG_CHANNELS
+    static int CHARGE_CHANNEL = 10;
+    static int DEFENSE_CHANNEL = 11;
+    static int DETECTED_CHANNEL = 12;
 
     // Keep important numbers here
     static Team myTeam, them;
     static MapLocation initialArchonLocations[];
 
+    static int VICTORY_CASH = 400;
+
     static int GARDENER_MAX = 6;
     static int LUMBERJACK_MAX = 5;
     static int ROUND_CHANGE = 500;
     
-    static boolean chargeActivate = true;
-    static boolean archonDetected = false;
-    static boolean defenseActivte = false;
 	
 
     public static void init(RobotController theRC) {
@@ -158,6 +163,8 @@ public class Globals {
     	float x = ((float) rc.readBroadcast(CHANNEL)) / 1000;
     	float y = ((float) rc.readBroadcast(CHANNEL+1)) / 1000;
     	
+    	System.out.println(x + "  " + y);
+    	
     	return new MapLocation(x,y);
     }
     
@@ -167,27 +174,32 @@ public class Globals {
 		for (RobotInfo enemy : nearbyEnemies) {
 			if (enemy.type == RobotType.ARCHON) {
 				broadcastLocation(enemy.getLocation(), ARCHON_LOC_CHANNEL);
-				chargeActivate = true;
-				archonDetected = true;
+				rc.broadcast(CHARGE_CHANNEL, 1);
+				rc.broadcast(DETECTED_CHANNEL, 1);
 				return;
 			}
 		}
 		
-		if(rc.getLocation().distanceTo(recieveLocation(ARCHON_LOC_CHANNEL)) < rc.getType().sensorRadius)
+		if(rc.readBroadcast(DETECTED_CHANNEL) == 1 && rc.getLocation().distanceTo(recieveLocation(ARCHON_LOC_CHANNEL)) < rc.getType().sensorRadius)
 		{
-			chargeActivate = true;
+			rc.broadcast(CHARGE_CHANNEL, 0);
 		}
 	}
 	
 	public static void moveTwardArchon() throws GameActionException 
 	{
-		if(chargeActivate)
+		if(rc.readBroadcast(CHARGE_CHANNEL) == 1)
 		{
-			if(archonDetected)
+			if(rc.readBroadcast(DETECTED_CHANNEL) == 1)
 			{
 				tryMove(rc.getLocation().directionTo(recieveLocation(ARCHON_LOC_CHANNEL)));
+				System.out.println(recieveLocation(ARCHON_LOC_CHANNEL));
 			}
-			else tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(myTeam.opponent())[0]));
+			else
+			{
+				tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(myTeam.opponent())[0]));
+				System.out.println("FUCK");
+			}
 		}
 		else wander();
 	}
