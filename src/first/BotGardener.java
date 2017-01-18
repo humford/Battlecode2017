@@ -11,33 +11,54 @@ public class BotGardener extends Globals {
                 rc.broadcast(GARDENER_CHANNEL, prev+1);            
                 Direction dir = randomDirection();
                 
-                if(rc.canWater())
+                TreeInfo[] closeTrees = rc.senseNearbyTrees(1, myTeam);
+                
+                if(rc.canWater() && closeTrees.length != 0)
                 {
                 	TreeInfo[] trees = rc.senseNearbyTrees(-1, myTeam);
-              
-                	if(trees.length != 0)
-                	{
-                		float maxHealth = 0;
-                		int IDtoWater = trees[0].getID();
-                		for(TreeInfo tree : trees)
-                		{
-                			if(maxHealth < tree.getHealth());
-                			{
-                				IDtoWater = tree.getID(); 
-                				maxHealth = tree.getHealth();
-                			}
-                			
-                		}
-                		
-                		rc.water(IDtoWater);
-                	}
-                	else wander();
+
+            		
+            		float minHealth = closeTrees[0].getHealth();
+            		TreeInfo lowHealthTree = closeTrees[0];
+
+            		for(TreeInfo tree : closeTrees)
+            		{
+            			if(minHealth > tree.getHealth());
+            			{
+            				lowHealthTree = tree; 
+            				minHealth = tree.getHealth();
+            			}
+            			
+            		}
+            		
+            		rc.water(lowHealthTree.getID());
                 }
+                
+                TreeInfo[] trees = rc.senseNearbyTrees(-1, myTeam);
+                
+            	if(trees.length != 0 && rc.getLocation().distanceTo(rc.getInitialArchonLocations(myTeam)[0]) > 5)
+            	{
+            		float minHealth = trees[0].getHealth();
+            		TreeInfo lowHealthTree = trees[0];
+            		for(TreeInfo tree : trees)
+            		{
+            			if(minHealth > tree.getHealth());
+            			{
+            				lowHealthTree = tree; 
+            				minHealth = tree.getHealth();
+            			}
+            			
+            		}
+            		
+            		tryMove(rc.getLocation().directionTo(lowHealthTree.getLocation())); 
+            	}
+            	
+            	else wander();
                 
                 
                 if (rc.getRoundNum() < 500) {
                     int prevNumGard = rc.readBroadcast(LUMBERJACK_CHANNEL);
-                    if (prevNumGard <= LUMBERJACK_MAX && rc.canBuildRobot(RobotType.LUMBERJACK, dir)) {
+                    if (prevNumGard < LUMBERJACK_MAX && rc.canBuildRobot(RobotType.LUMBERJACK, dir)) {
                         rc.buildRobot(RobotType.LUMBERJACK, dir);
                         rc.broadcast(LUMBERJACK_CHANNEL, prevNumGard + 1);
                     }

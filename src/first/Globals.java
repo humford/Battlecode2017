@@ -14,7 +14,7 @@ public class Globals {
 
     // Keep important numbers here
     static int GARDENER_MAX = 6;
-    static int LUMBERJACK_MAX = 10;
+    static int LUMBERJACK_MAX = 5;
 	
     public static void init(RobotController theRC) {
 

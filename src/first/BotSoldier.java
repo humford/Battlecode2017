@@ -8,13 +8,23 @@ public class BotSoldier extends Globals {
                 dodge();
                 RobotInfo[] bots = rc.senseNearbyRobots();
                 for (RobotInfo b : bots) {
+                    if (b.getTeam() != myTeam && rc.canStrike()) {
+                        rc.strike();
+                        Direction chase = rc.getLocation().directionTo(b.getLocation());
+                        tryMove(chase);
+                        break;
+                    }
+                }
+                for (RobotInfo b : bots) {
                     if (b.getTeam() != rc.getTeam()) {
                         Direction towards = rc.getLocation().directionTo(b.getLocation());
                         rc.fireSingleShot(towards);
                         break;
                     }
                 }
-                wander();
+                if (! rc.hasAttacked()) {
+                	tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(myTeam.opponent())[0]));
+                }
                 Clock.yield();
             } catch (Exception e) {
                 e.printStackTrace();
