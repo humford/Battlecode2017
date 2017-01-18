@@ -11,6 +11,7 @@ public class Globals {
     // Keep broadcast channels
     static int GARDENER_CHANNEL = 5;
     static int LUMBERJACK_CHANNEL = 6;
+	static int LUMBER_ALIVE_CHANNEL = 7;
     
     //LOC_CHANNELS use next integer channel as well
     static int ARCHON_LOC_CHANNEL = 1;
