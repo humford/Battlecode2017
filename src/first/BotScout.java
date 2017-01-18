@@ -44,7 +44,7 @@ public class BotScout extends Globals {
 		else {
 			RobotInfo nearbyRobots[] = rc.senseNearbyRobots();
 			for (RobotInfo robot : nearbyRobots) {
-				if (robot.team.equals(Globals.us)) continue;
+				if (robot.team.equals(Globals.myTeam)) continue;
 				if (robot.type.equals(RobotType.ARCHON))
 				{
 					lastKnownArchonLocation = robot.getLocation();
