@@ -18,7 +18,7 @@ public class Globals {
     // Keep important numbers here
     static int GARDENER_MAX = 6;
     static int LUMBERJACK_MAX = 5;
-
+static int ROUND_CHANGE = 500;
     
     static boolean chargeActivate = true;
     static boolean archonDetected = false;
