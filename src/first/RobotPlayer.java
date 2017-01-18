@@ -3,7 +3,6 @@ import battlecode.common.*;
 //import globas.java;
 
 public strictfp class RobotPlayer extends Globals {
-    static RobotController rc;
 
     /**
      * run() is the method that is called when a robot is instantiated in the Battlecode world.
