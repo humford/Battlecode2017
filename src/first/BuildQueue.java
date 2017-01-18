@@ -1,8 +1,6 @@
 package first;
 import battlecode.common.*;
 
-import scala.tools.nsc.settings.RC;
-
 public class BuildQueue {
 	
 	private int pointer;
