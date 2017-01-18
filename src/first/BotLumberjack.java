@@ -7,8 +7,10 @@ public class BotLumberjack extends Globals {
         while (true) {
             try {
             	locateArchon();
-		    int prev = rc.broadcast(LUMBER_ALIVE_CHANNEL);
-		    rc.broadcast(LUMBER_ALIVE_CHANNEL, prev+1);
+            	
+            	int prev = rc.readBroadcast(LUMBER_ALIVE_CHANNEL);
+		    	rc.broadcast(LUMBER_ALIVE_CHANNEL, prev+1);
+		    	
                 dodge();
                 
                 RobotInfo[] bots = rc.senseNearbyRobots();
