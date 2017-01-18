@@ -20,7 +20,7 @@ public class BotTank extends Globals {
                 for (RobotInfo b : bots) {
                     if (b.getTeam() != rc.getTeam()) {
                         Direction towards = rc.getLocation().directionTo(b.getLocation());
-                        rc.fireSingleShot(towards);
+                        rc.firePentadShot(towards);
                         break;
                     }
                 }
