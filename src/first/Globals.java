@@ -14,10 +14,17 @@ public class Globals {
     // Keep important numbers here
     static int GARDENER_MAX = 4;
     static int LUMBERJACK_MAX = 10;
+    
+    static Team us, them;
+    static MapLocation initialArchonLocations[];
 	
     public static void init(RobotController theRC) {
 
     	rc = theRC;
+    	
+    	us = rc.getTeam();
+    	them = us.opponent();
+    	initialArchonLocations = rc.getInitialArchonLocations(them);
     }
     
     public static void wander() throws GameActionException {
