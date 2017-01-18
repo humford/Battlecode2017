@@ -6,7 +6,6 @@ public class BotGardener extends Globals {
         while (true) {
             try {
                 dodge();
-                System.out.println(Clock.getBytecodesLeft());
                 int prev = rc.readBroadcast(GARDENER_CHANNEL);
                 rc.broadcast(GARDENER_CHANNEL, prev+1);            
                 Direction dir = randomDirection();

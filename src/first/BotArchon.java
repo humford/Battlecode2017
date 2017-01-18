@@ -3,8 +3,18 @@ import battlecode.common.*;
 
 class BotArchon extends Globals {
 	public static void loop() throws GameActionException {
+		
+		rc.broadcast(CHARGE_CHANNEL, 1);
+		
         while (true) {
             try {
+            	
+            	if(rc.getTeamBullets() > VICTORY_CASH)
+            	{
+            		int x = (int)rc.getTeamBullets() - VICTORY_CASH;
+            		rc.donate(x - x%10);
+            	}
+            	
             	locateArchon();
             	
             	wander();
