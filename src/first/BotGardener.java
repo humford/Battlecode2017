@@ -8,12 +8,13 @@ enum GardenerState {
 }
 
 public class BotGardener extends Globals {
-	public static final int MAX_WANDER_TURNS = 5;
+	public static final int MAX_WANDER_TURNS = 100;
 	
 	public static void loop() throws GameActionException {
 		for (int i = 0; i < MAX_WANDER_TURNS; i++) {
+			Pathfinding.wander(); // NEED BETTER FUNCTION TO MOVE
 			MapLocation location = rc.getLocation();
-			if (rc.isCircleOccupiedExceptByThisRobot(location, 3.8f));
+			if (!rc.isCircleOccupiedExceptByThisRobot(location, 4f))
 				macro();
 			Clock.yield();
 		}
@@ -40,6 +41,8 @@ public class BotGardener extends Globals {
 			treeDirs[i] = dir;
 			dir = dir.rotateLeftDegrees(60);
 		}
+		
+		productionDirs = dir;
 	}
 	
 	public static TreeInfo getLowHealthTree() {
@@ -72,6 +75,18 @@ public class BotGardener extends Globals {
 					break;
 				}
 			}
+			
+			if(rc.getRoundNum() < 500 && rc.canBuildRobot(RobotType.LUMBERJACK, productionDirs))
+			{
+				rc.buildRobot(RobotType.LUMBERJACK, productionDirs);
+			}
+			
+			else if(rc.canBuildRobot(RobotType.SOLDIER, productionDirs))
+			{
+				rc.buildRobot(RobotType.SOLDIER, productionDirs);
+			}
+	
+			
 			// Water the lowest health tree
 			TreeInfo lowHealthTree = getLowHealthTree();
 			if (lowHealthTree != null) {

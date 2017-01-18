@@ -23,6 +23,7 @@ public strictfp class RobotPlayer extends Globals {
                 break;
 
             case GARDENER:
+            //	rc.broadcast(GARDENER_ALIVE_CHANNEL, 0);
                 BotGardener.loop();
                 break;
 
