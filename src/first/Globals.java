@@ -18,11 +18,13 @@ public class Globals {
     // Keep important numbers here
     static int GARDENER_MAX = 6;
     static int LUMBERJACK_MAX = 5;
+	static final int VICTORY_POINT_CASH = 400;
     
     static boolean chargeActivate = true;
     static boolean archonDetected = false;
     static boolean defenseActivte = false;
 	
+
     public static void init(RobotController theRC) {
 
     	RobotPlayer.rc = theRC;
