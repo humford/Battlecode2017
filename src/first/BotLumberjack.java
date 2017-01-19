@@ -8,8 +8,8 @@ public class BotLumberjack extends Globals {
             try {
             	locateArchon();
             	
-            	int prev = rc.readBroadcast(LUMBER_ALIVE_CHANNEL);
-		    	rc.broadcast(LUMBER_ALIVE_CHANNEL, prev+1);
+            	int prev = rc.readBroadcast(LUMBERJACK_CHANNEL);
+		    	rc.broadcast(LUMBERJACK_CHANNEL, prev+1);
 		    	
                 Pathfinding.dodge();
                 
