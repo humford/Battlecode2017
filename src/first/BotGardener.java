@@ -61,6 +61,16 @@ public class BotGardener extends Globals {
 	static void macro() throws GameActionException {
 		init();
 		while (true) {
+			//production 
+			
+			if(BuildQueue.getLength() > 0)
+            {
+            	if(rc.canBuildRobot(BuildQueue.peak(), productionDirs))
+            	{
+            		rc.buildRobot(BuildQueue.dequeue(), productionDirs);
+            	}
+            }
+			
 			// Plant missing trees
 			for (int i = 0; i < 5; i++) {
 				MapLocation treeSpot = getTreeSpot(i);
@@ -76,7 +86,7 @@ public class BotGardener extends Globals {
 				}
 			}
 			
-			if(rc.getRoundNum() < 500 && rc.canBuildRobot(RobotType.LUMBERJACK, productionDirs))
+			/*if(rc.getRoundNum() < 500 && rc.canBuildRobot(RobotType.LUMBERJACK, productionDirs))
 			{
 				rc.buildRobot(RobotType.LUMBERJACK, productionDirs);
 			}
@@ -84,7 +94,8 @@ public class BotGardener extends Globals {
 			else if(rc.canBuildRobot(RobotType.SOLDIER, productionDirs))
 			{
 				rc.buildRobot(RobotType.SOLDIER, productionDirs);
-			}
+			}*/
+			
 	
 			
 			// Water the lowest health tree

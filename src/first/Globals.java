@@ -8,13 +8,13 @@ public class Globals {
     static Random myRand;
     
     // Keep broadcast channels
-    static final int ARCHON_CHANNEL = 4; 	
-    static final int GARDENER_CHANNEL = 5;
-    static final int LUMBERJACK_CHANNEL = 6;
-	static final int LUMBER_ALIVE_CHANNEL = 7;
+    static final int ARCHON_CHANNEL = 5; 	
+    static final int GARDENER_CHANNEL = 6;
+    static final int LUMBERJACK_CHANNEL = 7;
     
     //LOC_CHANNELS use next integer channel as well
-    static final int ARCHON_LOC_CHANNEL = 1;
+    static final int STRIKE_LOC_CHANNEL = 1;
+    static final int DEFENSE_LOC_CHANNEL = 3;
     
     //FLAG_CHANNELS
     static final int CHARGE_CHANNEL = 10;
@@ -96,14 +96,14 @@ public class Globals {
 		RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(-1, myTeam.opponent());
 		for (RobotInfo enemy : nearbyEnemies) {
 			if (enemy.type == RobotType.ARCHON) {
-				broadcastLocation(enemy.getLocation(), ARCHON_LOC_CHANNEL);
+				broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
 				rc.broadcast(CHARGE_CHANNEL, 1);
 				rc.broadcast(DETECTED_CHANNEL, 1);
 				return;
 			}
 		}
 		
-		if(rc.readBroadcast(DETECTED_CHANNEL) == 1 && rc.getLocation().distanceTo(recieveLocation(ARCHON_LOC_CHANNEL)) < rc.getType().sensorRadius)
+		if(rc.readBroadcast(DETECTED_CHANNEL) == 1 && rc.getLocation().distanceTo(recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
 		{
 			rc.broadcast(CHARGE_CHANNEL, 0);
 		}
@@ -115,7 +115,7 @@ public class Globals {
 		{
 			if(rc.readBroadcast(DETECTED_CHANNEL) == 1)
 			{
-				Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(ARCHON_LOC_CHANNEL)));
+				Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
 			}
 			else
 			{

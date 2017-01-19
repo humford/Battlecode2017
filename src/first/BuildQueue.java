@@ -3,23 +3,16 @@ import battlecode.common.*;
 
 import scala.tools.nsc.settings.RC;
 
-public class BuildQueue {
+public class BuildQueue extends Globals{
 	
-	private int pointer;
-	private int length;
+	public static int POINTER_CHANNEL = 498;
+	public static int LENGTH_CHANNEL = 499;
 	
-	private int low_endpoint;
-	private int up_endpoint;
+	public static int low_endpoint = 500;
+	public static int up_endpoint = 600;
 	
-	BuildQueue(int low_limit, int up_limit)
-	{
-		low_endpoint = low_limit;
-		up_endpoint = up_limit;
-		pointer = low_endpoint;
-		length = 0;
-	}
 	
-	private int robotInt(RobotType type) throws GameActionException, Exception
+	private static int robotInt(RobotType type) throws GameActionException, Exception
 	{
 		switch (type) {
          case ARCHON:
@@ -45,7 +38,7 @@ public class BuildQueue {
 		}
 	}
 	
-	private RobotType robotTypeFromInt(int type) throws GameActionException, Exception
+	private static RobotType robotTypeFromInt(int type) throws Exception
 	{
 		switch (type) {
          case 0:
@@ -71,37 +64,94 @@ public class BuildQueue {
 		}
 	}
 	
-	public void enqueue(RobotController rc, RobotType robot) throws Exception
+	private static int getPointer() throws GameActionException
 	{
-		if(length + 1 >= (up_endpoint - low_endpoint)) throw new Exception("MAX LENGTH EXCEEDED");
-		
-		int channel = (pointer + length) % (up_endpoint - low_endpoint);
-		try {
+		return rc.readBroadcast(POINTER_CHANNEL);
+	}
+	
+	public static int getLength() throws GameActionException
+	{
+		return rc.readBroadcast(LENGTH_CHANNEL);
+	}
+	
+	private static void increment() throws GameActionException
+	{
+		int length = rc.readBroadcast(LENGTH_CHANNEL);
+		rc.broadcast(LENGTH_CHANNEL, length + 1);
+	}
+	
+	private static void decrement() throws GameActionException
+	{
+		int pointer = rc.readBroadcast(POINTER_CHANNEL);
+		rc.broadcast(POINTER_CHANNEL, pointer + 1);
+		int length = rc.readBroadcast(LENGTH_CHANNEL);
+		rc.broadcast(LENGTH_CHANNEL, length - 1);
+	}
+	
+	
+	
+	public static void enqueue(RobotType robot)
+	{
+		try{
+			if(getLength() + 1 >= (up_endpoint - low_endpoint)) throw new Exception("MAX LENGTH EXCEEDED");
+			
+			int channel = (getPointer() + getLength()) % (up_endpoint - low_endpoint) + low_endpoint;
 			rc.broadcast(channel, robotInt(robot));
-		} catch (GameActionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			
+			increment();
+		}
+		catch(Exception e)
+		{
+			System.out.println("BAD QUEUE");
 			e.printStackTrace();
 		}
+	}
+	
+	public static RobotType dequeue()
+	{
+		try{
+			if(getLength() <= 0) throw new Exception("MIN LENGTH EXCEEDED");
+			int typeInt = rc.readBroadcast(getPointer());
+			decrement();
+			return robotTypeFromInt(typeInt);
+		}
+		catch(Exception e)
+		{
+			System.out.println("BAD QUEUE");
+			e.printStackTrace();
+			return RobotType.ARCHON;
+		}
+	}
+	
+	public static RobotType peak()
+	{
+		try{
+			if(getLength() <= 0) throw new Exception("MIN LENGTH EXCEEDED");
+			int typeInt = rc.readBroadcast(getPointer());
+			return robotTypeFromInt(typeInt);
+		}
+		catch(Exception e)
+		{
+			System.out.println("BAD QUEUE");
+			e.printStackTrace();
+			return RobotType.ARCHON;
+		}
+	}
+	
+	public static void printQueue()
+	{
+		try{
+			for(int i = getPointer(); i < getPointer() + getLength(); i++)
+			{
+				System.out.print(rc.readBroadcast(i));
+				System.out.println("");
+			}
+		}
 		
-		length ++;
-	}
-	
-	public RobotType dequeue(RobotController rc) throws Exception
-	{
-		if(length <= 0) throw new Exception("MIN LENGTH EXCEEDED");
-		int typeInt = rc.readBroadcast(pointer);
-		pointer++;
-		length --;
-		return robotTypeFromInt(typeInt);
-	}
-	
-	public RobotType peak(RobotController rc) throws Exception
-	{
-		if(length <= 0) throw new Exception("MIN LENGTH EXCEEDED");
-		int typeInt = rc.readBroadcast(pointer);
-		return robotTypeFromInt(typeInt);
+		catch(Exception e)
+		{
+			System.out.println("BAD QUEUE");
+			e.printStackTrace();
+		}
 	}
 }
