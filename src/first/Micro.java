@@ -16,7 +16,7 @@ public class Micro{
   public static void finishHim(){}
   
   //if two robots sense each other stop firing pentashots, start firing trishots
-  public static boolean isCondensed(RobotController rc){
+  public static void isCondensed(RobotController rc){
       RobotInfo[] near = rc.senseNearbyRobots();
       int counter = 0;
       for(RobotInfo x: near){
