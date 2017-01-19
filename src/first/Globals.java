@@ -24,7 +24,11 @@ public class Globals {
     // Keep important numbers here
     static Team myTeam, them;
     static MapLocation initialArchonLocations[];
-
+    static int CONDENSED =-1;//initially not condensed
+    /*
+    Condensed = 0->mediumCondensed
+    Condensed = 1->veryCondensed
+    */
     static int VICTORY_CASH = 400;
 
     static int GARDENER_MAX = 10;

@@ -7,29 +7,8 @@ public class BotSoldier extends Globals {
             try {
             	locateArchon();
             	
-                Pathfinding.dodge();
-                RobotInfo[] bots = rc.senseNearbyRobots();
-                for (RobotInfo b : bots) {
-                    if (b.getTeam() != myTeam && rc.canStrike()) {
-                        rc.strike();
-                        Direction chase = rc.getLocation().directionTo(b.getLocation());
-                        Pathfinding.tryMove(chase);
-                        break;
-                    }
-                }
-                for (RobotInfo b : bots) {
-                    if (b.getTeam() != rc.getTeam()) {
-                        Direction towards = rc.getLocation().directionTo(b.getLocation());
-			Micro.isCondensed(rc);
-			
-                        rc.fireSingleShot(towards);
-			    Micro.CONDENSED =-1;//reset the condensed static variable
-                        break;
-                    }
-                }
-                if (! rc.hasAttacked()) {
-                	moveTwardArchon();
-                }
+            	Micro.SoldierFight();
+                
                 Clock.yield();
             } catch (Exception e) {
                 e.printStackTrace();
