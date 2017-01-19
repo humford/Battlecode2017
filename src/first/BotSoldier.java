@@ -21,6 +21,7 @@ public class BotSoldier extends Globals {
                     if (b.getTeam() != rc.getTeam()) {
                         Direction towards = rc.getLocation().directionTo(b.getLocation());
 			Micro.isCondensed(rc);
+			
                         rc.fireSingleShot(towards);
 			    Micro.CONDENSED =-1;//reset the condensed static variable
                         break;
