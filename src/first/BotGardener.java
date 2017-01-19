@@ -19,7 +19,12 @@ public class BotGardener extends Globals {
 			Clock.yield();
 		}
 		macro();
+	
 	}
+	
+	// The number of trees + production areas about the gardener
+	static final int NUM_SLOTS = 6;
+	static final int NUM_TREE_SLOTS = NUM_SLOTS - 1;
 	
 	static MapLocation myLocation;
 	static Direction treeDirs[];
@@ -35,11 +40,12 @@ public class BotGardener extends Globals {
 	
 	public static void init() throws GameActionException {
 		myLocation = rc.getLocation();
-		treeDirs = new Direction[5];
+		treeDirs = new Direction[NUM_TREE_SLOTS];
 		Direction dir = Direction.NORTH;
-		for (int i = 0; i < 5; i++) {
+		final float stepDegrees = 360.0f / NUM_SLOTS;
+		for (int i = 0; i < NUM_TREE_SLOTS; i++) {
 			treeDirs[i] = dir;
-			dir = dir.rotateLeftDegrees(60);
+			dir = dir.rotateLeftDegrees(stepDegrees);
 		}
 		
 		productionDirs = dir;
@@ -62,15 +68,15 @@ public class BotGardener extends Globals {
 		init();
 		while (true) {
 			// Plant missing trees
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < NUM_TREE_SLOTS; i++) {
 				MapLocation treeSpot = getTreeSpot(i);
-				System.out.println("Looking at tree in spot " + treeSpot.toString());
+				//System.out.println("Looking at tree in spot " + treeSpot.toString());
 				if (rc.isLocationOccupiedByTree(treeSpot)){
-					System.out.println("Occupied");
+					//System.out.println("Occupied");
 					continue;
 				}
 				if (rc.canPlantTree(treeDirs[i])) {
-					System.out.println("Planting tree in direcion " + Integer.toString(i));
+					//System.out.println("Planting tree in direction " + Integer.toString(i));
 					rc.plantTree(treeDirs[i]);
 					break;
 				}
