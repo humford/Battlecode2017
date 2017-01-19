@@ -1,5 +1,11 @@
-package first;
+package second;
 import battlecode.common.*;
+
+enum GardenerState {
+	PLANTING,
+	WATERING,
+	PRODUCING
+}
 
 public class BotGardener extends Globals {
 	public static final int MAX_WANDER_TURNS = 100;
@@ -7,7 +13,7 @@ public class BotGardener extends Globals {
 	public static void loop() throws GameActionException {
 		for (int i = 0; i < MAX_WANDER_TURNS; i++) {
 			
-			loop_common();
+			locateArchon();
 			
 			rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
 			 
@@ -59,7 +65,8 @@ public class BotGardener extends Globals {
 	public static TreeInfo getLowHealthTree() {
 		TreeInfo ret = null;
 		float minHealth = GameConstants.BULLET_TREE_MAX_HEALTH;
-		for (TreeInfo tree : rc.senseNearbyTrees(2, myTeam)) {
+		for (TreeInfo tree : rc.senseNearbyTrees()) {
+			if (!tree.team.equals(myTeam)) continue;
 			if (tree.health < minHealth) {
 				minHealth = tree.health;
 				ret = tree;
@@ -72,7 +79,7 @@ public class BotGardener extends Globals {
 		init();
 		while (true) {
 			
-			loop_common();
+			locateArchon();
 			
 			rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
 			
@@ -89,13 +96,13 @@ public class BotGardener extends Globals {
 			// Plant missing trees
 			for (int i = 0; i < 5; i++) {
 				MapLocation treeSpot = getTreeSpot(i);
-				//System.out.println("Looking at tree in spot " + treeSpot.toString());
+				System.out.println("Looking at tree in spot " + treeSpot.toString());
 				if (rc.isLocationOccupiedByTree(treeSpot)){
 					System.out.println("Occupied");
 					continue;
 				}
 				if (rc.canPlantTree(treeDirs[i])) {
-					//System.out.println("Planting tree in direcion " + Integer.toString(i));
+					System.out.println("Planting tree in direcion " + Integer.toString(i));
 					rc.plantTree(treeDirs[i]);
 					break;
 				}
@@ -106,12 +113,8 @@ public class BotGardener extends Globals {
 			TreeInfo lowHealthTree = getLowHealthTree();
 			if (lowHealthTree != null) {
 				MapLocation treeSpot = lowHealthTree.getLocation();
-				System.out.println("ATTEMPTING TO WATER");
 				if (rc.canWater(treeSpot))
-				{
 					rc.water(treeSpot);
-					System.out.println("WATERING");
-				}
 			}
 			Clock.yield();
 		}

@@ -1,4 +1,4 @@
-package first;
+package second;
 import battlecode.common.*;
 import java.util.Random;
 
@@ -32,8 +32,6 @@ public class Globals {
     static int GARDENER_MAX = 10;
     static int LUMBERJACK_MAX = 5;
     static int ROUND_CHANGE = 500;
-    
- 
     
 	
 
@@ -80,38 +78,39 @@ public class Globals {
         return (perpendicularDist <= rc.getType().bodyRadius);
     }
     
+    public static void broadcastLocation(MapLocation loc, int CHANNEL) throws GameActionException
+    {
+    	rc.broadcast(CHANNEL, (int) (loc.x * 1000)); 
+    	rc.broadcast(CHANNEL+1, (int) (loc.y * 1000));
+    }
+    
+    public static MapLocation recieveLocation(int CHANNEL) throws GameActionException
+    {
+    	float x = ((float) rc.readBroadcast(CHANNEL)) / 1000;
+    	float y = ((float) rc.readBroadcast(CHANNEL+1)) / 1000;
+    	
+    	
+    	return new MapLocation(x,y);
+    }
+    
 	public static void locateArchon() throws GameActionException 
 	{
 		RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(-1, them);
 		for (RobotInfo enemy : nearbyEnemies) {
 			if (enemy.type == RobotType.ARCHON) {
-				Messaging.broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
+				broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
 				return;
 			}
 		}
 		
-		if(rc.getLocation().distanceTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
+		if(rc.getLocation().distanceTo(recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
 		{
 			int dest = rc.readBroadcast(ARCHON_TARGETING_CHANNEL);
 			rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1) % initialArchonLocations.length);
-			Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
+			broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
 		}
 	}
 	
-	public static void donate_to_win() throws GameActionException // if can win by donating then do it
-	{
-		if((int) rc.getTeamBullets()/10 + rc.getTeamVictoryPoints() > GameConstants.VICTORY_POINTS_TO_WIN)
-		{
-			rc.donate(rc.getTeamBullets());
-		}
-		
-	}
-	
-	public static void loop_common() throws GameActionException // things that all robots do in loop
-	{
-		donate_to_win();
-		locateArchon();
-	}
 }
 
 

@@ -1,4 +1,4 @@
-package first;
+package second;
 import battlecode.common.*;
 
 
@@ -6,27 +6,15 @@ public class BotScout extends Globals {
 	public static void loop() throws GameActionException {
 		while (true) {
 			try {
-				loop_common();
+				locateArchon();
 				
 				RobotInfo[] bots = rc.senseNearbyRobots();
 
 				for (RobotInfo b : bots) {
-					if (b.getTeam() != rc.getTeam() && b.getType() != RobotType.ARCHON) {
+					if (b.getTeam() != rc.getTeam()) {
 						Direction towards = rc.getLocation().directionTo(b.getLocation());
 						if(rc.canFireSingleShot())rc.fireSingleShot(towards);
-						break;
 					}      
-				}
-				
-				if(!rc.hasAttacked() && bots.length > 0)
-				{
-					for (RobotInfo b : bots) {
-						if (b.getTeam() != rc.getTeam()) {
-							Direction towards = rc.getLocation().directionTo(b.getLocation());
-							if(rc.canFireSingleShot())rc.fireSingleShot(towards);
-							break;
-						}      
-					} 
 				}
 				
 				Pathfinding.dodge();
@@ -51,7 +39,7 @@ public class BotScout extends Globals {
 
 	      	  		if(!rc.hasMoved())
 	            	{
-	            		Pathfinding.tryMove(rc.getLocation().directionTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)));
+	            		Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
 	            	}
 	        	}
 				Clock.yield();

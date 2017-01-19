@@ -1,4 +1,4 @@
-package first;
+package second;
 import battlecode.common.*;
 public class Micro extends Globals {
   
@@ -62,10 +62,10 @@ public class Micro extends Globals {
           if(!rc.hasMoved())
           {
         	  if(rc.readBroadcast(DEFENSE_CHANNEL) == 1)
-        		  Pathfinding.tryMove(rc.getLocation().directionTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL)));
+        		  Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(DEFENSE_LOC_CHANNEL)));
 
         	  else
-        		  Pathfinding.tryMove(rc.getLocation().directionTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)));
+        		  Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
           }
       }
   }

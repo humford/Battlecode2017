@@ -5,7 +5,7 @@ public class BotSoldier extends Globals {
 	public static void loop() throws GameActionException {
 		while (true) {
             try {
-            	locateArchon();
+            	loop_common();
             	
             	Micro.SoldierFight();
                 

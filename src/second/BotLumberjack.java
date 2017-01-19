@@ -1,4 +1,4 @@
-package first;
+package second;
 import battlecode.common.*;
 
 public class BotLumberjack extends Globals {
@@ -6,7 +6,7 @@ public class BotLumberjack extends Globals {
 	public static void loop() throws GameActionException {
         while (true) {
             try {
-            	loop_common();
+            	locateArchon();
 	    	
             	Pathfinding.dodge();
                 
@@ -39,7 +39,7 @@ public class BotLumberjack extends Globals {
                     }
                 }
                 if (! rc.hasMoved()) {
-                	Pathfinding.tryMove(rc.getLocation().directionTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)));
+                	Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
                 }
                 Clock.yield();
             } catch (Exception e) {

@@ -1,14 +1,14 @@
-package first;
+package second;
 import battlecode.common.*;
 
-public class BotTank extends Globals {
+public class BotSoldier extends Globals {
 	public static void loop() throws GameActionException {
 		while (true) {
             try {
-            	loop_common();
+            	locateArchon();
             	
             	Micro.SoldierFight();
-               
+                
                 Clock.yield();
             } catch (Exception e) {
                 e.printStackTrace();

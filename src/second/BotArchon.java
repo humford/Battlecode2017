@@ -1,4 +1,4 @@
-package first;
+package second;
 import battlecode.common.*;
 
 class BotArchon extends Globals {
@@ -8,7 +8,7 @@ class BotArchon extends Globals {
 		{
 			rc.broadcast(BuildQueue.POINTER_CHANNEL, BuildQueue.low_endpoint);
 			
-			Messaging.broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
+			broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
 			
 			if(rc.senseNearbyTrees().length > 3)
 			{
@@ -55,7 +55,6 @@ class BotArchon extends Globals {
         while (true) {
             try {
             	
-            	loop_common();
             	rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL));
             	rc.broadcast(GARDENER_SUM_CHANNEL, 0);
 
@@ -71,6 +70,7 @@ class BotArchon extends Globals {
     					BuildQueue.enqueue(RobotType.LUMBERJACK);
     					BuildQueue.enqueue(RobotType.SOLDIER);
     					BuildQueue.enqueue(RobotType.SOLDIER);
+    					BuildQueue.enqueue(RobotType.TANK);
             		}
             	}
             	
@@ -80,6 +80,7 @@ class BotArchon extends Globals {
             		rc.donate(x - x%10);
             	}
             	
+            	locateArchon();
             	
             	//Pathfinding.wander();
             	
@@ -89,7 +90,7 @@ class BotArchon extends Globals {
             	
             	if(enemyBots.length > 2)
             	{
-            		Messaging.broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
+            		broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
             		rc.broadcast(DEFENSE_CHANNEL, 1);
             	}
             	
