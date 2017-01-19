@@ -7,10 +7,10 @@ public class Globals {
 	static RobotController rc;
     static Random myRand;
     
+    static final int GARDENER_LOWER_LIMIT = 7;
     // Keep broadcast channels
-    static final int ARCHON_CHANNEL = 5; 	
-    static final int GARDENER_CHANNEL = 6;
-    static final int LUMBERJACK_CHANNEL = 7;
+    static final int GARDENER_COUNT_CHANNEL = 5;
+    static final int GARDENER_SUM_CHANNEL = 6;
     
     //LOC_CHANNELS use next integer channel as well
     static final int STRIKE_LOC_CHANNEL = 1;
@@ -95,7 +95,7 @@ public class Globals {
     
 	public static void locateArchon() throws GameActionException 
 	{
-		RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(-1, myTeam.opponent());
+		RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(-1, them);
 		for (RobotInfo enemy : nearbyEnemies) {
 			if (enemy.type == RobotType.ARCHON) {
 				broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);

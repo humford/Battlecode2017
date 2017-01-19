@@ -15,6 +15,20 @@ public class BotGardener extends Globals {
 			
 			locateArchon();
 			
+			rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
+			 
+			//production
+			
+			Direction dir = randomDirection();
+        	
+            if(BuildQueue.getLength() > 0)
+            {
+            	if(rc.canBuildRobot(BuildQueue.peak(), dir))
+            	{
+            		rc.buildRobot(BuildQueue.dequeue(), dir);
+            	}
+            }
+			
 			Pathfinding.wander(); // NEED BETTER FUNCTION TO MOVE
 			MapLocation location = rc.getLocation();
 			if (!rc.isCircleOccupiedExceptByThisRobot(location, 4f))
@@ -39,7 +53,7 @@ public class BotGardener extends Globals {
 	public static void init() throws GameActionException {
 		myLocation = rc.getLocation();
 		treeDirs = new Direction[5];
-		Direction dir = Direction.NORTH;
+		Direction dir = rc.getLocation().directionTo(initialArchonLocations[0]).rotateLeftDegrees(60);
 		for (int i = 0; i < 5; i++) {
 			treeDirs[i] = dir;
 			dir = dir.rotateLeftDegrees(60);
@@ -66,6 +80,8 @@ public class BotGardener extends Globals {
 		while (true) {
 			
 			locateArchon();
+			
+			rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
 			
 			//production 
 			

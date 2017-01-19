@@ -9,18 +9,44 @@ class BotArchon extends Globals {
 			rc.broadcast(BuildQueue.POINTER_CHANNEL, BuildQueue.low_endpoint);
 			
 			broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
-
-			BuildQueue.enqueue(RobotType.GARDENER);
-			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.GARDENER);
-			BuildQueue.enqueue(RobotType.SCOUT);
-		
-			for(int i = 0; i < 5; i ++)
+			
+			if(rc.senseNearbyTrees().length > 3)
 			{
 				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.LUMBERJACK);
 				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.LUMBERJACK);
+			
+				for(int i = 0; i < 5; i ++)
+				{
+					BuildQueue.enqueue(RobotType.GARDENER);
+					BuildQueue.enqueue(RobotType.LUMBERJACK);
+					BuildQueue.enqueue(RobotType.GARDENER);
+					BuildQueue.enqueue(RobotType.SOLDIER);
+				}
+			}
+			
+			else
+			{
+
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.LUMBERJACK);
+		
+				for(int i = 0; i < 5; i ++)
+				{
+					BuildQueue.enqueue(RobotType.GARDENER);
+					BuildQueue.enqueue(RobotType.LUMBERJACK);
+					BuildQueue.enqueue(RobotType.GARDENER);
+					BuildQueue.enqueue(RobotType.SOLDIER);
+				}
 			}
 			
 			BuildQueue.printQueue();
@@ -29,12 +55,22 @@ class BotArchon extends Globals {
         while (true) {
             try {
             	
+            	rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL));
+            	rc.broadcast(GARDENER_SUM_CHANNEL, 0);
+
             	if(BuildQueue.getLength() <= 0)
             	{
-            		BuildQueue.enqueue(RobotType.GARDENER);
-    				BuildQueue.enqueue(RobotType.LUMBERJACK);
-    				BuildQueue.enqueue(RobotType.SOLDIER);
-    				BuildQueue.enqueue(RobotType.SOLDIER);
+            		if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_LOWER_LIMIT)
+                	{
+            			BuildQueue.enqueue(RobotType.GARDENER);
+                	}
+            		else
+            		{
+            			BuildQueue.enqueue(RobotType.GARDENER);
+    					BuildQueue.enqueue(RobotType.LUMBERJACK);
+    					BuildQueue.enqueue(RobotType.SOLDIER);
+    					BuildQueue.enqueue(RobotType.SOLDIER);
+            		}
             	}
             	
             	if(rc.getTeamBullets() > VICTORY_CASH)
@@ -58,10 +94,9 @@ class BotArchon extends Globals {
             	}
             	
             	else rc.broadcast(DEFENSE_CHANNEL, 0);
+                
+            	Direction dir = randomDirection();
             	
-                Direction dir = randomDirection();
-                
-                
                 if(BuildQueue.getLength() > 0)
                 {
                 	if(rc.canBuildRobot(BuildQueue.peak(), dir))

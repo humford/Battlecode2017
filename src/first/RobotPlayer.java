@@ -23,12 +23,10 @@ public strictfp class RobotPlayer extends Globals {
                 break;
 
             case GARDENER:
-            //	rc.broadcast(GARDENER_ALIVE_CHANNEL, 0);
                 BotGardener.loop();
                 break;
 
             case LUMBERJACK:
-                rc.broadcast(LUMBERJACK_CHANNEL, 0);//reset the number of alive lumberjacks, relies on gardener before lumberjack
                 BotLumberjack.loop();
                 
                 break;

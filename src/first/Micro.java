@@ -32,9 +32,7 @@ public class Micro extends Globals {
   }
   
   public static void SoldierFight() throws GameActionException
-  {
-      Pathfinding.dodge();
-      
+  {   
       RobotInfo[] bots = rc.senseNearbyRobots();
 
       for (RobotInfo b : bots) {
@@ -56,6 +54,8 @@ public class Micro extends Globals {
               break;
           }      
       }
+      
+      Pathfinding.dodge();
       
       if (! rc.hasAttacked()) {
           chase();

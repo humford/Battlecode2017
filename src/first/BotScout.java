@@ -7,6 +7,16 @@ public class BotScout extends Globals {
 		while (true) {
 			try {
 				locateArchon();
+				
+				RobotInfo[] bots = rc.senseNearbyRobots();
+
+				for (RobotInfo b : bots) {
+					if (b.getTeam() != rc.getTeam()) {
+						Direction towards = rc.getLocation().directionTo(b.getLocation());
+						if(rc.canFireSingleShot())rc.fireSingleShot(towards);
+					}      
+				}
+				
 				Pathfinding.dodge();
 	    	
 				TreeInfo[] trees = rc.senseNearbyTrees();
@@ -19,27 +29,6 @@ public class BotScout extends Globals {
 					}
 				}
 	        
-				RobotInfo[] bots = rc.senseNearbyRobots();
-
-				for (RobotInfo b : bots) {
-					if (b.getTeam() != rc.getTeam()) {
-						Direction towards = rc.getLocation().directionTo(b.getLocation());
-						switch(Micro.isCondensed())
-						{
-						case -1:
-							if(rc.canFirePentadShot())rc.firePentadShot(towards);
-							break;
-						case 0:
-							if(rc.canFireTriadShot())rc.fireTriadShot(towards);
-							break;
-						case 1:
-							if(rc.canFireSingleShot())rc.fireSingleShot(towards);
-							break;
-	                	
-						}
-						break;
-					}      
-				}
 	       	 	if(! rc.hasAttacked()) {
 	       	 		RobotInfo[] enemyBots = rc.senseNearbyRobots(5, them);
 	      	  		if(enemyBots.length > 0)

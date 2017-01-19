@@ -7,15 +7,23 @@ public class BotLumberjack extends Globals {
         while (true) {
             try {
             	locateArchon();
-            	
-            	int prev = rc.readBroadcast(LUMBERJACK_CHANNEL);
-		    	rc.broadcast(LUMBERJACK_CHANNEL, prev+1);
-		    	
-                Pathfinding.dodge();
+	    	
+            	Pathfinding.dodge();
                 
                 RobotInfo[] myBots = rc.senseNearbyRobots(2, myTeam);
                 RobotInfo[] theirBots = rc.senseNearbyRobots(2, them);
-                if(myBots.length < theirBots.length && rc.canStrike())rc.strike();
+                boolean isArchon = false;
+                
+                for(RobotInfo b : theirBots)
+                {
+                	if(b.getType() == RobotType.ARCHON)
+                	{
+                		isArchon = true;
+                		break;
+                	}
+                }
+                
+                if((myBots.length < theirBots.length || isArchon) && rc.canStrike())rc.strike();
                 
                 Micro.chase();
                 
