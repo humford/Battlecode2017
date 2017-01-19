@@ -1,6 +1,6 @@
 package first;
 import battlecode.common.*;
-public class Micro{
+public class Micro extends Globals {
   static int CONDENSED =-1;//initially not condensed
   /*
   Condensed = 0->mediumCondensed
