@@ -1,6 +1,5 @@
-package first;
-import battlecode.common.*;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 import scala.tools.nsc.settings.RC;
 
@@ -159,3 +158,5 @@ public class BuildQueue {
 		}
 	}
 }
+=======
+>>>>>>> 2eb4085f0df82c4c0b8f02bb7c04b0a6c556804d
