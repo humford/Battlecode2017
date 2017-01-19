@@ -76,4 +76,9 @@ public class Pathfinding extends Globals {
         Direction dir = randomDirection();
         tryMove(dir);
     }
+    
+    // Placeholder for now, should have pathfinding later
+    public static void moveTo(MapLocation location) throws GameActionException {
+    	tryMove(rc.getLocation().directionTo(location));
+    }
 }
