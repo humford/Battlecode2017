@@ -1,9 +1,13 @@
 package first;
 import battlecode.common.*;
 
+<<<<<<< HEAD
 import scala.tools.nsc.settings.RC;
 
 public class BuildQueue extends Globals{
+=======
+public class BuildQueue {
+>>>>>>> 4b2f22d2cb6dfccba100aeb6feb6093663e3748a
 	
 	public static int POINTER_CHANNEL = 498;
 	public static int LENGTH_CHANNEL = 499;
