@@ -49,6 +49,16 @@ class BotArchon extends Globals {
             	
             	Pathfinding.dodge();
             	
+            	RobotInfo[] enemyBots = rc.senseNearbyRobots(5, them);
+            	
+            	if(enemyBots.length > 2)
+            	{
+            		broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
+            		rc.broadcast(DEFENSE_CHANNEL, 1);
+            	}
+            	
+            	else rc.broadcast(DEFENSE_CHANNEL, 0);
+            	
                 Direction dir = randomDirection();
                 
                 

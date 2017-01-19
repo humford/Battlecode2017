@@ -59,7 +59,14 @@ public class Micro extends Globals {
       
       if (! rc.hasAttacked()) {
           chase();
-          if(!rc.hasMoved()) Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
+          if(!rc.hasMoved())
+          {
+        	  if(rc.readBroadcast(DEFENSE_CHANNEL) == 1)
+        		  Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(DEFENSE_LOC_CHANNEL)));
+
+        	  else
+        		  Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
+          }
       }
   }
   //If three robots sense each other then stop firing trishots, start firing singleshots
