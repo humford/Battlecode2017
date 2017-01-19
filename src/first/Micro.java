@@ -19,7 +19,17 @@ public class Micro extends Globals {
 	  if(len < 2) return -1;
 	  else if(len == 2) return 0;
 	  else return 1;
-   }
+  }
+  
+  public static void chase() throws GameActionException
+  {
+	  RobotInfo[] bots = rc.senseNearbyRobots(-1, them);
+	  if(bots.length > 0)
+	  {
+		  Direction chase = rc.getLocation().directionTo(bots[0].getLocation());
+		  Pathfinding.tryMove(chase);
+	  }
+  }
   
   public static void SoldierFight() throws GameActionException
   {
@@ -33,13 +43,13 @@ public class Micro extends Globals {
               switch(Micro.isCondensed())
               {
               case -1:
-              	rc.firePentadShot(towards);
+              	if(rc.canFirePentadShot())rc.firePentadShot(towards);
               	break;
               case 0:
-              	rc.fireTriadShot(towards);
+              	if(rc.canFireTriadShot())rc.fireTriadShot(towards);
               	break;
               case 1:
-              	rc.fireSingleShot(towards);
+              	if(rc.canFireSingleShot())rc.fireSingleShot(towards);
               	break;
               	
               }
@@ -48,14 +58,8 @@ public class Micro extends Globals {
       }
       
       if (! rc.hasAttacked()) {
-          for (RobotInfo b : bots) {
-              if (b.getTeam() != myTeam) {
-                  Direction chase = rc.getLocation().directionTo(b.getLocation());
-                  Pathfinding.tryMove(chase);
-                  break;
-              }
-          }
-          if(!rc.hasMoved()) moveTwardArchon();
+          chase();
+          if(!rc.hasMoved()) Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
       }
   }
   //If three robots sense each other then stop firing trishots, start firing singleshots

@@ -17,14 +17,12 @@ public class Globals {
     static final int DEFENSE_LOC_CHANNEL = 3;
     
     //FLAG_CHANNELS
-    static final int CHARGE_CHANNEL = 10;
+    static final int ARCHON_TARGETING_CHANNEL = 10;
     static final int DEFENSE_CHANNEL = 11;
-    static final int DETECTED_CHANNEL = 12;
 
     // Keep important numbers here
     static Team myTeam, them;
     static MapLocation initialArchonLocations[];
-    static int CONDENSED =-1;//initially not condensed
     /*
     Condensed = 0->mediumCondensed
     Condensed = 1->veryCondensed
@@ -101,33 +99,18 @@ public class Globals {
 		for (RobotInfo enemy : nearbyEnemies) {
 			if (enemy.type == RobotType.ARCHON) {
 				broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
-				rc.broadcast(CHARGE_CHANNEL, 1);
-				rc.broadcast(DETECTED_CHANNEL, 1);
 				return;
 			}
 		}
 		
-		if(rc.readBroadcast(DETECTED_CHANNEL) == 1 && rc.getLocation().distanceTo(recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
+		if(rc.getLocation().distanceTo(recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
 		{
-			rc.broadcast(CHARGE_CHANNEL, 0);
+			int dest = rc.readBroadcast(ARCHON_TARGETING_CHANNEL);
+			rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1) % initialArchonLocations.length);
+			broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
 		}
 	}
 	
-	public static void moveTwardArchon() throws GameActionException 
-	{
-		if(rc.readBroadcast(CHARGE_CHANNEL) == 1)
-		{
-			if(rc.readBroadcast(DETECTED_CHANNEL) == 1)
-			{
-				Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
-			}
-			else
-			{
-				Pathfinding.tryMove(rc.getLocation().directionTo(rc.getInitialArchonLocations(myTeam.opponent())[0]));
-			}
-		}
-		else Pathfinding.wander();
-	}
 }
 
 

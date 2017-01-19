@@ -13,15 +13,12 @@ public class BotLumberjack extends Globals {
 		    	
                 Pathfinding.dodge();
                 
-                RobotInfo[] bots = rc.senseNearbyRobots();
-                for (RobotInfo b : bots) {
-                    if (b.getTeam() != myTeam && rc.canStrike()) {
-                        rc.strike();
-                        Direction chase = rc.getLocation().directionTo(b.getLocation());
-                        Pathfinding.tryMove(chase);
-                        break;
-                    }
-                }
+                RobotInfo[] myBots = rc.senseNearbyRobots(2, myTeam);
+                RobotInfo[] theirBots = rc.senseNearbyRobots(2, them);
+                if(myBots.length < theirBots.length && rc.canStrike())rc.strike();
+                
+                Micro.chase();
+                
                 TreeInfo[] trees = rc.senseNearbyTrees();
                 for (TreeInfo t : trees) {
                 	if(rc.canShake(t.getLocation()) && t.containedBullets > 0){
@@ -33,8 +30,8 @@ public class BotLumberjack extends Globals {
                         break;
                     }
                 }
-                if (! rc.hasAttacked()) {
-                	moveTwardArchon();
+                if (! rc.hasMoved()) {
+                	Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
                 }
                 Clock.yield();
             } catch (Exception e) {

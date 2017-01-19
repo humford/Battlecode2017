@@ -12,6 +12,9 @@ public class BotGardener extends Globals {
 	
 	public static void loop() throws GameActionException {
 		for (int i = 0; i < MAX_WANDER_TURNS; i++) {
+			
+			locateArchon();
+			
 			Pathfinding.wander(); // NEED BETTER FUNCTION TO MOVE
 			MapLocation location = rc.getLocation();
 			if (!rc.isCircleOccupiedExceptByThisRobot(location, 4f))
@@ -61,6 +64,9 @@ public class BotGardener extends Globals {
 	static void macro() throws GameActionException {
 		init();
 		while (true) {
+			
+			locateArchon();
+			
 			//production 
 			
 			if(BuildQueue.getLength() > 0)
@@ -85,17 +91,6 @@ public class BotGardener extends Globals {
 					break;
 				}
 			}
-			
-			/*if(rc.getRoundNum() < 500 && rc.canBuildRobot(RobotType.LUMBERJACK, productionDirs))
-			{
-				rc.buildRobot(RobotType.LUMBERJACK, productionDirs);
-			}
-			
-			else if(rc.canBuildRobot(RobotType.SOLDIER, productionDirs))
-			{
-				rc.buildRobot(RobotType.SOLDIER, productionDirs);
-			}*/
-			
 	
 			
 			// Water the lowest health tree

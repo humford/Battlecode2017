@@ -6,8 +6,9 @@ class BotArchon extends Globals {
 		
 		if(rc.getLocation() == rc.getInitialArchonLocations(myTeam)[0])
 		{
-			rc.broadcast(CHARGE_CHANNEL, 1);
 			rc.broadcast(BuildQueue.POINTER_CHANNEL, BuildQueue.low_endpoint);
+			
+			broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
 
 			BuildQueue.enqueue(RobotType.GARDENER);
 			BuildQueue.enqueue(RobotType.SCOUT);
@@ -50,11 +51,6 @@ class BotArchon extends Globals {
             	
                 Direction dir = randomDirection();
                 
-               /* int prevNumGard = rc.readBroadcast(GARDENER_CHANNEL);
-                if (prevNumGard < GARDENER_MAX && rc.canHireGardener(dir)) {
-                    rc.hireGardener(dir);
-                    rc.broadcast(GARDENER_CHANNEL, prevNumGard + 1);
-                }*/
                 
                 if(BuildQueue.getLength() > 0)
                 {
