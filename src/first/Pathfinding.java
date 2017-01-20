@@ -54,23 +54,6 @@ public class Pathfinding extends Globals {
         return false;
     }
     
-    static boolean trySidestep(BulletInfo bullet) throws GameActionException{
-
-        Direction towards = bullet.getDir();
-        MapLocation leftGoal = rc.getLocation().add(towards.rotateLeftDegrees(90), rc.getType().bodyRadius);
-        MapLocation rightGoal = rc.getLocation().add(towards.rotateRightDegrees(90), rc.getType().bodyRadius);
-
-        return(tryMove(towards.rotateRightDegrees(90)) || tryMove(towards.rotateLeftDegrees(90)));
-    }
-
-    public static void dodge() throws GameActionException {
-        BulletInfo[] bullets = rc.senseNearbyBullets();
-        for (BulletInfo bi : bullets) {
-            if (willCollideWithMe(bi)) {
-                trySidestep(bi);
-            }
-        }
-    }
     
     public static void wander() throws GameActionException {
         Direction dir = randomDirection();

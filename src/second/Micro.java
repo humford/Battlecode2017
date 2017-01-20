@@ -11,6 +11,24 @@ public class Micro extends Globals {
   //Only attack while their obstacle is still there.  When enemy only needs one shot, flag it.  Select final two shots.
   public static void finishHim(){}
   
+  static boolean trySidestep(BulletInfo bullet) throws GameActionException{
+
+      Direction towards = bullet.getDir();
+      MapLocation leftGoal = rc.getLocation().add(towards.rotateLeftDegrees(90), rc.getType().bodyRadius);
+      MapLocation rightGoal = rc.getLocation().add(towards.rotateRightDegrees(90), rc.getType().bodyRadius);
+
+      return(Pathfinding.tryMove(towards.rotateRightDegrees(90)) || Pathfinding.tryMove(towards.rotateLeftDegrees(90)));
+  }
+
+  public static void dodge() throws GameActionException {
+      BulletInfo[] bullets = rc.senseNearbyBullets();
+      for (BulletInfo bi : bullets) {
+          if (willCollideWithMe(bi)) {
+              trySidestep(bi);
+          }
+      }
+  }
+  
   //if two robots sense each other stop firing pentashots, start firing trishots
   public static int isCondensed(){
 	  RobotInfo[] near = rc.senseNearbyRobots(-1, myTeam);
@@ -55,7 +73,7 @@ public class Micro extends Globals {
           }      
       }
       
-      Pathfinding.dodge();
+      dodge();
       
       if (! rc.hasAttacked()) {
           chase();

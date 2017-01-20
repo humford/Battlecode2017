@@ -10,27 +10,8 @@ public class BotScout extends Globals {
 				loop_common();
 				
 				RobotInfo[] bots = rc.senseNearbyRobots();
-
-				for (RobotInfo b : bots) {
-					if (b.getTeam() != rc.getTeam() && b.getType() != RobotType.ARCHON) {
-						Direction towards = rc.getLocation().directionTo(b.getLocation());
-						if(rc.canFireSingleShot())rc.fireSingleShot(towards);
-						break;
-					}      
-				}
 				
-				if(!rc.hasAttacked() && bots.length > 0)
-				{
-					for (RobotInfo b : bots) {
-						if (b.getTeam() != rc.getTeam()) {
-							Direction towards = rc.getLocation().directionTo(b.getLocation());
-							if(rc.canFireSingleShot())rc.fireSingleShot(towards);
-							break;
-						}      
-					} 
-				}
-				
-				Pathfinding.dodge();
+				Micro.dodge();
 	    	
 				TreeInfo[] trees = rc.senseNearbyTrees();
 				for (TreeInfo t : trees) {
@@ -61,10 +42,30 @@ public class BotScout extends Globals {
       	  			}
       	  		}
 	        
-      	  		if(!is_gardener && !rc.hasMoved())
+      	  		if(!is_gardener)
       	  		{
-      	  			Pathfinding.moveTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL));
+      	  			Micro.SolderMove();
       	  		}
+      	  		
+      	  		for (RobotInfo b : bots) {
+      	  			if (b.getTeam() != rc.getTeam() && b.getType() != RobotType.ARCHON) {
+      	  				Direction towards = rc.getLocation().directionTo(b.getLocation());
+      	  				if(rc.canFireSingleShot())rc.fireSingleShot(towards);
+      	  				break;
+      	  			}      
+      	  		}
+			
+      	  		if(!rc.hasAttacked() && bots.length > 0)
+      	  		{
+      	  			for (RobotInfo b : bots) {
+      	  				if (b.getTeam() != rc.getTeam()) {
+      	  					Direction towards = rc.getLocation().directionTo(b.getLocation());
+      	  					if(rc.canFireSingleShot())rc.fireSingleShot(towards);
+      	  					break;
+      	  				}      
+      	  			} 
+      	  		}
+      	  		
 				Clock.yield();
 		    } catch (Exception e) {
 		        e.printStackTrace();

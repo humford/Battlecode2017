@@ -9,7 +9,9 @@ public class BotLumberjack extends Globals {
             try {
             	loop_common();
 	    	
-            	Pathfinding.dodge();
+            	Micro.dodge();
+            	
+            	Micro.chase();
                 
                 RobotInfo[] myBots = rc.senseNearbyRobots(GameConstants.LUMBERJACK_STRIKE_RADIUS, myTeam);
                 RobotInfo[] theirBots = rc.senseNearbyRobots(GameConstants.LUMBERJACK_STRIKE_RADIUS, them);
@@ -23,6 +25,7 @@ public class BotLumberjack extends Globals {
                 		break;
                 	}
                 }
+
                 
                 if((myBots.length < theirBots.length || isArchon) && rc.canStrike())rc.strike();
                 
@@ -34,14 +37,14 @@ public class BotLumberjack extends Globals {
                     if (t.getTeam() != myTeam && rc.canChop(t.getLocation())) {
                         rc.chop(t.getLocation());
                     }
-                    if(t.getTeam() == them){
+                    if(t.getTeam() != myTeam){
                     	Pathfinding.moveTo(t.getLocation());
                     	break;
                     }         
                 } 
              
                 
-                TreeInfo[] neutralTrees = rc.senseNearbyTrees(-1, Team.NEUTRAL);
+               /* TreeInfo[] neutralTrees = rc.senseNearbyTrees(-1, Team.NEUTRAL);
                 
                 if(neutralTrees.length > 0)
                 {
@@ -59,14 +62,10 @@ public class BotLumberjack extends Globals {
                     
                     Pathfinding.moveTo(bestTree.getLocation());
                     
-                }
-                
-                
-                Micro.chase();
+                }*/
 
-                if (! rc.hasMoved()) {
-                	Pathfinding.moveTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL));
-                }
+                Micro.SolderMove();
+                
                 Clock.yield();
             } catch (Exception e) {
                 e.printStackTrace();

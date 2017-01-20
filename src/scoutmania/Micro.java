@@ -1,5 +1,6 @@
 package scoutmania;
 import battlecode.common.*;
+
 public class Micro extends Globals {
   
  
@@ -35,48 +36,70 @@ public class Micro extends Globals {
   {   
       RobotInfo[] bots = rc.senseNearbyRobots();
 
-      for (RobotInfo b : bots) {
-          if (b.getTeam() != rc.getTeam()) {
-              Direction towards = rc.getLocation().directionTo(b.getLocation());
-              switch(Micro.isCondensed())
-              {
-              case -1:
-              	if(rc.canFirePentadShot())rc.firePentadShot(towards);
-              	break;
-              case 0:
-              	if(rc.canFireTriadShot())rc.fireTriadShot(towards);
-              	break;
-              case 1:
-              	if(rc.canFireSingleShot())rc.fireSingleShot(towards);
-              	break;
-              	
-              }
-              break;
-          }      
+      
+      Micro.dodge();
+      chase();
+      
+      if(!rc.hasMoved())
+      {
+    	  SolderMove();
       }
-      
-      Pathfinding.dodge();
-      
-      if (! rc.hasAttacked()) {
-          chase();
-          if(!rc.hasMoved())
-          {
-        	  if(rc.readBroadcast(DEFENSE_CHANNEL) == 1)
-        		  Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
+          for (RobotInfo b : bots) {
+              if (b.getTeam() != rc.getTeam()) {
+                  Direction towards = rc.getLocation().directionTo(b.getLocation());
+                  switch(Micro.isCondensed())
+                  {
+                  case -1:
+                  	if(rc.canFirePentadShot())rc.firePentadShot(towards);
+                  	break;
+                  case 0:
+                  	if(rc.canFireTriadShot())rc.fireTriadShot(towards);
+                  	break;
+                  case 1:
+                  	if(rc.canFireSingleShot())rc.fireSingleShot(towards);
+                  	break;
+                  	
+                  }
+                  break;
+              }      
+          }
+  }
+  
+  static boolean trySidestep(BulletInfo bullet) throws GameActionException{
 
-        	  else
-        		  Pathfinding.moveTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL));
+      Direction towards = bullet.getDir();
+      MapLocation leftGoal = rc.getLocation().add(towards.rotateLeftDegrees(90), rc.getType().bodyRadius);
+      MapLocation rightGoal = rc.getLocation().add(towards.rotateRightDegrees(90), rc.getType().bodyRadius);
+
+      return(Pathfinding.tryMove(towards.rotateRightDegrees(90)) || Pathfinding.tryMove(towards.rotateLeftDegrees(90)));
+  }
+
+  public static void dodge() throws GameActionException {
+      BulletInfo[] bullets = rc.senseNearbyBullets();
+      for (BulletInfo bi : bullets) {
+          if (willCollideWithMe(bi)) {
+              trySidestep(bi);
           }
       }
   }
+  
   //If three robots sense each other then stop firing trishots, start firing singleshots
   
   
   //use archon sensors how dense map is with trees
-  
-
-  
-  
-  
+  public static void SolderMove() throws GameActionException
+  {
+	  if(!rc.hasMoved())
+	  {
+		  if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1) Pathfinding.wander();
+		  else
+	      {
+	    	  if(rc.readBroadcast(DEFENSE_CHANNEL) == 1)
+	    		  Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
+	    	  else
+	    		  Pathfinding.moveTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL));
+	      }
+	  }
+  }
   
 }

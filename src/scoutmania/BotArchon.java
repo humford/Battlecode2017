@@ -27,7 +27,7 @@ class BotArchon extends Globals {
 				for(int i = 0; i < 5; i ++)
 				{
 					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.SCOUT);
+					BuildQueue.enqueue(RobotType.LUMBERJACK);
 					BuildQueue.enqueue(RobotType.SCOUT);
 					BuildQueue.enqueue(RobotType.SCOUT);
 				}
@@ -35,7 +35,6 @@ class BotArchon extends Globals {
 			
 			else
 			{
-
 				BuildQueue.enqueue(RobotType.GARDENER);
 				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.GARDENER);
@@ -73,7 +72,7 @@ class BotArchon extends Globals {
             		else
             		{
             			BuildQueue.enqueue(RobotType.GARDENER);
-            			BuildQueue.enqueue(RobotType.SCOUT);
+    					BuildQueue.enqueue(RobotType.SCOUT);
     					BuildQueue.enqueue(RobotType.SCOUT);
     					BuildQueue.enqueue(RobotType.SCOUT);
             		}
@@ -88,7 +87,7 @@ class BotArchon extends Globals {
             	
             	//Pathfinding.wander();
             	
-            	Pathfinding.dodge();
+            	Micro.dodge();
             	
             	RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
             	

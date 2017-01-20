@@ -88,13 +88,30 @@ public class Globals {
 				Messaging.broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
 				return;
 			}
+			else if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1)
+			{
+				Messaging.broadcastLocation(rc.getLocation(), STRIKE_LOC_CHANNEL);
+				rc.broadcast(ARCHON_TARGETING_CHANNEL, initialArchonLocations.length);
+				System.out.println("TARGET");
+				break;
+			}
 		}
 		
 		if(rc.getLocation().distanceTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
 		{
 			int dest = rc.readBroadcast(ARCHON_TARGETING_CHANNEL);
-			rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1) % initialArchonLocations.length);
-			Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
+			if(dest + 1 < initialArchonLocations.length && dest != -1) 
+			{
+				rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1));
+				Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
+			}
+			else if(nearbyEnemies.length > 0)
+			{
+				Messaging.broadcastLocation(rc.getLocation(), STRIKE_LOC_CHANNEL);
+				rc.broadcast(ARCHON_TARGETING_CHANNEL, initialArchonLocations.length);
+				System.out.println("TARGET");
+			}
+			else rc.broadcast(ARCHON_TARGETING_CHANNEL, -1);
 		}
 	}
 	

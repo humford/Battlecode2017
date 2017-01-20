@@ -17,7 +17,7 @@ public class BotScout extends Globals {
 					}      
 				}
 				
-				Pathfinding.dodge();
+				Micro.dodge();
 	    	
 				TreeInfo[] trees = rc.senseNearbyTrees();
 				for (TreeInfo t : trees) {

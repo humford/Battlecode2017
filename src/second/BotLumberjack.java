@@ -8,7 +8,7 @@ public class BotLumberjack extends Globals {
             try {
             	locateArchon();
 	    	
-            	Pathfinding.dodge();
+            	Micro.dodge();
                 
                 RobotInfo[] myBots = rc.senseNearbyRobots(2, myTeam);
                 RobotInfo[] theirBots = rc.senseNearbyRobots(2, them);

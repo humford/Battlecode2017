@@ -88,7 +88,7 @@ class BotArchon extends Globals {
             	
             	//Pathfinding.wander();
             	
-            	Pathfinding.dodge();
+            	Micro.dodge();
             	
             	RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
             	

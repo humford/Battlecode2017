@@ -1,5 +1,7 @@
 package first;
 import battlecode.common.*;
+import scoutmania.Messaging;
+
 import java.util.Random;
 
 public class Globals {
@@ -88,33 +90,34 @@ public class Globals {
 				Messaging.broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
 				return;
 			}
-		}
-		
-		if(rc.getLocation().distanceTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
-		{
-			int dest = rc.readBroadcast(ARCHON_TARGETING_CHANNEL);
-			rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1) % initialArchonLocations.length);
-			Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
-		}
-	}
-	
-	public static void locateGardener() throws GameActionException 
-	{
-		RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(-1, them);
-		for (RobotInfo enemy : nearbyEnemies) {
-			if (enemy.type == RobotType.GARDENER) {
-				Messaging.broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
-				return;
+			else if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1)
+			{
+				Messaging.broadcastLocation(rc.getLocation(), STRIKE_LOC_CHANNEL);
+				rc.broadcast(ARCHON_TARGETING_CHANNEL, initialArchonLocations.length);
+				System.out.println("TARGET");
+				break;
 			}
 		}
 		
 		if(rc.getLocation().distanceTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
 		{
 			int dest = rc.readBroadcast(ARCHON_TARGETING_CHANNEL);
-			rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1) % initialArchonLocations.length);
-			Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
+			if(dest + 1 < initialArchonLocations.length && dest != -1) 
+			{
+				rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1));
+				Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
+			}
+			else if(nearbyEnemies.length > 0)
+			{
+				Messaging.broadcastLocation(rc.getLocation(), STRIKE_LOC_CHANNEL);
+				rc.broadcast(ARCHON_TARGETING_CHANNEL, initialArchonLocations.length);
+				System.out.println("TARGET");
+			}
+			else rc.broadcast(ARCHON_TARGETING_CHANNEL, -1);
 		}
 	}
+	
+	
 	
 	public static void donate_to_win() throws GameActionException // if can win by donating then do it
 	{
@@ -128,7 +131,7 @@ public class Globals {
 	public static void loop_common() throws GameActionException // things that all robots do in loop
 	{
 		donate_to_win();
-		locateGardener();
+		locateArchon();
 	}
 }
 
