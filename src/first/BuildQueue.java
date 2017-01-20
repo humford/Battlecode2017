@@ -1,7 +1,7 @@
 package first;
 import battlecode.common.*;
 
-import scala.tools.nsc.settings.RC;
+//import scala.tools.nsc.settings.RC;
 
 public class BuildQueue extends Globals{
 	
