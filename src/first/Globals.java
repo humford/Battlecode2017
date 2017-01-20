@@ -98,6 +98,24 @@ public class Globals {
 		}
 	}
 	
+	public static void locateGardener() throws GameActionException 
+	{
+		RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(-1, them);
+		for (RobotInfo enemy : nearbyEnemies) {
+			if (enemy.type == RobotType.GARDENER) {
+				Messaging.broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
+				return;
+			}
+		}
+		
+		if(rc.getLocation().distanceTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
+		{
+			int dest = rc.readBroadcast(ARCHON_TARGETING_CHANNEL);
+			rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1) % initialArchonLocations.length);
+			Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
+		}
+	}
+	
 	public static void donate_to_win() throws GameActionException // if can win by donating then do it
 	{
 		if((int) rc.getTeamBullets()/10 + rc.getTeamVictoryPoints() > GameConstants.VICTORY_POINTS_TO_WIN)
@@ -110,7 +128,7 @@ public class Globals {
 	public static void loop_common() throws GameActionException // things that all robots do in loop
 	{
 		donate_to_win();
-		locateArchon();
+		locateGardener();
 	}
 }
 
