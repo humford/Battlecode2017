@@ -6,6 +6,8 @@ public class BotGardener extends Globals {
 	public static final int GARDENER_CIRCLE_RADIUS = 2;
 	public static final int GARDENER_PATCH_RADIUS = 4;
 	
+	public static boolean underAttack = false;
+	
 	public static void loop() throws GameActionException {
 		for (int i = 0; i < MAX_WANDER_TURNS; i++) {
 			
@@ -75,6 +77,23 @@ public class BotGardener extends Globals {
 		while (true) {
 			
 			loop_common();
+			
+			RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
+        	
+        	if(enemyBots.length > 2)
+        	{
+        		Messaging.broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
+        		rc.broadcast(DEFENSE_CHANNEL, 1);
+        		underAttack = true;
+        	}
+        	
+        	else if(underAttack)
+        	{
+        		rc.broadcast(DEFENSE_CHANNEL, 0);
+        		underAttack = false;
+        	}
+            
+
 			
 			rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
 			

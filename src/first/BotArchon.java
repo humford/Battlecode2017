@@ -2,7 +2,12 @@ package first;
 import battlecode.common.*;
 
 class BotArchon extends Globals {
+	private static MapLocation birthLoc;
+	public static boolean underAttack = false;
+	
 	public static void loop() throws GameActionException {
+		
+		birthLoc = rc.getLocation();
 		
 		if(rc.getLocation() == rc.getInitialArchonLocations(myTeam)[0])
 		{
@@ -85,15 +90,20 @@ class BotArchon extends Globals {
             	
             	Pathfinding.dodge();
             	
-            	RobotInfo[] enemyBots = rc.senseNearbyRobots(5, them);
+            	RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
             	
             	if(enemyBots.length > 2)
             	{
             		Messaging.broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
             		rc.broadcast(DEFENSE_CHANNEL, 1);
+            		underAttack = true;
             	}
             	
-            	else rc.broadcast(DEFENSE_CHANNEL, 0);
+            	else if(underAttack)
+            	{
+            		rc.broadcast(DEFENSE_CHANNEL, 0);
+            		underAttack = false;
+            	}
                 
             	Direction dir = randomDirection();
             	
@@ -102,6 +112,14 @@ class BotArchon extends Globals {
                 	if(rc.canBuildRobot(BuildQueue.peak(), dir))
                 	{
                 		rc.buildRobot(BuildQueue.dequeue(), dir);
+                	}
+                }
+                
+                if(!rc.hasMoved())
+                {
+                	if(rc.getLocation().distanceTo(birthLoc) > 5)
+                	{
+                		Pathfinding.tryMove(rc.getLocation().directionTo(birthLoc));
                 	}
                 }
          
