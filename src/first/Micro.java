@@ -1,5 +1,6 @@
 package first;
 import battlecode.common.*;
+
 public class Micro extends Globals {
   
  

@@ -1,8 +1,6 @@
 package scoutmania;
 import battlecode.common.*;
 
-import scala.tools.nsc.settings.RC;
-
 public class BuildQueue extends Globals{
 	
 	public static int POINTER_CHANNEL = 498;

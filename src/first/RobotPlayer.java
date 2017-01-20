@@ -1,6 +1,5 @@
 package first;
 import battlecode.common.*;
-//import globas.java;
 
 public strictfp class RobotPlayer extends Globals {
 

@@ -1,6 +1,6 @@
 package first;
 import battlecode.common.*;
-import scoutmania.Pathfinding;
+
 
 
 public class BotScout extends Globals {
@@ -72,3 +72,4 @@ public class BotScout extends Globals {
 		}
 	}
 }
+
