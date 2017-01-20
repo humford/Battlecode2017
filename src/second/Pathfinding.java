@@ -23,7 +23,7 @@ public class Pathfinding extends Globals {
      * @return true if a move was performed
      * @throws GameActionException
      */
-    static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
+     static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
 
         // First, try intended direction
         if (!rc.hasMoved() && rc.canMove(dir)) {

@@ -1,4 +1,4 @@
-package first;
+package scoutmania;
 import battlecode.common.*;
 
 public class Pathfinding extends Globals {

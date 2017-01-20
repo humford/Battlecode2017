@@ -1,4 +1,4 @@
-package first;
+package scoutmania;
 import battlecode.common.*;
 
 class BotArchon extends Globals {
@@ -27,9 +27,9 @@ class BotArchon extends Globals {
 				for(int i = 0; i < 5; i ++)
 				{
 					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.LUMBERJACK);
-					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.SOLDIER);
+					BuildQueue.enqueue(RobotType.SCOUT);
+					BuildQueue.enqueue(RobotType.SCOUT);
+					BuildQueue.enqueue(RobotType.SCOUT);
 				}
 			}
 			
@@ -48,9 +48,9 @@ class BotArchon extends Globals {
 				for(int i = 0; i < 5; i ++)
 				{
 					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.LUMBERJACK);
-					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.SOLDIER);
+					BuildQueue.enqueue(RobotType.SCOUT);
+					BuildQueue.enqueue(RobotType.SCOUT);
+					BuildQueue.enqueue(RobotType.SCOUT);
 				}
 			}
 			
@@ -73,9 +73,9 @@ class BotArchon extends Globals {
             		else
             		{
             			BuildQueue.enqueue(RobotType.GARDENER);
-    					BuildQueue.enqueue(RobotType.LUMBERJACK);
-    					BuildQueue.enqueue(RobotType.SOLDIER);
-    					BuildQueue.enqueue(RobotType.SOLDIER);
+            			BuildQueue.enqueue(RobotType.SCOUT);
+    					BuildQueue.enqueue(RobotType.SCOUT);
+    					BuildQueue.enqueue(RobotType.SCOUT);
             		}
             	}
             	
