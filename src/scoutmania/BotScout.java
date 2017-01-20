@@ -49,8 +49,11 @@ public class BotScout extends Globals {
       	  			if(b.getType() == RobotType.GARDENER)
       	  			{
       	  				Direction chase = rc.getLocation().directionTo(b.getLocation());
-      	  				if(rc.getLocation().distanceTo(b.getLocation().add(chase)) < rc.getType().strideRadius)
-      	  					rc.move(rc.getLocation().add(chase, rc.getLocation().distanceTo(b.getLocation().add(chase)) -  1));
+      	  				if(rc.getLocation().distanceTo(b.getLocation()) < rc.getType().strideRadius)
+      	  				{
+      	  					System.out.println("REEE");
+      	  					if(rc.canMove(b.getLocation().add(chase.rotateLeftDegrees(180), 2))) rc.move(b.getLocation().add(chase.rotateLeftDegrees(180), 2));
+      	  				}
       	  				else Pathfinding.tryMove(chase);
       	  				is_gardener = true;
       	  				break;

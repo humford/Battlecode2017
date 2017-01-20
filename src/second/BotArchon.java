@@ -67,11 +67,11 @@ class BotArchon extends Globals {
                 	}
             		else
             		{
-            			BuildQueue.enqueue(RobotType.GARDENER);
-    					BuildQueue.enqueue(RobotType.LUMBERJACK);
-    					BuildQueue.enqueue(RobotType.SOLDIER);
-    					BuildQueue.enqueue(RobotType.SOLDIER);
-    					BuildQueue.enqueue(RobotType.TANK);
+            		//	BuildQueue.enqueue(RobotType.GARDENER);
+    				//	BuildQueue.enqueue(RobotType.LUMBERJACK);
+    				//	BuildQueue.enqueue(RobotType.SOLDIER);
+    				//	BuildQueue.enqueue(RobotType.SOLDIER);
+    				//	BuildQueue.enqueue(RobotType.TANK);
             		}
             	}
             	
