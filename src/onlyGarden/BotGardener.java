@@ -1,36 +1,37 @@
-package scoutmania;
+package onlyGarden;
 import battlecode.common.*;
+
+enum GardenerState {
+	PLANTING,
+	WATERING,
+	PRODUCING
+}
 
 public class BotGardener extends Globals {
 	public static final int MAX_WANDER_TURNS = 100;
-	public static final int GARDENER_CIRCLE_RADIUS = 2;
-	public static final int GARDENER_PATCH_RADIUS = 4;
-	
-	public static boolean underAttack = false;
 	
 	public static void loop() throws GameActionException {
 		for (int i = 0; i < MAX_WANDER_TURNS; i++) {
 			
-			loop_common();
+			locateArchon();
 			
 			rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
 			 
 			//production
 			
-			if(BuildQueue.getLength() > 0)
+			Direction dir = randomDirection();
+        	
+            if(BuildQueue.getLength() > 0)
             {
-            	if(rc.hasRobotBuildRequirements(BuildQueue.peak()))
+            	if(rc.canBuildRobot(BuildQueue.peak(), dir))
             	{
-        			buildWhereFree(BuildQueue.dequeue(), 6);
+            		rc.buildRobot(BuildQueue.dequeue(), dir);
             	}
             }
-            
-            
-            Micro.dodge();
 			
 			Pathfinding.wander(); // NEED BETTER FUNCTION TO MOVE
 			MapLocation location = rc.getLocation();
-			if (!rc.isCircleOccupiedExceptByThisRobot(location, GARDENER_PATCH_RADIUS))
+			if (!rc.isCircleOccupiedExceptByThisRobot(location, 4f))
 				macro();
 			Clock.yield();
 		}
@@ -42,18 +43,18 @@ public class BotGardener extends Globals {
 	static Direction productionDirs;
 	
 	public static MapLocation getTreeSpot(int idx) {
-		return rc.getLocation().add(treeDirs[idx], GARDENER_CIRCLE_RADIUS);
+		return rc.getLocation().add(treeDirs[idx], 2);
 	}
 	
 	public static MapLocation getProductionSpot() {
-		return rc.getLocation().add(productionDirs, GARDENER_CIRCLE_RADIUS);
+		return rc.getLocation().add(productionDirs, 2);
 	}
 	
 	public static void init() throws GameActionException {
 		myLocation = rc.getLocation();
-		treeDirs = new Direction[5];
+		treeDirs = new Direction[6];
 		Direction dir = rc.getLocation().directionTo(initialArchonLocations[0]).rotateLeftDegrees(60);
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 6; i++) {
 			treeDirs[i] = dir;
 			dir = dir.rotateLeftDegrees(60);
 		}
@@ -64,7 +65,8 @@ public class BotGardener extends Globals {
 	public static TreeInfo getLowHealthTree() {
 		TreeInfo ret = null;
 		float minHealth = GameConstants.BULLET_TREE_MAX_HEALTH;
-		for (TreeInfo tree : rc.senseNearbyTrees(GARDENER_CIRCLE_RADIUS, myTeam)) {
+		for (TreeInfo tree : rc.senseNearbyTrees()) {
+			if (!tree.team.equals(myTeam)) continue;
 			if (tree.health < minHealth) {
 				minHealth = tree.health;
 				ret = tree;
@@ -77,24 +79,7 @@ public class BotGardener extends Globals {
 		init();
 		while (true) {
 			
-			loop_common();
-			
-			RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
-        	
-        	if(enemyBots.length > 2)
-        	{
-        		Messaging.broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
-        		rc.broadcast(DEFENSE_CHANNEL, 1);
-        		underAttack = true;
-        	}
-        	
-        	else if(underAttack)
-        	{
-        		rc.broadcast(DEFENSE_CHANNEL, 0);
-        		underAttack = false;
-        	}
-            
-
+			locateArchon();
 			
 			rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
 			
@@ -109,15 +94,15 @@ public class BotGardener extends Globals {
             }
 			
 			// Plant missing trees
-			for (int i = 0; i < 5; i++) {
+			for (int i = 0; i < 6; i++) {
 				MapLocation treeSpot = getTreeSpot(i);
-				//System.out.println("Looking at tree in spot " + treeSpot.toString());
+				System.out.println("Looking at tree in spot " + treeSpot.toString());
 				if (rc.isLocationOccupiedByTree(treeSpot)){
 					System.out.println("Occupied");
 					continue;
 				}
 				if (rc.canPlantTree(treeDirs[i])) {
-					//System.out.println("Planting tree in direcion " + Integer.toString(i));
+					System.out.println("Planting tree in direcion " + Integer.toString(i));
 					rc.plantTree(treeDirs[i]);
 					break;
 				}
@@ -128,12 +113,8 @@ public class BotGardener extends Globals {
 			TreeInfo lowHealthTree = getLowHealthTree();
 			if (lowHealthTree != null) {
 				MapLocation treeSpot = lowHealthTree.getLocation();
-				System.out.println("ATTEMPTING TO WATER");
 				if (rc.canWater(treeSpot))
-				{
 					rc.water(treeSpot);
-					System.out.println("WATERING");
-				}
 			}
 			Clock.yield();
 		}

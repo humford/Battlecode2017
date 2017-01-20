@@ -1,4 +1,4 @@
-package scoutmania;
+package best;
 import battlecode.common.*;
 
 class BotArchon extends Globals {
@@ -28,8 +28,8 @@ class BotArchon extends Globals {
 				{
 					BuildQueue.enqueue(RobotType.GARDENER);
 					BuildQueue.enqueue(RobotType.LUMBERJACK);
-					BuildQueue.enqueue(RobotType.SCOUT);
-					BuildQueue.enqueue(RobotType.SCOUT);
+					BuildQueue.enqueue(RobotType.GARDENER);
+					BuildQueue.enqueue(RobotType.SOLDIER);
 				}
 			}
 			
@@ -47,9 +47,9 @@ class BotArchon extends Globals {
 				for(int i = 0; i < 5; i ++)
 				{
 					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.SCOUT);
-					BuildQueue.enqueue(RobotType.SCOUT);
-					BuildQueue.enqueue(RobotType.SCOUT);
+					BuildQueue.enqueue(RobotType.LUMBERJACK);
+					BuildQueue.enqueue(RobotType.GARDENER);
+					BuildQueue.enqueue(RobotType.SOLDIER);
 				}
 			}
 			
@@ -72,9 +72,9 @@ class BotArchon extends Globals {
             		else
             		{
             			BuildQueue.enqueue(RobotType.GARDENER);
-    					BuildQueue.enqueue(RobotType.SCOUT);
-    					BuildQueue.enqueue(RobotType.SCOUT);
-    					BuildQueue.enqueue(RobotType.SCOUT);
+    					BuildQueue.enqueue(RobotType.LUMBERJACK);
+    					BuildQueue.enqueue(RobotType.SOLDIER);
+    					BuildQueue.enqueue(RobotType.SOLDIER);
             		}
             	}
             	
@@ -103,7 +103,7 @@ class BotArchon extends Globals {
             		rc.broadcast(DEFENSE_CHANNEL, 0);
             		underAttack = false;
             	}
-                
+            	
             	if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) == 0)
             	{
             		if(rc.hasRobotBuildRequirements(RobotType.GARDENER))
@@ -112,15 +112,13 @@ class BotArchon extends Globals {
                 	}
             	}
             	
-            	
-            	if(BuildQueue.getLength() > 0)
+                if(BuildQueue.getLength() > 0)
                 {
                 	if(rc.hasRobotBuildRequirements(BuildQueue.peak()))
                 	{
             			buildWhereFree(BuildQueue.dequeue(), 6);
                 	}
                 }
-                
                 
                 if(!rc.hasMoved())
                 {

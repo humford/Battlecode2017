@@ -23,10 +23,28 @@ public class Pathfinding extends Globals {
      * @return true if a move was performed
      * @throws GameActionException
      */
+    
+    
+    
     private static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
 
         // First, try intended direction
-        if (!rc.hasMoved() && rc.canMove(dir)) {
+    	BulletInfo bullets[] = rc.senseNearbyBullets();
+    	
+    	boolean isSafe = true;
+    	MapLocation loc = rc.getLocation().add(dir);
+    	
+    	for(BulletInfo b : bullets)
+    	{
+    		if(willCollideWith(b, loc))
+    		{
+    			isSafe = false;
+    			break;
+    		}
+    	}
+    	
+        if (!rc.hasMoved() && rc.canMove(dir) && isSafe) {
+        	
             rc.move(dir);
             return true;
         }
@@ -34,23 +52,60 @@ public class Pathfinding extends Globals {
         // Now try a bunch of similar angles
         //boolean moved = rc.hasMoved();
         int currentCheck = 1;
-
-        while(currentCheck<=checksPerSide) {
+        
+        while(currentCheck <= checksPerSide) {
             // Try the offset of the left side
-            if(!rc.hasMoved() && rc.canMove(dir.rotateLeftDegrees(degreeOffset*currentCheck))) {
-                rc.move(dir.rotateLeftDegrees(degreeOffset*currentCheck));
-                return true;
+        	Direction curDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
+        	loc = rc.getLocation().add(curDir, rc.getType().strideRadius);
+        	
+            if(!rc.hasMoved() && rc.canMove(curDir)) {
+            	
+            	isSafe = true;
+            	
+            	for(BulletInfo b : bullets)
+            	{
+            		if(willCollideWith(b, loc))
+            		{
+            			isSafe = false;
+            			break;
+            		}
+            	}
+            	
+                if(isSafe)
+                {
+                	rc.move(curDir);
+                	return true;
+                }
             }
             // Try the offset on the right side
-            if(! rc.hasMoved() && rc.canMove(dir.rotateRightDegrees(degreeOffset*currentCheck))) {
-                rc.move(dir.rotateRightDegrees(degreeOffset*currentCheck));
-                return true;
+        	curDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
+        	loc = rc.getLocation().add(curDir, rc.getType().strideRadius);
+        	
+            if(!rc.hasMoved() && rc.canMove(curDir)) {
+            	
+            	isSafe = true;
+            	
+            	for(BulletInfo b : bullets)
+            	{
+            		if(willCollideWith(b, loc))
+            		{
+            			isSafe = false;
+            			break;
+            		}
+            	}
+            	
+                if(isSafe)
+                {
+                	rc.move(curDir);
+                	return true;
+                }
             }
             // No move performed, try slightly further
             currentCheck++;
         }
 
         // A move never happened, so return false.
+       // Micro.dodge();
         return false;
     }
     

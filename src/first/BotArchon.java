@@ -35,7 +35,6 @@ class BotArchon extends Globals {
 			
 			else
 			{
-
 				BuildQueue.enqueue(RobotType.GARDENER);
 				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.GARDENER);
@@ -130,7 +129,6 @@ class BotArchon extends Globals {
                 		Pathfinding.moveTo(birthLoc);
                 	}
                 }
-         
                 	
                 Clock.yield();
             } catch (Exception e) {

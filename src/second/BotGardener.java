@@ -52,9 +52,9 @@ public class BotGardener extends Globals {
 	
 	public static void init() throws GameActionException {
 		myLocation = rc.getLocation();
-		treeDirs = new Direction[6];
+		treeDirs = new Direction[5];
 		Direction dir = rc.getLocation().directionTo(initialArchonLocations[0]).rotateLeftDegrees(60);
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 5; i++) {
 			treeDirs[i] = dir;
 			dir = dir.rotateLeftDegrees(60);
 		}
@@ -94,7 +94,7 @@ public class BotGardener extends Globals {
             }
 			
 			// Plant missing trees
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < 5; i++) {
 				MapLocation treeSpot = getTreeSpot(i);
 				System.out.println("Looking at tree in spot " + treeSpot.toString());
 				if (rc.isLocationOccupiedByTree(treeSpot)){

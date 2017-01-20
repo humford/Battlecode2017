@@ -10,8 +10,6 @@ public class BotScout extends Globals {
 				loop_common();
 				
 				RobotInfo[] bots = rc.senseNearbyRobots();
-				
-				Micro.dodge();
 	    	
 				TreeInfo[] trees = rc.senseNearbyTrees();
 				for (TreeInfo t : trees) {
@@ -37,6 +35,9 @@ public class BotScout extends Globals {
       	  					if(rc.canMove(b.getLocation().add(chase.rotateLeftDegrees(180), 2))) rc.move(b.getLocation().add(chase.rotateLeftDegrees(180), 2));
       	  				}
       	  				else Pathfinding.tryMove(chase);
+      	  				
+      	  			Pathfinding.tryMove(chase);
+      	  				
       	  				is_gardener = true;
       	  				break;
       	  			}

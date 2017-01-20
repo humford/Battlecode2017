@@ -1,4 +1,4 @@
-package second;
+package onlyGardenTest;
 import battlecode.common.*;
 
 class BotArchon extends Globals {
@@ -10,46 +10,9 @@ class BotArchon extends Globals {
 			
 			broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
 			
-			if(rc.senseNearbyTrees().length > 3)
-			{
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.LUMBERJACK);
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.LUMBERJACK);
-			
-				for(int i = 0; i < 5; i ++)
-				{
-					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.LUMBERJACK);
-					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.SOLDIER);
-				}
-			}
-			
-			else
-			{
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.GARDENER);
 
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.LUMBERJACK);
-		
-				for(int i = 0; i < 5; i ++)
-				{
-					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.LUMBERJACK);
-					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.SOLDIER);
-				}
-			}
-			
-			BuildQueue.printQueue();
 		}
 		
         while (true) {
@@ -61,17 +24,6 @@ class BotArchon extends Globals {
             	if(BuildQueue.getLength() <= 0)
             	{
             		BuildQueue.enqueue(RobotType.GARDENER);
-            		if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_LOWER_LIMIT)
-                	{
-            			BuildQueue.enqueue(RobotType.GARDENER);
-                	}
-            		else
-            		{
-            			BuildQueue.enqueue(RobotType.GARDENER);
-    					BuildQueue.enqueue(RobotType.LUMBERJACK);
-    					BuildQueue.enqueue(RobotType.SOLDIER);
-    					BuildQueue.enqueue(RobotType.SOLDIER);
-            		}
             	}
             	
             	if(rc.getTeamBullets() > VICTORY_CASH)

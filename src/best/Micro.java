@@ -1,4 +1,4 @@
-package scoutmania;
+package best;
 import battlecode.common.*;
 
 public class Micro extends Globals {
@@ -29,6 +29,16 @@ public class Micro extends Globals {
 	  {
 		  Direction chase = rc.getLocation().directionTo(bots[0].getLocation());
 		  Pathfinding.tryMove(chase);
+	  }
+  }
+  
+  public static void flee() throws GameActionException
+  {
+	  RobotInfo[] bots = rc.senseNearbyRobots(-1, them);
+	  if(bots.length > 0)
+	  {
+		  Direction flee = rc.getLocation().directionTo(bots[0].getLocation()).opposite();
+		  Pathfinding.tryMove(flee);
 	  }
   }
   

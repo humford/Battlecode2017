@@ -8,8 +8,6 @@ public class BotLumberjack extends Globals {
         while (true) {
             try {
             	loop_common();
-	    	
-            	Micro.dodge();
             	
             	Micro.chase();
                 

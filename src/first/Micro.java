@@ -36,8 +36,6 @@ public class Micro extends Globals {
   {   
       RobotInfo[] bots = rc.senseNearbyRobots();
 
-      
-      Micro.dodge();
       chase();
       
       if(!rc.hasMoved())
@@ -77,7 +75,7 @@ public class Micro extends Globals {
   public static void dodge() throws GameActionException {
       BulletInfo[] bullets = rc.senseNearbyBullets();
       for (BulletInfo bi : bullets) {
-          if (willCollideWithMe(bi)) {
+          if (willCollideWith(bi, rc.getLocation())) {
               trySidestep(bi);
           }
       }

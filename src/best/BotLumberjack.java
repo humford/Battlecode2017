@@ -1,4 +1,4 @@
-package first;
+package best;
 import battlecode.common.*;
 
 public class BotLumberjack extends Globals {

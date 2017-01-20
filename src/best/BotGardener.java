@@ -1,4 +1,4 @@
-package scoutmania;
+package best;
 import battlecode.common.*;
 
 public class BotGardener extends Globals {
@@ -24,7 +24,6 @@ public class BotGardener extends Globals {
         			buildWhereFree(BuildQueue.dequeue(), 6);
             	}
             }
-            
             
             Micro.dodge();
 			
