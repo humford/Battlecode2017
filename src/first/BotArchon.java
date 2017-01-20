@@ -107,6 +107,14 @@ class BotArchon extends Globals {
                 
             	Direction dir = randomDirection();
             	
+            	if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) == 0)
+            	{
+            		if(rc.canBuildRobot(RobotType.GARDENER, dir))
+                	{
+            			rc.canBuildRobot(RobotType.GARDENER, dir);
+                	}
+            	}
+            	
                 if(BuildQueue.getLength() > 0)
                 {
                 	if(rc.canBuildRobot(BuildQueue.peak(), dir))
