@@ -3,6 +3,8 @@ import battlecode.common.*;
 
 public class BotGardener extends Globals {
 	public static final int MAX_WANDER_TURNS = 100;
+	public static final int GARDENER_CIRCLE_RADIUS = 2;
+	public static final int GARDENER_PATCH_RADIUS = 4;
 	
 	public static void loop() throws GameActionException {
 		for (int i = 0; i < MAX_WANDER_TURNS; i++) {
@@ -25,7 +27,7 @@ public class BotGardener extends Globals {
 			
 			Pathfinding.wander(); // NEED BETTER FUNCTION TO MOVE
 			MapLocation location = rc.getLocation();
-			if (!rc.isCircleOccupiedExceptByThisRobot(location, 4f))
+			if (!rc.isCircleOccupiedExceptByThisRobot(location, GARDENER_PATCH_RADIUS))
 				macro();
 			Clock.yield();
 		}
@@ -37,11 +39,11 @@ public class BotGardener extends Globals {
 	static Direction productionDirs;
 	
 	public static MapLocation getTreeSpot(int idx) {
-		return rc.getLocation().add(treeDirs[idx], 2);
+		return rc.getLocation().add(treeDirs[idx], GARDENER_CIRCLE_RADIUS);
 	}
 	
 	public static MapLocation getProductionSpot() {
-		return rc.getLocation().add(productionDirs, 2);
+		return rc.getLocation().add(productionDirs, GARDENER_CIRCLE_RADIUS);
 	}
 	
 	public static void init() throws GameActionException {
@@ -59,7 +61,7 @@ public class BotGardener extends Globals {
 	public static TreeInfo getLowHealthTree() {
 		TreeInfo ret = null;
 		float minHealth = GameConstants.BULLET_TREE_MAX_HEALTH;
-		for (TreeInfo tree : rc.senseNearbyTrees(2, myTeam)) {
+		for (TreeInfo tree : rc.senseNearbyTrees(GARDENER_CIRCLE_RADIUS, myTeam)) {
 			if (tree.health < minHealth) {
 				minHealth = tree.health;
 				ret = tree;

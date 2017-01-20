@@ -60,6 +60,7 @@ class BotArchon extends Globals {
 
             	if(BuildQueue.getLength() <= 0)
             	{
+            		BuildQueue.enqueue(RobotType.GARDENER);
             		if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_LOWER_LIMIT)
                 	{
             			BuildQueue.enqueue(RobotType.GARDENER);

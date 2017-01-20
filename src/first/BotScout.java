@@ -40,20 +40,27 @@ public class BotScout extends Globals {
 						break;
 					}
 				}
+				
+				RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
+				
+				boolean is_gardener = false;
+      	  		for(RobotInfo b : enemyBots)
+      	  		{
+      	  			if(b.getType() == RobotType.GARDENER)
+      	  			{
+      	  				Direction chase = rc.getLocation().directionTo(b.getLocation());
+      	  				if(rc.getLocation().distanceTo(b.getLocation().add(Direction.NORTH)) < rc.getType().strideRadius)
+      	  					rc.move(b.getLocation().add(chase, rc.getLocation().distanceTo(b.getLocation().add(Direction.NORTH)) -  1));
+      	  				else Pathfinding.tryMove(chase);
+      	  				is_gardener = true;
+      	  				break;
+      	  			}
+      	  		}
 	        
-	       	 	if(! rc.hasAttacked()) {
-	       	 		RobotInfo[] enemyBots = rc.senseNearbyRobots(5, them);
-	      	  		if(enemyBots.length > 0)
-	      	  		{
-	      	  			Direction run = rc.getLocation().directionTo(bots[0].getLocation()).rotateLeftDegrees(180);
-	      	  			Pathfinding.tryMove(run);
-	      	  		}
-
-	      	  		if(!rc.hasMoved())
-	            	{
-	            		Pathfinding.tryMove(rc.getLocation().directionTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)));
-	            	}
-	        	}
+      	  		if(!is_gardener && !rc.hasMoved())
+      	  		{
+      	  			Pathfinding.tryMove(rc.getLocation().directionTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)));
+      	  		}
 				Clock.yield();
 		    } catch (Exception e) {
 		        e.printStackTrace();
