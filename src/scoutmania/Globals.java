@@ -6,19 +6,24 @@ public class Globals {
 	
 	static RobotController rc;
     static Random myRand;
+    static MapLocation birthLoc;
     
-    static final int GARDENER_LOWER_LIMIT = 7;
+    static final int GARDENER_UPPER_LIMIT = 10;
     // Keep broadcast channels
-    static final int GARDENER_COUNT_CHANNEL = 5;
-    static final int GARDENER_SUM_CHANNEL = 6;
+    static final int GARDENER_COUNT_CHANNEL = 1;
+    static final int GARDENER_SUM_CHANNEL = 2;
+    static final int HAS_COUNTED_CHANNEL = 3;
+    static final int GARDENER_INPRODUCTION_CHANNEL = 4;
     
     //LOC_CHANNELS use next integer channel as well
-    static final int STRIKE_LOC_CHANNEL = 1;
-    static final int DEFENSE_LOC_CHANNEL = 3;
+    static final int STRIKE_LOC_CHANNEL = 5;
+    static final int DEFENSE_LOC_CHANNEL = 7;
+    static final int SCOUT_LOC_CHANNEL = 9;
     
     //FLAG_CHANNELS
-    static final int ARCHON_TARGETING_CHANNEL = 10;
-    static final int DEFENSE_CHANNEL = 11;
+    static final int ARCHON_TARGETING_CHANNEL = 11;
+    static final int GARDENER_TARGETING_CHANNEL = 12;
+    static final int DEFENSE_CHANNEL = 13;
 
     // Keep important numbers here
     static Team myTeam, them;
@@ -27,11 +32,11 @@ public class Globals {
     Condensed = 0->mediumCondensed
     Condensed = 1->veryCondensed
     */
-    static int VICTORY_CASH = 400;
+    static final int VICTORY_CASH_CUTOFF = 400;
 
-    static int GARDENER_MAX = 10;
-    static int LUMBERJACK_MAX = 5;
-    static int ROUND_CHANGE = 500;
+    static final int GARDENER_MAX = 10;
+    static final int LUMBERJACK_MAX = 5;
+    static final int ROUND_CHANGE = 500;
     
  
     
@@ -44,6 +49,7 @@ public class Globals {
     	myTeam = rc.getTeam();
     	them = myTeam.opponent();
     	initialArchonLocations = rc.getInitialArchonLocations(them);
+    	birthLoc = rc.getLocation();
 
     	RobotPlayer.rc = theRC;
         myRand = new Random(rc.getID());
@@ -55,17 +61,18 @@ public class Globals {
         return(new Direction(myRand.nextFloat()*2*(float)Math.PI));
     }
     
-    public static void buildWhereFree(RobotType bot, int check) throws GameActionException {
+    public static boolean buildWhereFree(RobotType bot, int check) throws GameActionException {
     	Direction dir = Direction.NORTH;
         for(int i = 0; i < check; i++)
         {
         	if(rc.canBuildRobot(bot, dir))
         	{
         		rc.buildRobot(bot, dir);
-        		return;
+        		return true;
         	}
         	dir = dir.rotateLeftDegrees(360f/check);
         }
+        return false;
     }
 
     static boolean willCollideWith(BulletInfo bullet, MapLocation myLocation) {
@@ -92,83 +99,75 @@ public class Globals {
 
         return (perpendicularDist <= rc.getType().bodyRadius * 1.25);
     }
-    
-	public static void locateArchon() throws GameActionException 
-	{
-		RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(-1, them);
-		for (RobotInfo enemy : nearbyEnemies) {
-			if (enemy.type == RobotType.ARCHON) {
-				Messaging.broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
-				return;
-			}
-			else if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1)
-			{
-				Messaging.broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
-				rc.broadcast(ARCHON_TARGETING_CHANNEL, initialArchonLocations.length);
-				System.out.println("TARGET");
-				break;
-			}
-		}
-		
-		if(rc.getLocation().distanceTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
-		{
-			int dest = rc.readBroadcast(ARCHON_TARGETING_CHANNEL);
-			if(dest + 1 < initialArchonLocations.length && dest != -1) 
-			{
-				rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1));
-				Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
-			}
-			else if(nearbyEnemies.length > 0)
-			{
-				Messaging.broadcastLocation(rc.getLocation(), STRIKE_LOC_CHANNEL);
-				rc.broadcast(ARCHON_TARGETING_CHANNEL, initialArchonLocations.length);
-				System.out.println("TARGET");
-			}
-			else rc.broadcast(ARCHON_TARGETING_CHANNEL, -1);
-		}
-	}
-	
-	public static void locateType(RobotType type) throws GameActionException 
+ 
+	public static void locateType(RobotType type, int targetChannel, int locChannel) throws GameActionException 
 	{
 		RobotInfo[] nearbyEnemies = rc.senseNearbyRobots(-1, them);
 		for (RobotInfo enemy : nearbyEnemies) {
 			if (enemy.type == type) {
-				Messaging.broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
+				Messaging.broadcastLocation(enemy.getLocation(), locChannel);
+				if(rc.readBroadcast(targetChannel) == -1)rc.broadcast(targetChannel, initialArchonLocations.length);
 				return;
 			}
-			if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1)
+			if(enemy.type != RobotType.ARCHON && rc.readBroadcast(targetChannel) == -1)
 			{
-				Messaging.broadcastLocation(enemy.getLocation(), STRIKE_LOC_CHANNEL);
-				rc.broadcast(ARCHON_TARGETING_CHANNEL, initialArchonLocations.length);
+				Messaging.broadcastLocation(enemy.getLocation(), locChannel);
+				rc.broadcast(targetChannel, initialArchonLocations.length);
 				return;
 			}
 		}
 		
-		if(rc.getLocation().distanceTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL)) < rc.getType().sensorRadius)
+		if(rc.getLocation().distanceTo(Messaging.recieveLocation(locChannel)) < rc.getType().sensorRadius)
 		{
-			int dest = rc.readBroadcast(ARCHON_TARGETING_CHANNEL);
+			int dest = rc.readBroadcast(targetChannel);
 			if(dest + 1 < initialArchonLocations.length && dest != -1) 
 			{
-				rc.broadcast(ARCHON_TARGETING_CHANNEL, (dest + 1));
-				Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(ARCHON_TARGETING_CHANNEL)], STRIKE_LOC_CHANNEL);
+				rc.broadcast(targetChannel, (dest + 1));
+				Messaging.broadcastLocation(initialArchonLocations[rc.readBroadcast(targetChannel)], locChannel);
 			}
-			else rc.broadcast(ARCHON_TARGETING_CHANNEL, -1);
+			else rc.broadcast(targetChannel, -1);
 		}
 	}
 	
-	public static void donate_to_win() throws GameActionException // if can win by donating then do it
+	public static void donate() throws GameActionException // if can win by donating then do it
 	{
-		if((int) rc.getTeamBullets()/10 + rc.getTeamVictoryPoints() > GameConstants.VICTORY_POINTS_TO_WIN)
+		if(rc.getTeamBullets() > VICTORY_CASH_CUTOFF)
+    	{
+    		int x = (int)rc.getTeamBullets() - VICTORY_CASH_CUTOFF;
+    		rc.donate(x - x%10);
+    	}
+		
+		if(((int) rc.getTeamBullets())/10 + rc.getTeamVictoryPoints() > GameConstants.VICTORY_POINTS_TO_WIN)
 		{
 			rc.donate(rc.getTeamBullets());
 		}
 		
 	}
 	
+	public static void refillQueue() throws GameActionException
+	{
+		if(BuildQueue.getLength() <= 0)
+    	{
+    		if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT)
+        	{
+    			BuildQueue.enqueue(RobotType.GARDENER);
+        	}
+    		else
+    		{
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.LUMBERJACK);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+    		}
+    	}
+	}
+	
 	public static void loop_common() throws GameActionException // things that all robots do in loop
 	{
-		donate_to_win();
-		locateType(RobotType.GARDENER);
+		donate();
+		refillQueue();
+		locateType(RobotType.ARCHON, ARCHON_TARGETING_CHANNEL, STRIKE_LOC_CHANNEL);
+		locateType(RobotType.GARDENER, GARDENER_TARGETING_CHANNEL, SCOUT_LOC_CHANNEL);
 	}
 }
 

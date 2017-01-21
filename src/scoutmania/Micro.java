@@ -92,12 +92,11 @@ public class Micro extends Globals {
 		  if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1) Pathfinding.wander();
 		  else
 	      {
-	    	  if(rc.readBroadcast(DEFENSE_CHANNEL) == 1)
+	    	  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL))
 	    		  Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
 	    	  else
 	    		  Pathfinding.moveTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL));
 	      }
 	  }
   }
-  
 }

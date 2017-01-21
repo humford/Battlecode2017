@@ -1,20 +1,38 @@
 package scoutmania;
 
-import battlecode.common.GameActionException;
-import battlecode.common.MapLocation;
+import battlecode.common.*;
+
 
 public class Messaging extends Globals{
     public static void broadcastLocation(MapLocation loc, int CHANNEL) throws GameActionException
     {
-    	rc.broadcast(CHANNEL, (int) (loc.x * 1000)); 
-    	rc.broadcast(CHANNEL+1, (int) (loc.y * 1000));
+    	rc.broadcastFloat(CHANNEL, loc.x); 
+    	rc.broadcastFloat(CHANNEL+1, loc.y);
     }
     
     public static MapLocation recieveLocation(int CHANNEL) throws GameActionException
     {
-    	float x = ((float) rc.readBroadcast(CHANNEL)) / 1000;
-    	float y = ((float) rc.readBroadcast(CHANNEL+1)) / 1000;
+    	float x = rc.readBroadcastFloat(CHANNEL);
+    	float y = rc.readBroadcastFloat(CHANNEL+1);
     	
     	return new MapLocation(x,y);
+    }
+    
+    public static boolean wasUnderAttack = false;
+    
+    public static void broadcastDefendMeIF(boolean isUnderAttack) throws GameActionException
+    {	
+    	if(isUnderAttack)
+    	{
+    		Messaging.broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
+    		rc.broadcastBoolean(DEFENSE_CHANNEL, true);
+    		wasUnderAttack = true;
+    	}
+    	
+    	else if(wasUnderAttack)
+    	{
+    		rc.broadcastBoolean(DEFENSE_CHANNEL, false);
+    		wasUnderAttack = false;
+    	}
     }
 }

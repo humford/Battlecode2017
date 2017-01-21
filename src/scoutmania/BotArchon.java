@@ -2,129 +2,107 @@ package scoutmania;
 import battlecode.common.*;
 
 class BotArchon extends Globals {
-	private static MapLocation birthLoc;
-	public static boolean underAttack = false;
+	
+	public static final boolean ARCHON_DEBUG_MODE = true;
+	
+	public static void makeInitialQueue() throws GameActionException
+	{
+		BuildQueue.clearQueue();
+		if(rc.senseNearbyTrees().length > 3) //DENSE
+		{
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.LUMBERJACK);
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.LUMBERJACK);
+		
+			for(int i = 0; i < 5; i ++)
+			{
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.LUMBERJACK);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SCOUT);
+			}
+		}
+		
+		else
+		{
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.LUMBERJACK);
+	
+			for(int i = 0; i < 5; i ++)
+			{
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SCOUT);
+			}
+		}
+	}
+	
+	public static void initializeChannels() throws GameActionException
+	{
+		
+		Messaging.broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
+		Messaging.broadcastLocation(initialArchonLocations[0], SCOUT_LOC_CHANNEL);
+		
+		
+	}
 	
 	public static void loop() throws GameActionException {
 		
-		birthLoc = rc.getLocation();
-		
 		if(rc.getLocation() == rc.getInitialArchonLocations(myTeam)[0])
 		{
-			rc.broadcast(BuildQueue.POINTER_CHANNEL, BuildQueue.low_endpoint);
-			
-			Messaging.broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
-			
-			if(rc.senseNearbyTrees().length > 3)
-			{
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.LUMBERJACK);
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.LUMBERJACK);
-			
-				for(int i = 0; i < 5; i ++)
-				{
-					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.LUMBERJACK);
-					BuildQueue.enqueue(RobotType.SCOUT);
-					BuildQueue.enqueue(RobotType.SCOUT);
-				}
-			}
-			
-			else
-			{
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.LUMBERJACK);
-		
-				for(int i = 0; i < 5; i ++)
-				{
-					BuildQueue.enqueue(RobotType.GARDENER);
-					BuildQueue.enqueue(RobotType.SCOUT);
-					BuildQueue.enqueue(RobotType.SCOUT);
-					BuildQueue.enqueue(RobotType.SCOUT);
-				}
-			}
-			
-			BuildQueue.printQueue();
+			initializeChannels();
+			makeInitialQueue();
 		}
 		
         while (true) {
             try {
-            	
             	loop_common();
-            	rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL));
-            	rc.broadcast(GARDENER_SUM_CHANNEL, 0);
-
-            	if(BuildQueue.getLength() <= 0)
+            	if(!rc.readBroadcastBoolean(HAS_COUNTED_CHANNEL))
             	{
-            		if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_LOWER_LIMIT)
-                	{
-            			BuildQueue.enqueue(RobotType.GARDENER);
-                	}
-            		else
-            		{
-            			BuildQueue.enqueue(RobotType.GARDENER);
-    					BuildQueue.enqueue(RobotType.SCOUT);
-    					BuildQueue.enqueue(RobotType.SCOUT);
-    					BuildQueue.enqueue(RobotType.SCOUT);
-            		}
+            		rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL));
+            		rc.broadcast(GARDENER_SUM_CHANNEL, 0);
+            		rc.broadcastBoolean(HAS_COUNTED_CHANNEL, true);
             	}
             	
-            	if(rc.getTeamBullets() > VICTORY_CASH)
+            	if(ARCHON_DEBUG_MODE)
             	{
-            		int x = (int)rc.getTeamBullets() - VICTORY_CASH;
-            		rc.donate(x - x%10);
+            		BuildQueue.printQueue();
+            		System.out.println("NUM GARD: " + rc.readBroadcast(GARDENER_COUNT_CHANNEL));
+            		System.out.println("ARC: " + rc.readBroadcast(ARCHON_TARGETING_CHANNEL) + " SCO: " + rc.readBroadcast(GARDENER_TARGETING_CHANNEL));
             	}
-            	
-            	
+     	
             	//Pathfinding.wander();
             	
             	Micro.dodge();
             	
             	RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
-            	
-            	if(enemyBots.length > 2)
-            	{
-            		Messaging.broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
-            		rc.broadcast(DEFENSE_CHANNEL, 1);
-            		underAttack = true;
-            	}
-            	
-            	else if(underAttack)
-            	{
-            		rc.broadcast(DEFENSE_CHANNEL, 0);
-            		underAttack = false;
-            	}
+            	Messaging.broadcastDefendMeIF(enemyBots.length > 2);
                 
-            	if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) == 0)
+            	if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) == 0 && BuildQueue.peak() != RobotType.GARDENER && !rc.readBroadcastBoolean(GARDENER_INPRODUCTION_CHANNEL))
             	{
-            		if(rc.hasRobotBuildRequirements(RobotType.GARDENER))
-                	{
-            			buildWhereFree(RobotType.GARDENER, 6);
-                	}
+            		BuildQueue.clearQueue();
+            		BuildQueue.enqueue(RobotType.GARDENER);
+            		System.out.println("FUCK");
+            		
             	}
             	
             	
-            	if(BuildQueue.getLength() > 0)
+            	if(BuildQueue.tryBuildFromQueue())rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, true);
+                
+                
+                if(!rc.hasMoved()) //move back to birth location CHANGE THIS!!!!
                 {
-                	if(rc.hasRobotBuildRequirements(BuildQueue.peak()))
-                	{
-            			buildWhereFree(BuildQueue.dequeue(), 6);
-                	}
-                }
-                
-                
-                if(!rc.hasMoved())
-                {
-                	if(rc.getLocation().distanceTo(birthLoc) > 5)
+                	if(rc.getLocation().distanceTo(birthLoc) > 1)
                 	{
                 		Pathfinding.moveTo(birthLoc);
                 	}

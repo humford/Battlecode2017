@@ -6,24 +6,22 @@ public class BotGardener extends Globals {
 	public static final int GARDENER_CIRCLE_RADIUS = 2;
 	public static final int GARDENER_PATCH_RADIUS = 4;
 	
-	public static boolean underAttack = false;
+	public static void gardener_common() throws GameActionException {
+		loop_common();
+		
+		rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
+		rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, false);
+		rc.broadcastBoolean(HAS_COUNTED_CHANNEL, false);
+	}
 	
 	public static void loop() throws GameActionException {
 		for (int i = 0; i < MAX_WANDER_TURNS; i++) {
 			
-			loop_common();
-			
-			rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
+			gardener_common();
 			 
 			//production
 			
-			if(BuildQueue.getLength() > 0)
-            {
-            	if(rc.hasRobotBuildRequirements(BuildQueue.peak()))
-            	{
-        			buildWhereFree(BuildQueue.dequeue(), 6);
-            	}
-            }
+			BuildQueue.tryBuildFromQueue();
             
             
             Micro.dodge();
@@ -76,28 +74,11 @@ public class BotGardener extends Globals {
 	static void macro() throws GameActionException {
 		init();
 		while (true) {
-			
-			loop_common();
+			gardener_common();
 			
 			RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
+        	Messaging.broadcastDefendMeIF(enemyBots.length > 1);
         	
-        	if(enemyBots.length > 2)
-        	{
-        		Messaging.broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
-        		rc.broadcast(DEFENSE_CHANNEL, 1);
-        		underAttack = true;
-        	}
-        	
-        	else if(underAttack)
-        	{
-        		rc.broadcast(DEFENSE_CHANNEL, 0);
-        		underAttack = false;
-        	}
-            
-
-			
-			rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
-			
 			//production 
 			
 			if(BuildQueue.getLength() > 0)
@@ -107,13 +88,13 @@ public class BotGardener extends Globals {
             		rc.buildRobot(BuildQueue.dequeue(), productionDirs);
             	}
             }
-			
+			 
 			// Plant missing trees
 			for (int i = 0; i < 5; i++) {
 				MapLocation treeSpot = getTreeSpot(i);
 				//System.out.println("Looking at tree in spot " + treeSpot.toString());
 				if (rc.isLocationOccupiedByTree(treeSpot)){
-					System.out.println("Occupied");
+					//System.out.println("Occupied");
 					continue;
 				}
 				if (rc.canPlantTree(treeDirs[i])) {
@@ -128,11 +109,11 @@ public class BotGardener extends Globals {
 			TreeInfo lowHealthTree = getLowHealthTree();
 			if (lowHealthTree != null) {
 				MapLocation treeSpot = lowHealthTree.getLocation();
-				System.out.println("ATTEMPTING TO WATER");
+				//System.out.println("ATTEMPTING TO WATER");
 				if (rc.canWater(treeSpot))
 				{
 					rc.water(treeSpot);
-					System.out.println("WATERING");
+					//System.out.println("WATERING");
 				}
 			}
 			Clock.yield();

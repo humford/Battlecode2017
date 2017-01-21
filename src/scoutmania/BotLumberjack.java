@@ -2,9 +2,8 @@ package scoutmania;
 import battlecode.common.*;
 
 public class BotLumberjack extends Globals {
-	private static MapLocation birthLoc;
+
 	public static void loop() throws GameActionException {
-		birthLoc = rc.getLocation();
         while (true) {
             try {
             	loop_common();

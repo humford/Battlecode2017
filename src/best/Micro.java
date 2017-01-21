@@ -95,6 +95,8 @@ public class Micro extends Globals {
   
   
   //use archon sensors how dense map is with trees
+  
+  
   public static void SolderMove() throws GameActionException
   {
 	  if(!rc.hasMoved())
