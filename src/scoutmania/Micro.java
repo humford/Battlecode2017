@@ -42,25 +42,35 @@ public class Micro extends Globals {
       {
     	  SolderMove();
       }
-          for (RobotInfo b : bots) {
-              if (b.getTeam() != rc.getTeam()) {
-                  Direction towards = rc.getLocation().directionTo(b.getLocation());
-                  switch(Micro.isCondensed())
+      for (RobotInfo b : bots) {
+    	  if (b.getTeam() != myTeam) {
+    		  Direction towards = rc.getLocation().directionTo(b.getLocation());
+    		  switch(Micro.isCondensed())
+              {
+    		  case -1:
+    			  if(rc.canFirePentadShot() && PentadShotOpen(b))
+    			  {
+    				  rc.firePentadShot(towards);
+    			  	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
+    			  }
+    		  case 0:
+                  if(rc.canFireTriadShot() && TriadShotOpen(b))
                   {
-                  case -1:
-                  	if(rc.canFirePentadShot())rc.firePentadShot(towards);
-                  	break;
-                  case 0:
-                  	if(rc.canFireTriadShot())rc.fireTriadShot(towards);
-                  	break;
-                  case 1:
-                  	if(rc.canFireSingleShot())rc.fireSingleShot(towards);
-                  	break;
-                  	
+                	  rc.fireTriadShot(towards);
+                	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
                   }
-                  break;
-              }      
-          }
+              case 1:
+                  if(rc.canFireSingleShot() && SingleShotOpen(b))
+                  {
+                	  rc.fireSingleShot(towards);
+                	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
+                  }
+                  break; //FALL THROUGH UNTIL CAN FIRE
+              }
+              if(rc.hasAttacked())
+            	  break;
+           }      
+      }
   }
   
   static boolean trySidestep(BulletInfo bullet) throws GameActionException{

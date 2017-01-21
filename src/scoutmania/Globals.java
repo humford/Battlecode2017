@@ -99,6 +99,127 @@ public class Globals {
 
         return (perpendicularDist <= rc.getType().bodyRadius * 1.25);
     }
+    
+    static boolean bulletBlocked(Direction dir, float distTo) {
+
+        //For each friendly or neutral object within distTo check if the bullet would hit it
+    	RobotInfo friendlyRobots[] = rc.senseNearbyRobots(distTo, myTeam);
+    	for(RobotInfo bot : friendlyRobots)
+    	{
+    		Direction directionToRobot = rc.getLocation().directionTo(bot.getLocation());
+            float distToRobot = rc.getLocation().distanceTo(bot.getLocation());
+            float theta = dir.radiansBetween(directionToRobot);
+            
+            // If theta > 90 degrees, then the bullet is traveling away from the robot and we can ignore it
+            if (Math.abs(theta) > Math.PI / 2 && distToRobot + bot.getRadius() > rc.getType().bodyRadius + GameConstants.BULLET_SPAWN_OFFSET) 
+                continue;
+            
+            // distToRobot is our hypotenuse, theta is our angle, and we want to know this length of the opposite leg.
+            // This is the distance of a line that goes from myLocation and intersects perpendicularly with propagationDirection.
+            // This corresponds to the smallest radius circle centered at our location that would intersect with the
+            // line that is the path of the bullet.
+            
+            float perpendicularDist = (float) Math.abs(distToRobot * Math.sin(theta));
+            if(perpendicularDist <= bot.getRadius() * 1.25)
+            	return true;
+    	}
+    	
+    	TreeInfo nonEnemyTrees[] = rc.senseNearbyTrees(distTo);
+    	for(TreeInfo tree : nonEnemyTrees)
+    	{
+    		if(tree.getTeam() != them)
+    		{
+        		Direction directionToRobot = rc.getLocation().directionTo(tree.getLocation());
+                float distToRobot = rc.getLocation().distanceTo(tree.getLocation());
+                float theta = dir.radiansBetween(directionToRobot);
+                
+                // If theta > 90 degrees, then the bullet is traveling away from the robot and we can ignore it
+                if (Math.abs(theta) > Math.PI / 2 && distToRobot + tree.getRadius() > rc.getType().bodyRadius + GameConstants.BULLET_SPAWN_OFFSET) 
+                    continue;
+                
+                // distToRobot is our hypotenuse, theta is our angle, and we want to know this length of the opposite leg.
+                // This is the distance of a line that goes from myLocation and intersects perpendicularly with propagationDirection.
+                // This corresponds to the smallest radius circle centered at our location that would intersect with the
+                // line that is the path of the bullet.
+                
+                float perpendicularDist = (float) Math.abs(distToRobot * Math.sin(theta));
+                if(perpendicularDist <= tree.getRadius() * 1.25)
+                	return true;
+    		}
+    	}
+    	
+    	return false;
+    	
+    }
+    
+    public static boolean PentadShotOpen(RobotInfo target) throws GameActionException
+    {
+    	Direction dirTarget = rc.getLocation().directionTo(target.getLocation());
+    	float distTarget = rc.getLocation().distanceTo(target.getLocation());
+    	
+    	//false if forward direction blocked 
+    	
+    	if(bulletBlocked(dirTarget, distTarget))
+    		return false;
+    	
+    	//false if left directions blocked 
+    	
+    	for(int i = 1; i <= 2; i ++)
+    	{
+    		Direction dir = dirTarget.rotateLeftDegrees(15 * i);
+    		if(bulletBlocked(dir, rc.getType().sensorRadius))
+    			return false;
+    	}
+    	
+    	//false if right directions blocked 
+    	
+    	for(int i = 1; i <= 2; i ++)
+    	{
+    		Direction dir = dirTarget.rotateRightDegrees(15 * i);
+    		if(bulletBlocked(dir, rc.getType().sensorRadius))
+    			return false;
+    	}
+    	
+    	return true;
+    }
+    
+    public static boolean TriadShotOpen(RobotInfo target) throws GameActionException
+    {
+    	Direction dirTarget = rc.getLocation().directionTo(target.getLocation());
+    	float distTarget = rc.getLocation().distanceTo(target.getLocation());
+    	
+    	//false if forward direction blocked 
+    	
+    	if(bulletBlocked(dirTarget, distTarget))
+    		return false;
+    	
+    	//false if left direction blocked 
+    	
+    	Direction dir = dirTarget.rotateLeftDegrees(20);
+		if(bulletBlocked(dir, rc.getType().sensorRadius))
+			return false;
+    	
+    	//false if right directions blocked 
+    	
+		dir = dirTarget.rotateRightDegrees(20);
+		if(bulletBlocked(dir, rc.getType().sensorRadius))
+			return false;
+    	
+    	return true;
+    }
+    
+    public static boolean SingleShotOpen(RobotInfo target) throws GameActionException
+    {
+    	Direction dirTarget = rc.getLocation().directionTo(target.getLocation());
+    	float distTarget = rc.getLocation().distanceTo(target.getLocation());
+    	
+    	//false if forward direction blocked 
+    	
+    	if(bulletBlocked(dirTarget, distTarget))
+    		return false;
+    	else
+    		return true;
+    }
  
 	public static void locateType(RobotType type, int targetChannel, int locChannel) throws GameActionException 
 	{

@@ -1,4 +1,4 @@
-package onlyGarden;
+package KohsGarden;
 import battlecode.common.*;
 //import globas.java;
 

@@ -1,4 +1,4 @@
-package onlyGarden;
+package KohsGarden;
 import battlecode.common.*;
 public class Micro extends Globals {
   

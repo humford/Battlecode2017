@@ -50,14 +50,16 @@ public class BotScout extends Globals {
       		    		  	Pathfinding.moveTo(Messaging.recieveLocation(SCOUT_LOC_CHANNEL));
       		      	}
       		  	}
-	        
-
-      	  		
+	       
       	  		for (RobotInfo b : bots) {
       	  			if (b.getTeam() != rc.getTeam() && b.getType() != RobotType.ARCHON) {
       	  				Direction towards = rc.getLocation().directionTo(b.getLocation());
-      	  				if(rc.canFireSingleShot())rc.fireSingleShot(towards);
-      	  				break;
+      	  				if(rc.canFireSingleShot() && SingleShotOpen(b))
+      	  				{
+      	  					rc.fireSingleShot(towards);
+      	  					rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
+      	  					break;
+      	  				}
       	  			}      
       	  		}
       	  		

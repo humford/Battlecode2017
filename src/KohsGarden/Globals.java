@@ -1,4 +1,4 @@
-package onlyGarden;
+package KohsGarden;
 import battlecode.common.*;
 import java.util.Random;
 
@@ -19,6 +19,12 @@ public class Globals {
     //FLAG_CHANNELS
     static final int ARCHON_TARGETING_CHANNEL = 10;
     static final int DEFENSE_CHANNEL = 11;
+    
+    static final int OPEN_MAP = 100;
+    static  int AVAILABLE_SPOT = 101;
+    static final int GARDNER_SPOT1 = 120;
+    static final int GARDNER_SPOT2 = 130;
+    
 
     // Keep important numbers here
     static Team myTeam, them;

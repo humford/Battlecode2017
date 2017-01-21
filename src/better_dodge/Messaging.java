@@ -1,4 +1,4 @@
-package first;
+package better_dodge;
 
 import battlecode.common.GameActionException;
 import battlecode.common.MapLocation;

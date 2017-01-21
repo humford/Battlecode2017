@@ -1,4 +1,4 @@
-package onlyGarden;
+package KohsGarden;
 import battlecode.common.*;
 
 
@@ -42,7 +42,7 @@ public class BotScout extends Globals {
 	            		Pathfinding.tryMove(rc.getLocation().directionTo(recieveLocation(STRIKE_LOC_CHANNEL)));
 	            	}
 	        	}
-	       	 	if(rc.readBroadcast(OPEN_MAP)>=0){
+	       	 	if(rc.readBroadcast(OPEN_MAP) >= 0){
 	       	 	MapLocation center = rc.getLocation();
 	       	 	float spacing = (float)(RobotType.GARDENER.sensorRadius +1);
 	       	 	if(rc.onTheMap(center, spacing)  && rc.isCircleOccupiedExceptByThisRobot(center, spacing)){

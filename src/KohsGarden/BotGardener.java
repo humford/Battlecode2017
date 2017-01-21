@@ -1,4 +1,4 @@
-package onlyGarden;
+package KohsGarden;
 import battlecode.common.*;
 
 enum GardenerState {
@@ -8,6 +8,9 @@ enum GardenerState {
 }
 
 public class BotGardener extends Globals {
+	
+	public static int AVAILABLE_SPOT = 0
+			; 
 	public static final int MAX_WANDER_TURNS = 100;
 	
 	public static void loop() throws GameActionException {
@@ -28,7 +31,7 @@ public class BotGardener extends Globals {
             		rc.buildRobot(BuildQueue.dequeue(), dir);
             	}
             }
-			if(AVAILABLE_SPOT>0&& rc.readBroadcast(OPEN_MAP) == 0){
+			if(AVAILABLE_SPOT > 0 && rc.readBroadcast(OPEN_MAP) == 0){
 				GardenerMove(); // NEED BETTER FUNCTION TO MOVE
 			}
 			else{
