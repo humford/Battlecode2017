@@ -227,7 +227,8 @@ public class Globals {
 		for (RobotInfo enemy : nearbyEnemies) {
 			if (enemy.type == type) {
 				Messaging.broadcastLocation(enemy.getLocation(), locChannel);
-				if(rc.readBroadcast(targetChannel) == -1)rc.broadcast(targetChannel, initialArchonLocations.length);
+				if(rc.readBroadcast(targetChannel) == -1)
+					rc.broadcast(targetChannel, initialArchonLocations.length);
 				return;
 			}
 			if(enemy.type != RobotType.ARCHON && rc.readBroadcast(targetChannel) == -1)

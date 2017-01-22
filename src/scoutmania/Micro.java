@@ -99,13 +99,15 @@ public class Micro extends Globals {
   {
 	  if(!rc.hasMoved())
 	  {
-		  if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1) Pathfinding.wander();
+		  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL))
+  		  	Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
+  			
 		  else
 	      {
-	    	  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL))
-	    		  Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
-	    	  else
-	    		  Pathfinding.moveTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL));
+		  	if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1) 
+		  		Pathfinding.wander();
+	    	else
+	    	  	Pathfinding.moveTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL));
 	      }
 	  }
   }

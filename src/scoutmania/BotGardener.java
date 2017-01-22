@@ -12,6 +12,9 @@ public class BotGardener extends Globals {
 		rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
 		rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, false);
 		rc.broadcastBoolean(HAS_COUNTED_CHANNEL, false);
+		
+		RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
+    	Messaging.broadcastDefendMeIF(enemyBots.length > 1);
 	}
 	
 	public static void loop() throws GameActionException {
@@ -75,9 +78,6 @@ public class BotGardener extends Globals {
 		init();
 		while (true) {
 			gardener_common();
-			
-			RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
-        	Messaging.broadcastDefendMeIF(enemyBots.length > 1);
         	
 			//production 
 			

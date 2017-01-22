@@ -26,6 +26,46 @@ public class Pathfinding extends Globals {
      * @return true if a move was performed
      * @throws GameActionException
      */
+    
+    private static boolean tryMoveWithoutBulletDetection(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
+
+    	if(rc.hasMoved())return false;
+        // First, try intended direction
+    
+        if (!rc.hasMoved() && rc.canMove(dir)) {
+        	
+            rc.move(dir);
+            return true;
+        }
+
+        // Now try a bunch of similar angles
+        //boolean moved = rc.hasMoved();
+        int currentCheck = 1;
+        
+        while(currentCheck <= checksPerSide) {
+            // Try the offset of the left side
+        	Direction curDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
+        	
+            if(!rc.hasMoved() && rc.canMove(curDir)) {
+                rc.move(curDir);
+                return true;
+            }
+            // Try the offset on the right side
+        	curDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
+
+            if(!rc.hasMoved() && rc.canMove(curDir)) {
+            	rc.move(curDir);
+            	return true;
+            }
+            // No move performed, try slightly further
+            currentCheck++;
+        }
+
+        return false;
+    }
+    
+    
+    
     private static boolean tryMove(Direction dir, float degreeOffset, int checksPerSide) throws GameActionException {
 
     	if(rc.hasMoved())return false;
@@ -35,20 +75,22 @@ public class Pathfinding extends Globals {
     	boolean isSafe = true;
     	MapLocation loc = rc.getLocation().add(dir, rc.getType().strideRadius);
     	
-    	for(BulletInfo b : bullets)
-    	{
-    		if(willCollideWith(b, loc))
-    		{
-    			isSafe = false;
-    			break;
-    		}
-    	}
     	
-    	
-        if (!rc.hasMoved() && rc.canMove(dir) && isSafe) {
+        if (!rc.hasMoved() && rc.canMove(dir)) {
+        	for(BulletInfo b : bullets)
+        	{
+        		if(willCollideWith(b, loc))
+        		{
+        			isSafe = false;
+        			break;
+        		}
+        	}
         	
-            rc.move(dir);
-            return true;
+        	if(isSafe)
+        	{
+        		rc.move(dir);
+        		return true;
+        	}
         }
 
         // Now try a bunch of similar angles
@@ -105,10 +147,10 @@ public class Pathfinding extends Globals {
             // No move performed, try slightly further
             currentCheck++;
         }
-
-        // A move never happened, so return false.
-       // Micro.dodge();
-        return false;
+        if(tryMoveWithoutBulletDetection(dir, degreeOffset, checksPerSide))
+        	return true;
+        else
+        	return false;
     }
     
     

@@ -67,6 +67,7 @@ class BotArchon extends Globals {
         while (true) {
             try {
             	loop_common();
+            	
             	if(!rc.readBroadcastBoolean(HAS_COUNTED_CHANNEL))
             	{
             		rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL));
@@ -80,6 +81,10 @@ class BotArchon extends Globals {
             		System.out.println("NUM GARD: " + rc.readBroadcast(GARDENER_COUNT_CHANNEL));
             		System.out.println("ARC: " + rc.readBroadcast(ARCHON_TARGETING_CHANNEL) + " SCO: " + rc.readBroadcast(GARDENER_TARGETING_CHANNEL));
             	}
+            	
+            	rc.setIndicatorDot(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL), 0, 0, 0);
+            	rc.setIndicatorDot(Messaging.recieveLocation(STRIKE_LOC_CHANNEL), 127, 0, 0);
+            	rc.setIndicatorDot(Messaging.recieveLocation(SCOUT_LOC_CHANNEL), 100, 20, 30);
      	
             	//Pathfinding.wander();
             	
