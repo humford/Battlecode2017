@@ -1,7 +1,6 @@
 package new_gardeners;
 import battlecode.common.*;
 
-import scala.tools.nsc.settings.RC;
 
 public class BuildQueue extends Globals{
 	
