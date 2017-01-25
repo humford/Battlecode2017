@@ -202,4 +202,12 @@ public class BotGardener extends Globals {
 		}
 		return ret;
 	}
+	
+	public static MapLocation gridStart;
+	public static final float spacing = 2 * GARDENER_PATCH_RADIUS;
+	
+	public static MapLocation[] gridSpotsInSensorRadius() throws GameActionException {
+		MapLocation[] ret = new MapLocation[10];
+		return ret;
+	}
 }
