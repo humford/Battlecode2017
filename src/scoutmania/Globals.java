@@ -38,11 +38,17 @@ public class Globals {
     static final int LUMBERJACK_MAX = 5;
     static final int ROUND_CHANGE = 500;
     
+    
+    // LOCATION LISTS
+    //USES CHANNELS 1999 - 3000
+    static LocationList treeList;
+    //USES CHANNELS 3999 - 5000
+    static LocationList plantingList;
  
     
 	
 
-    public static void init(RobotController theRC) {
+    public static void init(RobotController theRC) throws GameActionException {
 
     	rc = theRC;
     	
@@ -54,6 +60,10 @@ public class Globals {
     	RobotPlayer.rc = theRC;
         myRand = new Random(rc.getID());
         Pathfinding.lastWander = randomDirection();
+        
+        treeList = new LocationList(2000, 3000);
+        plantingList = new LocationList(4000, 5000);
+       
     }
 
 

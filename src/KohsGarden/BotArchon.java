@@ -1,116 +1,102 @@
 package KohsGarden;
-package scoutmania;
 import battlecode.common.*;
 
 class BotArchon extends Globals {
-	
-	public static final boolean ARCHON_DEBUG_MODE = true;
-	
-	public static void makeInitialQueue() throws GameActionException
-	{
-		BuildQueue.clearQueue();
-		if(rc.senseNearbyTrees().length > 3) //DENSE
-		{
-			BuildQueue.enqueue(RobotType.GARDENER);
-			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.LUMBERJACK);
-			BuildQueue.enqueue(RobotType.GARDENER);
-			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.LUMBERJACK);
-		
-			for(int i = 0; i < 5; i ++)
-			{
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.LUMBERJACK);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.SCOUT);
-			}
-		}
-		
-		else
-		{
-			BuildQueue.enqueue(RobotType.GARDENER);
-			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.GARDENER);
-			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.GARDENER);
-			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.LUMBERJACK);
-	
-			for(int i = 0; i < 5; i ++)
-			{
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.SCOUT);
-			}
-		}
-	}
-	
-	public static void initializeChannels() throws GameActionException
-	{
-		
-		Messaging.broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
-		Messaging.broadcastLocation(initialArchonLocations[0], SCOUT_LOC_CHANNEL);
-		
-		
-	}
-	
 	public static void loop() throws GameActionException {
 		
 		if(rc.getLocation() == rc.getInitialArchonLocations(myTeam)[0])
 		{
-			initializeChannels();
-			makeInitialQueue();
+			rc.broadcast(BuildQueue.POINTER_CHANNEL, BuildQueue.low_endpoint);
+			
+			broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
+			
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.GARDENER);
+			
+			LocationList locs = new LocationList(1000, 1100);
+			
+			for(int i = 0; i < 10; i ++)
+			{
+				locs.addLocation(new MapLocation(i, i));
+			}
+			locs.printList();
+			
+			locs.addLocation(new MapLocation(5,5));
+			
+			locs.addLocation(new MapLocation(5.5f, 6));
+			
+			locs.printList();
+			
+			System.out.println("\n\n" + locs.getNearest(new MapLocation(0,0)) + "\n\n");
+			
+			locs.addLocation(new MapLocation(5,5));
+			
+			
+			locs.addLocation(new MapLocation(15,15));
+			
+			locs.printList();
+			
+			System.out.println("\n\n" + locs.getNearest(new MapLocation(5,5)) + "\n\n");
+			
+			locs.addLocation(new MapLocation(5,5));
+			
+			
+			locs.addLocation(new MapLocation(15,15));
+			
+			locs.printList();
+			
+			System.out.println("\n\n" + locs.getNearest(new MapLocation(5,5)) + "\n\n");
+			
+			locs.addLocation(new MapLocation(15,15));
+			locs.addLocation(new MapLocation(16,16));
+			
+			locs.printList();
+			
+
 		}
 		
         while (true) {
             try {
-            	loop_common();
             	
-            	if(!rc.readBroadcastBoolean(HAS_COUNTED_CHANNEL))
+            //	rc.disintegrate();
+            	
+            	rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL));
+            	rc.broadcast(GARDENER_SUM_CHANNEL, 0);
+
+            	if(BuildQueue.getLength() <= 0)
             	{
-            		rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL));
-            		rc.broadcast(GARDENER_SUM_CHANNEL, 0);
-            		rc.broadcastBoolean(HAS_COUNTED_CHANNEL, true);
+            		BuildQueue.enqueue(RobotType.GARDENER);
             	}
             	
-            	if(ARCHON_DEBUG_MODE)
+            	if(rc.getTeamBullets() > VICTORY_CASH)
             	{
-            		BuildQueue.printQueue();
-            		System.out.println("NUM GARD: " + rc.readBroadcast(GARDENER_COUNT_CHANNEL));
-            		System.out.println("ARC: " + rc.readBroadcast(ARCHON_TARGETING_CHANNEL) + " SCO: " + rc.readBroadcast(GARDENER_TARGETING_CHANNEL));
+            		int x = (int)rc.getTeamBullets() - VICTORY_CASH;
+            		rc.donate(x - x%10);
             	}
             	
-            	rc.setIndicatorDot(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL), 0, 0, 0);
-            	rc.setIndicatorDot(Messaging.recieveLocation(STRIKE_LOC_CHANNEL), 127, 0, 0);
-            	rc.setIndicatorDot(Messaging.recieveLocation(SCOUT_LOC_CHANNEL), 100, 20, 30);
-     	
+            	locateArchon();
+            	
             	//Pathfinding.wander();
             	
-            	Micro.dodge();
+            	Pathfinding.dodge();
             	
-            	RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
-            	Messaging.broadcastDefendMeIF(enemyBots.length > 2);
-                
-            	if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) == 0 && BuildQueue.peak() != RobotType.GARDENER && !rc.readBroadcastBoolean(GARDENER_INPRODUCTION_CHANNEL))
+            	RobotInfo[] enemyBots = rc.senseNearbyRobots(5, them);
+            	
+            	if(enemyBots.length > 2)
             	{
-            		BuildQueue.clearQueue();
-            		BuildQueue.enqueue(RobotType.GARDENER);
-            		System.out.println("FUCK");
-            		
+            		broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
+            		rc.broadcast(DEFENSE_CHANNEL, 1);
             	}
             	
+            	else rc.broadcast(DEFENSE_CHANNEL, 0);
+                
+            	Direction dir = randomDirection();
             	
-            	if(BuildQueue.tryBuildFromQueue())rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, true);
-                
-                
-                if(!rc.hasMoved()) //move back to birth location CHANGE THIS!!!!
+                if(BuildQueue.getLength() > 0)
                 {
-                	if(rc.getLocation().distanceTo(birthLoc) > 1)
+                	if(rc.canBuildRobot(BuildQueue.peak(), dir))
                 	{
-                		Pathfinding.moveTo(birthLoc);
+                		rc.buildRobot(BuildQueue.dequeue(), dir);
                 	}
                 }
          
@@ -122,4 +108,3 @@ class BotArchon extends Globals {
         }
 	}
 }
-

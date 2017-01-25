@@ -1,6 +1,5 @@
 package scoutmania;
 import java.util.ArrayList;
-
 import battlecode.common.*;
 
 public class BotGardener extends Globals {
