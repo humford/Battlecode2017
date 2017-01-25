@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import battlecode.common.*;
 
 public class BotGardener extends Globals {
-	public static final int MAX_WANDER_TURNS = 200;
+	public static final int MAX_WANDER_TURNS = 100;
 	public static final int GARDENER_CIRCLE_RADIUS = 2;
 	public static final int GARDENER_PATCH_RADIUS = 4;
 	
@@ -34,7 +34,7 @@ public class BotGardener extends Globals {
 			 
 			//production build away from motion
 			
-			if(!location.equals(plantLoc) && plantLoc != null)
+			if(plantLoc != null && !location.equals(plantLoc))
 				BuildQueue.tryBuildFromQueue(location.directionTo(plantLoc).opposite());
 			else
 				BuildQueue.tryBuildFromQueue();
@@ -48,31 +48,21 @@ public class BotGardener extends Globals {
 			if(plantLoc == null)
 			{
 				plantLoc = plantingList.getNearest(location);
-				trashList.addLocation(plantLoc);
+				if(plantLoc != null)
+				{
+					System.out.println(plantLoc.toString());
+					trashList.addLocation(plantLoc);
+				}
 			}
 			
 			if(plantLoc == null)
 			{
-				Pathfinding.wander(); // NEED BETTER FUNCTION TO MOVE
+				if (!rc.isCircleOccupiedExceptByThisRobot(location, GARDENER_PATCH_RADIUS))
+					macro();
+				Pathfinding.gardenerWander(); // NEED BETTER FUNCTION TO MOVE
 			}
 			else
 			{
-				if(!plantingList.peakNearest(location).equals(plantLoc))
-				{
-					trashList.getNearest(plantLoc);
-					plantingList.addLocation(plantLoc);
-					plantLoc = plantingList.getNearest(location);
-					trashList.addLocation(plantLoc);
-				}
-				
-				if(rc.canSenseAllOfCircle(plantLoc, GARDENER_PATCH_RADIUS) && rc.onTheMap(plantLoc, GARDENER_PATCH_RADIUS))
-				{
-					if(rc.senseNearbyTrees(plantLoc, GARDENER_PATCH_RADIUS, null).length > 0)
-					{
-						plantLoc = plantingList.getNearest(location);
-					}
-				}
-				
 				if(rc.canMove(plantLoc) && location.distanceTo(plantLoc) <= rc.getType().strideRadius)
 				{
 					rc.move(plantLoc);
@@ -80,6 +70,26 @@ public class BotGardener extends Globals {
 				}
 				else
 					Pathfinding.moveTo(plantLoc);
+				
+				MapLocation nearest  = plantingList.peakNearest(location);
+				if(nearest != null && location.distanceTo(nearest) < location.distanceTo(plantLoc))
+				{
+					System.out.println("FUCK THIS");
+					trashList.getNearest(plantLoc);
+					plantingList.addLocation(plantLoc);
+					plantLoc = plantingList.getNearest(location);
+					if(plantLoc != null)
+						trashList.addLocation(plantLoc);
+				}
+				
+				if(rc.canSenseAllOfCircle(plantLoc, GARDENER_PATCH_RADIUS) && rc.onTheMap(plantLoc, GARDENER_PATCH_RADIUS))
+				{
+					if(rc.senseNearbyTrees(plantLoc, GARDENER_PATCH_RADIUS, myTeam).length > 0)
+					{
+						plantLoc = plantingList.getNearest(location);
+					}
+				}
+				
 			}
 			Clock.yield();
 		}
@@ -155,6 +165,8 @@ public class BotGardener extends Globals {
             	{
             		rc.buildRobot(BuildQueue.dequeue(), productionDirs);
             	}
+            	else
+            		BuildQueue.tryBuildFromQueue();
             }
 			 
 			// Plant missing trees
@@ -193,24 +205,26 @@ public class BotGardener extends Globals {
 		if (!rc.onTheMap(location)) return 0;
 		if(rc.isCircleOccupied(location, RobotType.GARDENER.bodyRadius)) return -1;
 		MapLocation[] spots = getTreeSpotsAbout(location);
-		TreeInfo[] trees = rc.senseNearbyTrees(location, GARDENER_PATCH_RADIUS, myTeam);
+		TreeInfo[] trees = rc.senseNearbyTrees(location, -1, null);
 		int ret = 0;
 		
 		for (MapLocation spot : spots) {
 			boolean collision = false;
 			if (!rc.onTheMap(spot)) continue;
 			for (TreeInfo tree : trees) {
-				if (MapLocation.doCirclesCollide(spot, GameConstants.BULLET_TREE_RADIUS, tree.getLocation(), tree.getRadius())) {
+				if (MapLocation.doCirclesCollide(spot, GameConstants.BULLET_TREE_RADIUS, tree.getLocation(), tree.getRadius()) || !rc.onTheMap(spot, GameConstants.BULLET_TREE_RADIUS)) {
 					collision = true;
 					break;
 				}
 			}
 			if (!collision) ret++;
 		}
+		rc.setIndicatorDot(location, 127, 0, 0);
+		System.out.println("SEARCH: " + ret);
 		return ret;
 	}
 	
-	public static final float gridSpacing = 1.7f;
+	public static final float gridSpacing = 2f;
 	
 	public static ArrayList<MapLocation> getGridLocations(MapLocation location) throws GameActionException {
 		float testRadius = rc.getType().sensorRadius - GARDENER_PATCH_RADIUS;

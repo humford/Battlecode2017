@@ -13,7 +13,7 @@ class BotArchon extends Globals {
 			BuildQueue.enqueue(RobotType.GARDENER);
 			BuildQueue.enqueue(RobotType.GARDENER);
 			
-			LocationList locs = new LocationList(1000, 1100);
+			LocationList locs = new LocationList(1000, 1009);
 			
 			for(int i = 0; i < 5; i ++)
 			{

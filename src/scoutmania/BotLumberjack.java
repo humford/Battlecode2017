@@ -12,19 +12,19 @@ public class BotLumberjack extends Globals {
                 
                 RobotInfo[] myBots = rc.senseNearbyRobots(GameConstants.LUMBERJACK_STRIKE_RADIUS, myTeam);
                 RobotInfo[] theirBots = rc.senseNearbyRobots(GameConstants.LUMBERJACK_STRIKE_RADIUS, them);
-                boolean isArchon = false;
+                boolean isSoldier = false;
                 
                 for(RobotInfo b : theirBots)
                 {
-                	if(b.getType() == RobotType.ARCHON)
+                	if(b.getType() == RobotType.SOLDIER)
                 	{
-                		isArchon = true;
+                		isSoldier = true;
                 		break;
                 	}
                 }
 
                 
-                if((myBots.length < theirBots.length || isArchon) && rc.canStrike())rc.strike();
+                if((myBots.length < theirBots.length || isSoldier) && rc.canStrike())rc.strike();
                 
                 TreeInfo[] trees = rc.senseNearbyTrees();
                 for (TreeInfo t : trees) {

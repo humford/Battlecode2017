@@ -42,15 +42,15 @@ public class Globals {
     
     static final int START_LOC_CHANNEL = 100;
 	static final int NUM_INIT_TREES_CHANNEL = 102;
-	static final int BEST_ARCHON_ID_CHANNEL = 103; 
+	static final int BEST_ARCHON_ID_CHANNEL = 99; 
     
     
     // LOCATION LISTS
-    //USES CHANNELS 1999 - 3000
+    //USES CHANNELS 0945 - 3946
     static LocationList treeList;
-    //USES CHANNELS 3999 - 5000
+    //USES CHANNELS 3947 - 6948
     static LocationList plantingList;
-  //USES CHANNELS 6999 - 8000
+   //USES CHANNELS 6949 - 9950
     static LocationList trashList;
  
     
@@ -69,9 +69,9 @@ public class Globals {
         myRand = new Random(rc.getID());
         Pathfinding.lastWander = randomDirection();
         
-        treeList = new LocationList(2000, 3000);
-        plantingList = new LocationList(4000, 5000);
-        trashList = new LocationList(7000, 8000);
+        treeList = new LocationList(945, 3946);
+        plantingList = new LocationList(3947, 6948);
+        trashList = new LocationList(6949, 9950);
         
         gridStart = Messaging.recieveLocation(START_LOC_CHANNEL);
        
@@ -117,7 +117,52 @@ public class Globals {
         // line that is the path of the bullet.
         float perpendicularDist = (float) Math.abs(distToRobot * Math.sin(theta)); // soh cah toa :)
 
-        return (perpendicularDist <= rc.getType().bodyRadius * 1.25);
+        return (perpendicularDist <= rc.getType().bodyRadius);
+    }
+    
+    static float distToCollidingBullet(BulletInfo bullet, MapLocation myLocation) {
+
+        // Get relevant bullet information
+        Direction propagationDirection = bullet.dir;
+        MapLocation bulletLocation = bullet.location;
+
+        // Calculate bullet relations to this robot
+        Direction directionToRobot = bulletLocation.directionTo(myLocation);
+        float distToRobot = bulletLocation.distanceTo(myLocation);
+        float theta = propagationDirection.radiansBetween(directionToRobot);
+
+        // If theta > 90 degrees, then the bullet is traveling away from us and we can break early
+        if (Math.abs(theta) > Math.PI / 2 && distToRobot > rc.getType().bodyRadius) {
+            return -1;
+        }
+
+        // distToRobot is our hypotenuse, theta is our angle, and we want to know this length of the opposite leg.
+        // This is the distance of a line that goes from myLocation and intersects perpendicularly with propagationDirection.
+        // This corresponds to the smallest radius circle centered at our location that would intersect with the
+        // line that is the path of the bullet.
+        float perpendicularDist = (float) Math.abs(distToRobot * Math.sin(theta)); // soh cah toa :)
+        if(perpendicularDist <= rc.getType().bodyRadius)
+        	return perpendicularDist;
+        else
+        	return -1;
+    }
+    
+    static float ClosestBulletWillHit(MapLocation location)
+    {
+    	BulletInfo[] bullets = rc.senseNearbyBullets();
+    	if(bullets.length == 0)
+    		return -1;
+    	float closest = distToCollidingBullet(bullets[0], location);
+    	
+    	for(BulletInfo b : bullets)
+    	{
+    		float curDist = distToCollidingBullet(b, location);
+    		if(curDist < closest || closest == -1)
+    		{
+    			closest = curDist;
+    		}
+    	}
+    	return closest;
     }
     
     static boolean bulletBlocked(Direction dir, float distTo) {
@@ -140,7 +185,7 @@ public class Globals {
             // line that is the path of the bullet.
             
             float perpendicularDist = (float) Math.abs(distToRobot * Math.sin(theta));
-            if(perpendicularDist <= bot.getRadius() * 1.25)
+            if(perpendicularDist <= bot.getRadius() * 1.1)
             	return true;
     	}
     	
@@ -308,6 +353,19 @@ public class Globals {
 	{
 		donate();
 		refillQueue();
+		RobotInfo[] myBots = rc.senseNearbyRobots(BotGardener.GARDENER_PATCH_RADIUS, myTeam);
+		
+		if(rc.getType() != RobotType.GARDENER)
+		{
+			for(RobotInfo bot : myBots)
+			{
+				if(bot.getType() == RobotType.GARDENER)
+				{
+					Pathfinding.tryMove(rc.getLocation().directionTo(bot.getLocation()).opposite());
+					break;
+				}
+			}
+		}
 		locateType(RobotType.ARCHON, ARCHON_TARGETING_CHANNEL, STRIKE_LOC_CHANNEL);
 		locateType(RobotType.GARDENER, GARDENER_TARGETING_CHANNEL, SCOUT_LOC_CHANNEL);
 		BotGardener.addGridLocation();

@@ -15,15 +15,16 @@ class BotArchon extends Globals {
 			BuildQueue.enqueue(RobotType.SCOUT);
 			BuildQueue.enqueue(RobotType.LUMBERJACK);
 			BuildQueue.enqueue(RobotType.GARDENER);
-			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.SOLDIER);
 			BuildQueue.enqueue(RobotType.LUMBERJACK);
 		
-			for(int i = 0; i < 5; i ++)
+			for(int i = 0; i < 3; i ++)
 			{
 				BuildQueue.enqueue(RobotType.GARDENER);
 				BuildQueue.enqueue(RobotType.LUMBERJACK);
 				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
 			}
 		}
 		
@@ -39,12 +40,15 @@ class BotArchon extends Globals {
 			BuildQueue.enqueue(RobotType.SCOUT);
 			BuildQueue.enqueue(RobotType.LUMBERJACK);
 	
-			for(int i = 0; i < 5; i ++)
+			for(int i = 0; i < 2; i ++)
 			{
 				BuildQueue.enqueue(RobotType.GARDENER);
 				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.LUMBERJACK);
 				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
 			}
 		}
 	}
@@ -64,11 +68,11 @@ class BotArchon extends Globals {
 		{
 			initializeChannels();
 			makeInitialQueue();
-			rc.broadcast(BEST_ARCHON_ID_CHANNEL, rc.getID());
 		}
 		
 		MapLocation bestLoc = BotGardener.getBestLocation();
 		int numTreesCanPlant = BotGardener.getOpenTreeSpotsAbout(bestLoc);
+		System.out.println("MY: " + numTreesCanPlant + "BEST: " + rc.readBroadcast(NUM_INIT_TREES_CHANNEL));
 		
 		if(rc.readBroadcast(NUM_INIT_TREES_CHANNEL) < numTreesCanPlant)
 		{
@@ -78,20 +82,20 @@ class BotArchon extends Globals {
 		}
 		
 		rc.setIndicatorDot(bestLoc, 0, 0, 127);
-		rc.setIndicatorDot(Messaging.recieveLocation(START_LOC_CHANNEL), 0, 127, 0);
-		System.out.println(rc.readBroadcast(NUM_INIT_TREES_CHANNEL));
-		System.out.println(rc.readBroadcast(BEST_ARCHON_ID_CHANNEL));
 		
 		Clock.yield();
 		
 		if(rc.readBroadcast(BEST_ARCHON_ID_CHANNEL) == rc.getID())
 		{
+			System.out.println("ITS MEE");
 			plantingList.addLocation(bestLoc);
 			if(BuildQueue.tryBuildFromQueue(birthLoc.directionTo(bestLoc)))
         		rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, true);
 		}
 		
 		gridStart = Messaging.recieveLocation(START_LOC_CHANNEL);
+		
+		Clock.yield();
 		
         while (true) {
             try {
@@ -105,7 +109,7 @@ class BotArchon extends Globals {
             		BuildQueue.printQueue();
             		System.out.println("NUM GARD: " + rc.readBroadcast(GARDENER_COUNT_CHANNEL));
             		System.out.println("ARC: " + rc.readBroadcast(ARCHON_TARGETING_CHANNEL) + " SCO: " + rc.readBroadcast(GARDENER_TARGETING_CHANNEL) + " DEF: " + rc.readBroadcast(DEFENSE_CHANNEL));
-            		//plantingList.printList();
+            		plantingList.printList();
             		//plantingList.debug();
             	}
             	
@@ -135,7 +139,7 @@ class BotArchon extends Globals {
                 
                 if(!rc.hasMoved()) //move back to birth location CHANGE THIS!!!!
                 {
-                	if(rc.getLocation().distanceTo(birthLoc) > 1)
+                	if(rc.getLocation().distanceTo(birthLoc) > 5)
                 	{
                 		Pathfinding.moveTo(birthLoc);
                 	}
