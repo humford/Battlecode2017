@@ -226,19 +226,20 @@ public class BotGardener extends Globals {
 	
 	public static final float gridSpacing = 2f;
 	
-	public static ArrayList<MapLocation> getGridLocations(MapLocation location) throws GameActionException {
+	public static MapLocation[] getGridLocations(MapLocation location) throws GameActionException {
 		float testRadius = rc.getType().sensorRadius - GARDENER_PATCH_RADIUS;
 		float minRadius = 3;
 		float boxWidth = testRadius * 2;
 		int gridWidth = (int)(boxWidth / gridSpacing + 2);
-		ArrayList<MapLocation> ret = new ArrayList<>(gridWidth * gridWidth);
+		MapLocation[] ret = new MapLocation[gridWidth * gridWidth];
 		MapLocation start = location.translate(-testRadius, -testRadius);
+		int k = 0;
 		for (float dx = 0; dx < boxWidth; dx += gridSpacing) {
 			for (float dy = 0; dy < boxWidth; dy += gridSpacing) {
 				MapLocation l = start.translate(dx,dy);
 				float dist = l.distanceTo(location);
 				if (dist > testRadius || dist < minRadius) continue;
-				ret.add(start.translate(dx,  dy));
+				ret[k++] = start.translate(dx,  dy);
 			}
 		}
 
@@ -247,7 +248,10 @@ public class BotGardener extends Globals {
 	
 	// Gets the best starting location within sensor radius
 	public static MapLocation getBestLocation() throws GameActionException {
-		ArrayList<MapLocation> locations = getGridLocations(rc.getLocation());
+		//int start = Clock.getBytecodeNum();
+		MapLocation[] locations = getGridLocations(rc.getLocation());
+		//int diff = Clock.getBytecodeNum() - start;
+		//System.out.println("Cost of getting grid: " + Integer.toString(diff));
 		MapLocation ret = null;
 		//System.out.println("MyLocation: " + rc.getLocation().toString());
 		int max_trees = -1;
