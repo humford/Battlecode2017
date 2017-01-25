@@ -201,4 +201,31 @@ public class BotGardener extends Globals {
 		}
 		return ret;
 	}
+	
+	public static MapLocation gridStart;
+	public static final float spacing = 2 * GARDENER_PATCH_RADIUS;
+	
+	// Some of the returned location will be null
+	public static MapLocation[] gridSpotsInSensorRadius() throws GameActionException {
+		int maxGridWidth = (int)(2 * rc.getType().sensorRadius / spacing + 2);
+		MapLocation[] ret = new MapLocation[maxGridWidth * maxGridWidth];
+		float halfGridDist = maxGridWidth * spacing / 2;
+		MapLocation botL = rc.getLocation().translate(-halfGridDist, -halfGridDist);
+		int x = (int) Math.floor((botL.x - gridStart.x) / spacing);
+		int y = (int) Math.floor((botL.y - gridStart.y) / spacing);
+		
+		MapLocation firstGrid = gridStart.translate(x * spacing, y * spacing);
+		
+		int k = 0;
+		for (float dx = 0; dx < 2 * halfGridDist; dx += spacing) {
+			for (float dy = 0; dy < 2 * halfGridDist; dy += spacing) {
+				MapLocation l = firstGrid.translate(dx, dy);
+				if (l.distanceTo(myLocation) > rc.getType().sensorRadius)
+					continue;
+				ret[k++] = l;
+			}
+		}
+		
+		return ret;
+	}
 }
