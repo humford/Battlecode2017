@@ -171,7 +171,23 @@ public class BuildQueue extends Globals{
         {
         	if(rc.hasRobotBuildRequirements(BuildQueue.peak()) && rc.isBuildReady())
         	{
-    			if(buildWhereFree(BuildQueue.peak(), 6))
+    			if(buildWhereFree(BuildQueue.peak(), 12, Direction.NORTH))
+    			{
+    				BuildQueue.dequeue();
+    				return true;
+    			}
+        	}
+        }
+		return false;
+	}
+	
+	public static boolean tryBuildFromQueue(Direction dir) throws GameActionException
+	{
+		if(BuildQueue.getLength() > 0)
+        {
+        	if(rc.hasRobotBuildRequirements(BuildQueue.peak()) && rc.isBuildReady())
+        	{
+    			if(buildWhereFree(BuildQueue.peak(), 12, dir))
     			{
     				BuildQueue.dequeue();
     				return true;

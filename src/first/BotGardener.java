@@ -112,7 +112,7 @@ public class BotGardener extends Globals {
 				MapLocation treeSpot = getTreeSpot(i);
 				//System.out.println("Looking at tree in spot " + treeSpot.toString());
 				if (rc.isLocationOccupiedByTree(treeSpot)){
-					System.out.println("Occupied");
+					//System.out.println("Occupied");
 					continue;
 				}
 				if (rc.canPlantTree(treeDirs[i])) {
@@ -127,11 +127,11 @@ public class BotGardener extends Globals {
 			TreeInfo lowHealthTree = getLowHealthTree();
 			if (lowHealthTree != null) {
 				MapLocation treeSpot = lowHealthTree.getLocation();
-				System.out.println("ATTEMPTING TO WATER");
+				//System.out.println("ATTEMPTING TO WATER");
 				if (rc.canWater(treeSpot))
 				{
 					rc.water(treeSpot);
-					System.out.println("WATERING");
+					//System.out.println("WATERING");
 				}
 			}
 			Clock.yield();

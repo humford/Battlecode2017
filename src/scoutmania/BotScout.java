@@ -76,7 +76,7 @@ public class BotScout extends Globals {
       	  		
       	  		existLumberjacks = false;
       	  		
-      	  		if(!rc.hasMoved() && (rc.readBroadcastBoolean(DEFENSE_CHANNEL) || rc.readBroadcast(GARDENER_TARGETING_CHANNEL) != -1))
+      	  		if(!rc.hasMoved() && rc.readBroadcast(GARDENER_TARGETING_CHANNEL) != -1)
   	  			{
   	  				RobotInfo[] closeBots = rc.senseNearbyRobots(RobotType.SCOUT.bodyRadius + 3*RobotType.SCOUT.strideRadius + GameConstants.LUMBERJACK_STRIKE_RADIUS, them);
   	  				MapLocation temp = rc.getLocation();
@@ -94,10 +94,7 @@ public class BotScout extends Globals {
   	  				{
   	  					Direction targetLoc;
   	  				
-  	  					if(rc.readBroadcastBoolean(DEFENSE_CHANNEL))
-  	  						targetLoc = rc.getLocation().directionTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
-  	  					else
-  	  						targetLoc = rc.getLocation().directionTo(Messaging.recieveLocation(SCOUT_LOC_CHANNEL));
+  	  					targetLoc = rc.getLocation().directionTo(Messaging.recieveLocation(SCOUT_LOC_CHANNEL));
   	  				
   	  					temp = temp.add(targetLoc, 2);
   	  					
@@ -115,16 +112,10 @@ public class BotScout extends Globals {
       	  		
       	  		if(!rc.hasMoved())
       		  	{
-      	  			if(rc.readBroadcastBoolean(DEFENSE_CHANNEL))
-		    		  	Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
-      	  			
-      			  	else
-      		      	{
-      			  		if(rc.readBroadcast(GARDENER_TARGETING_CHANNEL) == -1) 
-      			  			Pathfinding.wander();
-      		    	  	else
-      		    		  	Pathfinding.moveTo(Messaging.recieveLocation(SCOUT_LOC_CHANNEL));
-      		      	}
+      	  			if(rc.readBroadcast(GARDENER_TARGETING_CHANNEL) == -1) 
+      			  		Pathfinding.wander();
+      		    	  else
+      		    		  Pathfinding.moveTo(Messaging.recieveLocation(SCOUT_LOC_CHANNEL));
       		  	}
       	  		
       	  		//fire bullets prioritize gardeners

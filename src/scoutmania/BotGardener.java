@@ -3,37 +3,84 @@ import java.util.ArrayList;
 import battlecode.common.*;
 
 public class BotGardener extends Globals {
-	public static final int MAX_WANDER_TURNS = 100;
+	public static final int MAX_WANDER_TURNS = 200;
 	public static final int GARDENER_CIRCLE_RADIUS = 2;
 	public static final int GARDENER_PATCH_RADIUS = 4;
+	
+	static MapLocation plantLoc = null;
 	
 	public static void gardener_common() throws GameActionException {
 		loop_common();
 		
+		if(plantLoc != null)
+		{
+			rc.setIndicatorDot(plantLoc, 0, 0, 127);
+		}
+		
 		rc.broadcast(GARDENER_SUM_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) + 1);
-		rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, false);
-		rc.broadcastBoolean(HAS_COUNTED_CHANNEL, false);
 		
 		RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
-    	Messaging.broadcastDefendMeIF(enemyBots.length > 1);
+    	Messaging.broadcastDefendMeIF(enemyBots.length >= 1);
 	}
 	
 	public static void loop() throws GameActionException {
+		
+		rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, false);
+		
 		for (int i = 0; i < MAX_WANDER_TURNS; i++) {
 			
 			gardener_common();
-			 
-			//production
-			
-			BuildQueue.tryBuildFromQueue();
-            
-            
-            Micro.dodge();
-			
-			Pathfinding.wander(); // NEED BETTER FUNCTION TO MOVE
 			MapLocation location = rc.getLocation();
-			if (!rc.isCircleOccupiedExceptByThisRobot(location, GARDENER_PATCH_RADIUS))
+			 
+			//production build away from motion
+			
+			if(!location.equals(plantLoc) && plantLoc != null)
+				BuildQueue.tryBuildFromQueue(location.directionTo(plantLoc).opposite());
+			else
+				BuildQueue.tryBuildFromQueue();
+			//if very open then start building 
+			
+			if (!rc.isCircleOccupiedExceptByThisRobot(location, rc.getType().sensorRadius))
 				macro();
+			
+			//get location from list of open spots
+            
+			if(plantLoc == null)
+			{
+				plantLoc = plantingList.getNearest(location);
+				trashList.addLocation(plantLoc);
+			}
+			
+			if(plantLoc == null)
+			{
+				Pathfinding.wander(); // NEED BETTER FUNCTION TO MOVE
+			}
+			else
+			{
+				if(!plantingList.peakNearest(location).equals(plantLoc))
+				{
+					trashList.getNearest(plantLoc);
+					plantingList.addLocation(plantLoc);
+					plantLoc = plantingList.getNearest(location);
+					trashList.addLocation(plantLoc);
+				}
+				
+				if(rc.canSenseAllOfCircle(plantLoc, GARDENER_PATCH_RADIUS) && rc.onTheMap(plantLoc, GARDENER_PATCH_RADIUS))
+				{
+					if(rc.senseNearbyTrees(plantLoc, GARDENER_PATCH_RADIUS, null).length > 0)
+					{
+						plantLoc = plantingList.getNearest(location);
+					}
+				}
+				
+				if(rc.canMove(plantLoc) && location.distanceTo(plantLoc) <= rc.getType().strideRadius)
+				{
+					rc.move(plantLoc);
+					macro();
+				}
+				else
+					Pathfinding.moveTo(plantLoc);
+			}
 			Clock.yield();
 		}
 		macro();
@@ -63,7 +110,7 @@ public class BotGardener extends Globals {
 	}
 	
 	public static Direction getProductionDirection() throws GameActionException {
-		return rc.getLocation().directionTo(initialArchonLocations[0]).rotateLeftDegrees(60);
+		return rc.getLocation().directionTo(initialArchonLocations[0]);
 	}
 	
 	public static MapLocation[] getTreeSpotsAbout(MapLocation location) throws GameActionException {
@@ -202,8 +249,7 @@ public class BotGardener extends Globals {
 		return ret;
 	}
 	
-	public static MapLocation gridStart;
-	public static final float spacing = 2 * GARDENER_PATCH_RADIUS;
+	public static final float spacing = 2.25f * GARDENER_PATCH_RADIUS;
 	
 	// Some of the returned location will be null
 	public static MapLocation[] gridSpotsInSensorRadius() throws GameActionException {
@@ -227,5 +273,25 @@ public class BotGardener extends Globals {
 		}
 		
 		return ret;
+	}
+	
+	public static void addGridLocation() throws GameActionException {
+		MapLocation botL = rc.getLocation();
+		int x = (int) Math.round((botL.x - gridStart.x) / spacing);
+		int y = (int) Math.round((botL.y - gridStart.y) / spacing);
+		
+		MapLocation firstGrid = gridStart.translate(x * spacing, y * spacing);
+		
+		if(rc.canSenseAllOfCircle(firstGrid, GARDENER_PATCH_RADIUS) && rc.onTheMap(firstGrid, GARDENER_PATCH_RADIUS))
+		{
+			if(!rc.isCircleOccupiedExceptByThisRobot(firstGrid, GARDENER_PATCH_RADIUS))
+			{
+				if(!trashList.isIn(firstGrid))
+				{
+					plantingList.addLocation(firstGrid);
+					rc.setIndicatorDot(firstGrid, 0, 127, 0);
+				}
+			}
+		}
 	}
 }

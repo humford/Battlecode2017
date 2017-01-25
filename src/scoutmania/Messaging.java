@@ -24,6 +24,7 @@ public class Messaging extends Globals{
     {	
     	if(isUnderAttack)
     	{
+    		System.out.println("UNDER ATTACK");
     		Messaging.broadcastLocation(rc.getLocation(), DEFENSE_LOC_CHANNEL);
     		rc.broadcastBoolean(DEFENSE_CHANNEL, true);
     		wasUnderAttack = true;
@@ -31,6 +32,7 @@ public class Messaging extends Globals{
     	
     	else if(wasUnderAttack)
     	{
+    		System.out.println("NOT UNDER ATTACK");
     		rc.broadcastBoolean(DEFENSE_CHANNEL, false);
     		wasUnderAttack = false;
     	}

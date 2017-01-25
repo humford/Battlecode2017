@@ -15,7 +15,7 @@ class BotArchon extends Globals {
 			
 			LocationList locs = new LocationList(1000, 1100);
 			
-			for(int i = 0; i < 10; i ++)
+			for(int i = 0; i < 5; i ++)
 			{
 				locs.addLocation(new MapLocation(i, i));
 			}
@@ -52,13 +52,15 @@ class BotArchon extends Globals {
 			
 			locs.printList();
 			
+			locs.debug();
+			
 
 		}
 		
         while (true) {
             try {
             	
-            //	rc.disintegrate();
+            	rc.disintegrate();
             	
             	rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL));
             	rc.broadcast(GARDENER_SUM_CHANNEL, 0);

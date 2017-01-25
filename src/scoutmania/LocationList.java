@@ -12,8 +12,6 @@ public class LocationList extends Globals {
 		start_limit = _start;
 		end_limit = _end;
 		length = end_limit - start_limit;
-		
-		rc.broadcast(HEAD_CHANNEL, start_limit);
 	}
 	
 	public int getHead() throws GameActionException
@@ -28,6 +26,7 @@ public class LocationList extends Globals {
 		if(head == 0)
 		{
 			head = start_limit;
+			rc.broadcast(HEAD_CHANNEL, head);
 			Messaging.broadcastLocation(loc, head);
 			rc.broadcast(head + 2, 0);
 		}
@@ -53,7 +52,7 @@ public class LocationList extends Globals {
 			{
 				if(rc.readBroadcast(channel) == 0 && rc.readBroadcast(channel + 1) == 0 && rc.readBroadcast(channel + 2) == 0)
 				{
-					rc.broadcast(ptrchannel, channel + i);
+					rc.broadcast(ptrchannel, channel);
 					Messaging.broadcastLocation(loc, channel);
 					rc.broadcast(channel + 2, 0);
 					return;
@@ -68,7 +67,8 @@ public class LocationList extends Globals {
 	public MapLocation getNearest(MapLocation loc) throws GameActionException
 	{
 		int head = getHead();
-		if(head == 0) return null;
+		if(head == 0) 
+			return null;
 		int ptrchannel = head + 2;
 		
 		MapLocation bestLoc = Messaging.recieveLocation(head);
@@ -110,23 +110,85 @@ public class LocationList extends Globals {
 		return bestLoc;
 	}
 	
-	public void printList() throws GameActionException
+	public MapLocation peakNearest(MapLocation loc) throws GameActionException
 	{
 		int head = getHead();
-		if(head == 0) return;
+		if(head == 0) 
+			return null;
+		int ptrchannel = head + 2;
+		
+		MapLocation bestLoc = Messaging.recieveLocation(head);
+		float bestDist = loc.distanceTo(bestLoc);
+		
+		while(rc.readBroadcast(ptrchannel) != 0)
+		{
+			head = rc.readBroadcast(ptrchannel);
+			
+			MapLocation curLoc = Messaging.recieveLocation(head);
+			float curDist = loc.distanceTo(curLoc);
+			
+			if(curDist < bestDist)
+			{
+				bestLoc = curLoc;
+				bestDist = curDist;
+			}
+			ptrchannel = head + 2;
+		}
+		
+		return bestLoc;
+	}
+	
+	public boolean isIn(MapLocation loc) throws GameActionException
+	{
+		int head = getHead();
+		if(head == 0) 
+			return false;
 		int ptrchannel = head + 2;
 		
 		while(rc.readBroadcast(ptrchannel) != 0)
 		{
 			head = rc.readBroadcast(ptrchannel);
-			ptrchannel = head + 2;
 			
+			MapLocation curLoc = Messaging.recieveLocation(head);
+			
+			if(curLoc.equals(loc))
+			{
+				return true;
+			}
+			ptrchannel = head + 2;
+		}
+		
+		return false;
+	}
+	
+	public void printList() throws GameActionException
+	{
+		int head = getHead();
+		int ptrchannel = head + 2;
+		
+		while(head != 0)
+		{	
 			MapLocation curLoc = Messaging.recieveLocation(head);
 			
 			System.out.println(curLoc.toString());
 			
 			rc.setIndicatorDot(curLoc, 0, 127, 0);
 			
+			head = rc.readBroadcast(ptrchannel);
+			ptrchannel = head + 2;
+			
+		}
+	}
+	
+	public void debug() throws GameActionException
+	{
+		System.out.println("HEAD: " + rc.readBroadcast(HEAD_CHANNEL));
+		if(getHead() != 0)
+		{
+			for(int i = getHead(); i < getHead() + 30; i++)
+			{
+				System.out.println(rc.readBroadcast(i));
+			}
 		}
 	}
 }

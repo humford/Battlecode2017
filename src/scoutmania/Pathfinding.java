@@ -158,7 +158,7 @@ public class Pathfinding extends Globals {
     	float angle = 0;
     	
     	if(rc.onTheMap(rc.getLocation().add(lastWander, rc.getType().strideRadius), (float) ((rc.getType().sensorRadius - rc.getType().strideRadius)*0.75)))
-    		angle = myRand.nextFloat()*(float)Math.PI/2;
+    		angle = myRand.nextFloat()*(float)Math.PI/4;
     	else
     		angle = (myRand.nextFloat() + 1)*(float)Math.PI/2;
     	

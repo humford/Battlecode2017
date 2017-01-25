@@ -7,12 +7,12 @@ public class Globals {
 	static RobotController rc;
     static Random myRand;
     static MapLocation birthLoc;
+    static MapLocation gridStart;
     
     static final int GARDENER_UPPER_LIMIT = 10;
     // Keep broadcast channels
     static final int GARDENER_COUNT_CHANNEL = 1;
     static final int GARDENER_SUM_CHANNEL = 2;
-    static final int HAS_COUNTED_CHANNEL = 3;
     static final int GARDENER_INPRODUCTION_CHANNEL = 4;
     
     //LOC_CHANNELS use next integer channel as well
@@ -38,12 +38,20 @@ public class Globals {
     static final int LUMBERJACK_MAX = 5;
     static final int ROUND_CHANGE = 500;
     
+    //INITIALIZATION CHANNELS
+    
+    static final int START_LOC_CHANNEL = 100;
+	static final int NUM_INIT_TREES_CHANNEL = 102;
+	static final int BEST_ARCHON_ID_CHANNEL = 103; 
+    
     
     // LOCATION LISTS
     //USES CHANNELS 1999 - 3000
     static LocationList treeList;
     //USES CHANNELS 3999 - 5000
     static LocationList plantingList;
+  //USES CHANNELS 6999 - 8000
+    static LocationList trashList;
  
     
 	
@@ -63,6 +71,9 @@ public class Globals {
         
         treeList = new LocationList(2000, 3000);
         plantingList = new LocationList(4000, 5000);
+        trashList = new LocationList(7000, 8000);
+        
+        gridStart = Messaging.recieveLocation(START_LOC_CHANNEL);
        
     }
 
@@ -71,8 +82,7 @@ public class Globals {
         return(new Direction(myRand.nextFloat()*2*(float)Math.PI));
     }
     
-    public static boolean buildWhereFree(RobotType bot, int check) throws GameActionException {
-    	Direction dir = Direction.NORTH;
+    public static boolean buildWhereFree(RobotType bot, int check, Direction dir) throws GameActionException {
         for(int i = 0; i < check; i++)
         {
         	if(rc.canBuildRobot(bot, dir))
@@ -300,6 +310,7 @@ public class Globals {
 		refillQueue();
 		locateType(RobotType.ARCHON, ARCHON_TARGETING_CHANNEL, STRIKE_LOC_CHANNEL);
 		locateType(RobotType.GARDENER, GARDENER_TARGETING_CHANNEL, SCOUT_LOC_CHANNEL);
+		BotGardener.addGridLocation();
 	}
 }
 
