@@ -1,4 +1,6 @@
 package scoutmania;
+import java.util.ArrayList;
+
 import battlecode.common.*;
 
 public class BotGardener extends Globals {
@@ -40,26 +42,46 @@ public class BotGardener extends Globals {
 	
 	static MapLocation myLocation;
 	static Direction treeDirs[];
+	static MapLocation treeLocations[];
 	static Direction productionDirs;
 	
 	public static MapLocation getTreeSpot(int idx) {
-		return rc.getLocation().add(treeDirs[idx], GARDENER_CIRCLE_RADIUS);
+		return treeLocations[idx];
 	}
 	
 	public static MapLocation getProductionSpot() {
 		return rc.getLocation().add(productionDirs, GARDENER_CIRCLE_RADIUS);
 	}
 	
-	public static void init() throws GameActionException {
-		myLocation = rc.getLocation();
-		treeDirs = new Direction[5];
+	public static Direction[] getTreeDirs() throws GameActionException {
+		Direction[] ret = new Direction[5];
 		Direction dir = rc.getLocation().directionTo(initialArchonLocations[0]).rotateLeftDegrees(60);
 		for (int i = 0; i < 5; i++) {
-			treeDirs[i] = dir;
+			ret[i] = dir;
 			dir = dir.rotateLeftDegrees(60);
 		}
+		return ret;
+	}
+	
+	public static Direction getProductionDirection() throws GameActionException {
+		return rc.getLocation().directionTo(initialArchonLocations[0]).rotateLeftDegrees(60);
+	}
+	
+	public static MapLocation[] getTreeSpotsAbout(MapLocation location) throws GameActionException {
+		MapLocation ret[] = new MapLocation[5];
+		if (treeDirs == null) treeDirs = getTreeDirs();
+		for (int i = 0; i < 5; i++) {
+			ret[i] = location.add(treeDirs[i], GARDENER_CIRCLE_RADIUS);
+		}
+		return ret;
+	}
+	
+	public static void init() throws GameActionException {
+		myLocation = rc.getLocation();
+		treeDirs = getTreeDirs();
+		treeLocations = getTreeSpotsAbout(myLocation);
 		
-		productionDirs = dir;
+		productionDirs = getProductionDirection();
 	}
 	
 	public static TreeInfo getLowHealthTree() {
@@ -118,5 +140,66 @@ public class BotGardener extends Globals {
 			}
 			Clock.yield();
 		}
+		
+	}
+	
+	public static int getOpenTreeSpotsAbout(MapLocation location) throws GameActionException {
+		if (!rc.onTheMap(location)) return 0;
+		if(rc.isCircleOccupied(location, RobotType.GARDENER.bodyRadius)) return -1;
+		MapLocation[] spots = getTreeSpotsAbout(location);
+		TreeInfo[] trees = rc.senseNearbyTrees(location, GARDENER_PATCH_RADIUS, myTeam);
+		int ret = 0;
+		
+		for (MapLocation spot : spots) {
+			boolean collision = false;
+			if (!rc.onTheMap(spot)) continue;
+			for (TreeInfo tree : trees) {
+				if (MapLocation.doCirclesCollide(spot, GameConstants.BULLET_TREE_RADIUS, tree.getLocation(), tree.getRadius())) {
+					collision = true;
+					break;
+				}
+			}
+			if (!collision) ret++;
+		}
+		return ret;
+	}
+	
+	public static final float gridSpacing = 1.7f;
+	
+	public static ArrayList<MapLocation> getGridLocations(MapLocation location) throws GameActionException {
+		float testRadius = rc.getType().sensorRadius - GARDENER_PATCH_RADIUS;
+		float minRadius = 3;
+		float boxWidth = testRadius * 2;
+		int gridWidth = (int)(boxWidth / gridSpacing + 2);
+		ArrayList<MapLocation> ret = new ArrayList<>(gridWidth * gridWidth);
+		MapLocation start = location.translate(-testRadius, -testRadius);
+		for (float dx = 0; dx < boxWidth; dx += gridSpacing) {
+			for (float dy = 0; dy < boxWidth; dy += gridSpacing) {
+				MapLocation l = start.translate(dx,dy);
+				float dist = l.distanceTo(location);
+				if (dist > testRadius || dist < minRadius) continue;
+				ret.add(start.translate(dx,  dy));
+			}
+		}
+
+		return ret;
+	}
+	
+	// Gets the best starting location within sensor radius
+	public static MapLocation getBestLocation() throws GameActionException {
+		ArrayList<MapLocation> locations = getGridLocations(rc.getLocation());
+		MapLocation ret = null;
+		//System.out.println("MyLocation: " + rc.getLocation().toString());
+		int max_trees = -1;
+		for (MapLocation location : locations) {
+			//rc.setIndicatorDot(location, 0, 0, 255);
+			if (location == null) continue;
+			int num_spots = getOpenTreeSpotsAbout(location);
+			if (num_spots > max_trees) {
+				ret = location;
+				max_trees = num_spots;
+			}
+		}
+		return ret;
 	}
 }
