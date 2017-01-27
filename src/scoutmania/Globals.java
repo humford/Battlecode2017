@@ -9,7 +9,7 @@ public class Globals {
     static MapLocation birthLoc;
     static MapLocation gridStart;
     
-    static final int GARDENER_UPPER_LIMIT = 10;
+    static int GARDENER_UPPER_LIMIT;
     // Keep broadcast channels
     static final int GARDENER_COUNT_CHANNEL = 1;
     static final int GARDENER_SUM_CHANNEL = 2;
@@ -74,6 +74,7 @@ public class Globals {
         trashList = new LocationList(6949, 9950);
         
         gridStart = Messaging.recieveLocation(START_LOC_CHANNEL);
+        GARDENER_UPPER_LIMIT = 5 * initialArchonLocations.length;
        
     }
 
@@ -335,7 +336,7 @@ public class Globals {
 	{
 		if(BuildQueue.getLength() <= 0)
     	{
-    		if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT)
+    		if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT && !plantingList.IsEmpty())
         	{
     			BuildQueue.enqueue(RobotType.GARDENER);
         	}
