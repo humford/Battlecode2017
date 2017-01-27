@@ -56,7 +56,7 @@ class BotArchon extends Globals {
 		
 		Messaging.broadcastLocation(initialArchonLocations[0], STRIKE_LOC_CHANNEL);
 		Messaging.broadcastLocation(initialArchonLocations[0], SCOUT_LOC_CHANNEL);
-		
+		BuildQueue.clearQueue();
 		
 	}
 	
@@ -69,7 +69,7 @@ class BotArchon extends Globals {
 		}
 		
 		MapLocation bestLoc = BotGardener.getBestLocation();
-		int numTreesCanPlant = BotGardener.getOpenTreeSpotsAbout(bestLoc);
+		int numTreesCanPlant = BotGardener.getOpenTreeSpotsAbout(bestLoc, rc.senseNearbyTrees());
 		System.out.println("MY: " + numTreesCanPlant + "BEST: " + rc.readBroadcast(NUM_INIT_TREES_CHANNEL));
 		
 		if(rc.readBroadcast(NUM_INIT_TREES_CHANNEL) < numTreesCanPlant)
@@ -86,6 +86,7 @@ class BotArchon extends Globals {
 		if(rc.readBroadcast(BEST_ARCHON_ID_CHANNEL) == rc.getID())
 		{
 			System.out.println("ITS MEE");
+			BuildQueue.printQueue();
 			plantingList.addLocation(bestLoc);
 			if(BuildQueue.tryBuildFromQueue(birthLoc.directionTo(bestLoc)))
         		rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, true);

@@ -124,7 +124,8 @@ public class BotGardener extends Globals {
 	
 	public static MapLocation[] getTreeSpotsAbout(MapLocation location) throws GameActionException {
 		MapLocation ret[] = new MapLocation[5];
-		if (treeDirs == null) treeDirs = getTreeDirs();
+		if (treeDirs == null) 
+			treeDirs = getTreeDirs();
 		for (int i = 0; i < 5; i++) {
 			ret[i] = location.add(treeDirs[i], GARDENER_CIRCLE_RADIUS);
 		}
@@ -209,30 +210,33 @@ public class BotGardener extends Globals {
 		
 	}
 	
-	public static int getOpenTreeSpotsAbout(MapLocation location) throws GameActionException {
-		if (!rc.onTheMap(location)) return 0;
-		if(rc.isCircleOccupied(location, RobotType.GARDENER.bodyRadius)) return -1;
+	public static int getOpenTreeSpotsAbout(MapLocation location, TreeInfo[] trees) throws GameActionException {
+		if (!rc.onTheMap(location)) 
+			return 0;
+		if(rc.isCircleOccupied(location, RobotType.GARDENER.bodyRadius)) 
+			return -1;
 		MapLocation[] spots = getTreeSpotsAbout(location);
-		TreeInfo[] trees = rc.senseNearbyTrees(location, -1, null);
 		int ret = 0;
+
+		boolean collision;
 		
-		for (MapLocation spot : spots) {
-			boolean collision = false;
-			if (!rc.onTheMap(spot)) continue;
+		for (int i = 0; i < 5; i++) {
+			collision = false;
+			if (!rc.onTheMap(spots[i], GameConstants.BULLET_TREE_RADIUS))
+				continue;
 			for (TreeInfo tree : trees) {
-				if (MapLocation.doCirclesCollide(spot, GameConstants.BULLET_TREE_RADIUS, tree.getLocation(), tree.getRadius()) || !rc.onTheMap(spot, GameConstants.BULLET_TREE_RADIUS)) {
+				if (MapLocation.doCirclesCollide(spots[i], GameConstants.BULLET_TREE_RADIUS, tree.getLocation(), tree.getRadius())) {
 					collision = true;
 					break;
 				}
 			}
-			if (!collision) ret++;
+			if (!collision) 
+				ret++;
 		}
-		rc.setIndicatorDot(location, 127, 0, 0);
-		System.out.println("SEARCH: " + ret);
 		return ret;
 	}
 	
-	public static final float gridSpacing = 2f;
+	public static final float gridSpacing = 1.25f;
 	
 	public static MapLocation[] getGridLocations(MapLocation location) throws GameActionException {
 		float testRadius = rc.getType().sensorRadius - GARDENER_PATCH_RADIUS;
@@ -247,10 +251,9 @@ public class BotGardener extends Globals {
 				MapLocation l = start.translate(dx,dy);
 				float dist = l.distanceTo(location);
 				if (dist > testRadius || dist < minRadius) continue;
-				ret[k++] = start.translate(dx,  dy);
+				ret[k++] = l;
 			}
 		}
-
 		return ret;
 	}
 	
@@ -263,10 +266,23 @@ public class BotGardener extends Globals {
 		MapLocation ret = null;
 		//System.out.println("MyLocation: " + rc.getLocation().toString());
 		int max_trees = -1;
+		
+		TreeInfo[] trees = rc.senseNearbyTrees();
+		
 		for (MapLocation location : locations) {
-			//rc.setIndicatorDot(location, 0, 0, 255);
-			if (location == null) continue;
-			int num_spots = getOpenTreeSpotsAbout(location);
+			if (location == null) 
+				continue;
+			
+			rc.setIndicatorDot(location, 0, 0, 255);
+			
+			//start = Clock.getBytecodeNum();
+			int num_spots = getOpenTreeSpotsAbout(location, trees);
+			//diff = Clock.getBytecodeNum() - start;
+			//System.out.println("Cost of getting grid: " + Integer.toString(diff));
+			
+			//if(num_spots == 5)
+			//	return location;
+			
 			if (num_spots > max_trees) {
 				ret = location;
 				max_trees = num_spots;
@@ -275,7 +291,7 @@ public class BotGardener extends Globals {
 		return ret;
 	}
 	
-	public static final float spacing = 2.25f * GARDENER_PATCH_RADIUS;
+	public static final float spacing = 2f * GARDENER_PATCH_RADIUS;
 	
 	// Some of the returned location will be null
 	public static MapLocation[] gridSpotsInSensorRadius() throws GameActionException {
