@@ -222,6 +222,11 @@ public class LocationList extends Globals {
 		}
 	}
 	
+	public boolean IsEmpty() throws GameActionException
+	{
+		return (getHead() == 0);
+	}
+	
 	public void debug() throws GameActionException
 	{
 		System.out.println("HEAD: " + rc.readBroadcast(HEAD_CHANNEL));

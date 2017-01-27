@@ -13,7 +13,7 @@ public class Pathfinding extends Globals {
      * @throws GameActionException
      */
     public static boolean tryMove(Direction dir) throws GameActionException {
-        return tryMove(dir,20,5);
+        return tryMove(dir,10,12);
     }
 
 
@@ -243,6 +243,7 @@ public class Pathfinding extends Globals {
     	tryMove(lastWander);
 		return;
     }
+    
     
     public static void gardenerWander() throws GameActionException {
     	float angle = 0;

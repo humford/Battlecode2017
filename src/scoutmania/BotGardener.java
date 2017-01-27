@@ -1,5 +1,4 @@
 package scoutmania;
-import java.util.ArrayList;
 import battlecode.common.*;
 
 public class BotGardener extends Globals {
@@ -133,10 +132,10 @@ public class BotGardener extends Globals {
 	}
 	
 	public static void queueNearbyTrees(float radius) throws GameActionException {
-		TreeInfo[] nearbyTrees = rc.senseNearbyTrees();
+		TreeInfo[] nearbyTrees = rc.senseNearbyTrees(radius);
 		for (TreeInfo tree : nearbyTrees) {
-			if (tree.team == myTeam) continue;
-			treeList.addLocation(tree.location);
+			if (tree.team != myTeam) 
+				treeList.addLocation(tree.location);
 		}
 	}
 	

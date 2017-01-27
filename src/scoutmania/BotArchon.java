@@ -9,9 +9,8 @@ class BotArchon extends Globals {
 	public static void makeInitialQueue() throws GameActionException
 	{
 		BuildQueue.clearQueue();
-		if(rc.senseNearbyTrees().length > 3) //DENSE
+		if(isDense()) //DENSE
 		{
-			BuildQueue.enqueue(RobotType.GARDENER);
 			BuildQueue.enqueue(RobotType.SCOUT);
 			BuildQueue.enqueue(RobotType.LUMBERJACK);
 			BuildQueue.enqueue(RobotType.GARDENER);
@@ -20,7 +19,6 @@ class BotArchon extends Globals {
 		
 			for(int i = 0; i < 3; i ++)
 			{
-				BuildQueue.enqueue(RobotType.GARDENER);
 				BuildQueue.enqueue(RobotType.LUMBERJACK);
 				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.SCOUT);
@@ -67,7 +65,7 @@ class BotArchon extends Globals {
 		if(rc.getLocation() == rc.getInitialArchonLocations(myTeam)[0])
 		{
 			initializeChannels();
-			makeInitialQueue();
+			BuildQueue.enqueue(RobotType.GARDENER);
 		}
 		
 		MapLocation bestLoc = BotGardener.getBestLocation();
@@ -91,6 +89,8 @@ class BotArchon extends Globals {
 			plantingList.addLocation(bestLoc);
 			if(BuildQueue.tryBuildFromQueue(birthLoc.directionTo(bestLoc)))
         		rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, true);
+			
+			makeInitialQueue();
 		}
 		
 		gridStart = Messaging.recieveLocation(START_LOC_CHANNEL);
@@ -99,7 +99,6 @@ class BotArchon extends Globals {
 		
         while (true) {
             try {
-            	treeList.debug_drawList();
             	
             	loop_common();
             	
@@ -112,6 +111,7 @@ class BotArchon extends Globals {
             		System.out.println("NUM GARD: " + rc.readBroadcast(GARDENER_COUNT_CHANNEL));
             		System.out.println("ARC: " + rc.readBroadcast(ARCHON_TARGETING_CHANNEL) + " SCO: " + rc.readBroadcast(GARDENER_TARGETING_CHANNEL) + " DEF: " + rc.readBroadcast(DEFENSE_CHANNEL));
             		plantingList.printList();
+                	treeList.debug_drawList();
             		//plantingList.debug();
             	}
             	
@@ -153,5 +153,21 @@ class BotArchon extends Globals {
                 e.printStackTrace();
             }
         }
+	}
+	
+	public static boolean isDense()
+	{
+		Direction dir = Direction.NORTH;
+		int count = 0;
+		
+		for(int i = 0; i < 4; i++)
+		{
+			TreeInfo[] trees = rc.senseNearbyTrees(birthLoc.add(dir, 3), 3, null);
+			if(trees.length > 0)
+				count ++;
+			dir.rotateLeftDegrees(90);
+		}
+		
+		return (count >= 4);
 	}
 }

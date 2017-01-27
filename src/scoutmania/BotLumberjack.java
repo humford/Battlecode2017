@@ -37,33 +37,11 @@ public class BotLumberjack extends Globals {
                         rc.chop(t.getLocation());
                     }
                     if(t.getTeam() != myTeam){
-                    	Pathfinding.moveTo(t.getLocation());
-                    	break;
+                    	if(!rc.hasMoved());
+                    		Pathfinding.moveTo(t.getLocation());
                     }         
                 }
                 
-                //clearTrees();
-             
-                
-               /* TreeInfo[] neutralTrees = rc.senseNearbyTrees(-1, Team.NEUTRAL);
-                
-                if(neutralTrees.length > 0)
-                {
-                    float minDist = birthLoc.distanceTo(neutralTrees[0].getLocation());
-                    TreeInfo bestTree = neutralTrees[0];
-                    
-                    for(TreeInfo t : neutralTrees)
-                    {
-                    	if(birthLoc.distanceTo(t.getLocation()) < minDist)
-                    	{
-                    		minDist = birthLoc.distanceTo(t.getLocation());
-                    		bestTree = t;
-                    	}
-                    }
-                    
-                    Pathfinding.moveTo(bestTree.getLocation());
-                    
-                }*/
 
                 Micro.SolderMove();
                 
@@ -77,9 +55,13 @@ public class BotLumberjack extends Globals {
 	public static MapLocation targetTree;
 	
 	public static void clearTrees() throws GameActionException {
-		if (targetTree == null) targetTree = treeList.getNearest(rc.getLocation());
+		if (targetTree == null) 
+			targetTree = treeList.getNearest(rc.getLocation());
+		
 		// There are no trees to target
-		if (targetTree == null) return;
+		if (targetTree == null)
+			return;
+		
 		if (rc.canSenseLocation(targetTree)) {
 			TreeInfo tree = rc.senseTreeAtLocation(targetTree);
 			if (tree == null) {
