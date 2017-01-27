@@ -132,12 +132,21 @@ public class BotGardener extends Globals {
 		return ret;
 	}
 	
+	public static void queueNearbyTrees(float radius) throws GameActionException {
+		TreeInfo[] nearbyTrees = rc.senseNearbyTrees();
+		for (TreeInfo tree : nearbyTrees) {
+			if (tree.team == myTeam) continue;
+			treeList.addLocation(tree.location);
+		}
+	}
+	
 	public static void init() throws GameActionException {
 		myLocation = rc.getLocation();
 		treeDirs = getTreeDirs();
 		treeLocations = getTreeSpotsAbout(myLocation);
-		
 		productionDirs = getProductionDirection();
+		
+		queueNearbyTrees(GARDENER_PATCH_RADIUS);
 	}
 	
 	public static TreeInfo getLowHealthTree() {

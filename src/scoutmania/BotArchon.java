@@ -99,6 +99,8 @@ class BotArchon extends Globals {
 		
         while (true) {
             try {
+            	treeList.debug_drawList();
+            	
             	loop_common();
             	
             	rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) - last_gardener_num);

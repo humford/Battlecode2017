@@ -200,6 +200,28 @@ public class LocationList extends Globals {
 		}
 	}
 	
+	public void debug_drawList() throws GameActionException
+	{
+		int head = getHead();
+		int ptrchannel = head + 2;
+		
+		while(head != 0)
+		{	
+			if(head > end_limit || head < start_limit)
+				return;
+			
+			MapLocation curLoc = Messaging.recieveLocation(head);
+			if(curLoc == null)
+				return;
+			
+			rc.setIndicatorDot(curLoc, 255, 0, 255);
+			
+			head = rc.readBroadcast(ptrchannel);
+			ptrchannel = head + 2;
+			
+		}
+	}
+	
 	public void debug() throws GameActionException
 	{
 		System.out.println("HEAD: " + rc.readBroadcast(HEAD_CHANNEL));
