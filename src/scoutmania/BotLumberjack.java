@@ -64,7 +64,7 @@ public class BotLumberjack extends Globals {
 		
 		if (rc.canSenseLocation(targetTree)) {
 			TreeInfo tree = rc.senseTreeAtLocation(targetTree);
-			if (tree == null) {
+			if (tree == null || tree.getTeam() == myTeam) {
 				targetTree = null;
 			}
 		}
