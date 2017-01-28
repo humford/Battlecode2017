@@ -276,6 +276,10 @@ public class Pathfinding extends Globals {
     
     // Placeholder for now, should have pathfinding later
     public static void moveTo(MapLocation location) throws GameActionException {
+    	if (rc.canMove(location)) {
+    		rc.move(location);
+    		return;
+    	}
     	tryMove(rc.getLocation().directionTo(location));
     }
 }
