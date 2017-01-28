@@ -54,6 +54,9 @@ public class BotLumberjack extends Globals {
 	
 	public static MapLocation targetTree;
 	
+	public static final int TREE_RECHECK_PERIOD = 15;
+	public static int treeRecheckCount = 0;
+	
 	public static void clearTrees() throws GameActionException {
 		if (targetTree == null) 
 			targetTree = treeList.getNearest(rc.getLocation());
@@ -68,6 +71,19 @@ public class BotLumberjack extends Globals {
 				targetTree = null;
 			}
 		}
+		
+		MapLocation myLocation = rc.getLocation();
+		
+		if (treeRecheckCount++ > TREE_RECHECK_PERIOD) {
+			treeRecheckCount = 0;
+			MapLocation nearest = treeList.peakNearest(myLocation);
+			if (myLocation.distanceTo(nearest) < myLocation.distanceTo(targetTree)) {
+				treeList.addLocation(targetTree);
+				targetTree = treeList.getNearest(myLocation);
+			}
+		}
+		
+		
 		if (targetTree != null) {
 			Pathfinding.moveTo(targetTree);
 			rc.setIndicatorLine(rc.getLocation(), targetTree, 0, 255, 255);
