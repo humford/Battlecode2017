@@ -149,7 +149,7 @@ public class BotScout extends Globals {
       	  			}	       
       	  		}
       	  		
-				Clock.yield();
+      	  		end_loop_common();
 		    } catch (Exception e) {
 		        e.printStackTrace();
 		    }

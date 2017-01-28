@@ -9,7 +9,7 @@ public class BotSoldier extends Globals {
             	
             	Micro.SoldierFight();
                 
-                Clock.yield();
+            	end_loop_common();
             } catch (Exception e) {
                 e.printStackTrace();
             }

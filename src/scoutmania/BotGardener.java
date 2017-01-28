@@ -90,7 +90,7 @@ public class BotGardener extends Globals {
 				}
 				
 			}
-			Clock.yield();
+			end_loop_common();
 		}
 		macro();
 	}
@@ -205,7 +205,7 @@ public class BotGardener extends Globals {
 					//System.out.println("WATERING");
 				}
 			}
-			Clock.yield();
+			end_loop_common();
 		}
 		
 	}

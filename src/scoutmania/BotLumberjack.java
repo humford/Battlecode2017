@@ -55,7 +55,7 @@ public class BotLumberjack extends Globals {
 
                 Micro.SolderMove();
                 
-                Clock.yield();
+                end_loop_common();
             } catch (Exception e) {
                 e.printStackTrace();
             }

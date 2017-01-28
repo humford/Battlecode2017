@@ -10,7 +10,7 @@ public class Globals {
     static MapLocation gridStart;
     
     static int GARDENER_UPPER_LIMIT;
-    static final int MAX_RUSH_DISTANCE = 8;
+    static final int MAX_RUSH_DISTANCE = 14;
     
     // Keep broadcast channels
     static final int GARDENER_COUNT_CHANNEL = 1;
@@ -377,13 +377,23 @@ public class Globals {
 		}
 		locateType(RobotType.ARCHON, ARCHON_TARGETING_CHANNEL, STRIKE_LOC_CHANNEL);
 		locateType(RobotType.GARDENER, GARDENER_TARGETING_CHANNEL, SCOUT_LOC_CHANNEL);
+	}
+	
+	public static void end_loop_common() throws GameActionException // things that all robots do at end of loop
+	{
 		BotGardener.addGridLocation();
 		
 		TreeInfo[] trees = rc.senseNearbyTrees(rc.getType().sensorRadius, Team.NEUTRAL);
 		for (TreeInfo tree : trees) {
 			if (tree.getContainedRobot() != null)
+			{
 				treeList.addLocation(tree.location);
+				if(Clock.getBytecodesLeft() < 1000)
+					break;
+			}
 		}
+		
+        Clock.yield();
 	}
 }
 
