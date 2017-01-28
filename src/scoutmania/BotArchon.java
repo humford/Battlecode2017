@@ -213,9 +213,9 @@ class BotArchon extends Globals {
 		for(int i = 0; i < 4; i++)
 		{
 			TreeInfo[] trees = rc.senseNearbyTrees(birthLoc.add(dir, 4), 3, null);
-			if(trees.length > 0 || !rc.onTheMap(birthLoc.add(dir, 4), 3))
+			if(trees.length >= 2 || !rc.onTheMap(birthLoc.add(dir, 4), 1.99f))
 				count ++;
-			dir.rotateLeftDegrees(90);
+			dir = dir.rotateLeftDegrees(90);
 		}
 		
 		return (count >= 3);
