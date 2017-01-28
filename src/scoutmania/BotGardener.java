@@ -236,7 +236,7 @@ public class BotGardener extends Globals {
 		return ret;
 	}
 	
-	public static final float gridSpacing = 1.25f;
+	public static final float gridSpacing = 1.5f;
 	
 	public static MapLocation[] getGridLocations(MapLocation location) throws GameActionException {
 		float testRadius = rc.getType().sensorRadius - GARDENER_PATCH_RADIUS;
@@ -280,8 +280,8 @@ public class BotGardener extends Globals {
 			//diff = Clock.getBytecodeNum() - start;
 			//System.out.println("Cost of getting grid: " + Integer.toString(diff));
 			
-			//if(num_spots == 5)
-			//	return location;
+			if(num_spots == 5)
+				return location;
 			
 			if (num_spots > max_trees) {
 				ret = location;
