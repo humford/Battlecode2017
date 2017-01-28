@@ -1,6 +1,6 @@
 package scoutmania;
 import battlecode.common.*;
-import java.util.Random;
+import java.util.*;
 
 public class Globals {
 	
@@ -8,9 +8,12 @@ public class Globals {
     static Random myRand;
     static MapLocation birthLoc;
     static MapLocation gridStart;
+    static ArrayList<MapLocation> treesToAdd = new ArrayList<MapLocation>();
+    static int current_round;
     
     static int GARDENER_UPPER_LIMIT;
-    static final int MAX_RUSH_DISTANCE = 14;
+    static final int MAX_RUSH_DISTANCE = 35;
+    static final int LIST_HAZARD_LENGTH = 75;
     
     // Keep broadcast channels
     static final int GARDENER_COUNT_CHANNEL = 1;
@@ -49,14 +52,12 @@ public class Globals {
     
     
     // LOCATION LISTS
-    //USES CHANNELS 0945 - 3946
+    //USES CHANNELS 0945 - 3947
     static LocationList treeList;
-    //USES CHANNELS 3947 - 6948
+    //USES CHANNELS 3948 - 6950
     static LocationList plantingList;
-   //USES CHANNELS 6949 - 9950
+   //USES CHANNELS 6951 - 9953
     static LocationList trashList;
- 
-    
 	
 
     public static void init(RobotController theRC) throws GameActionException {
@@ -72,9 +73,9 @@ public class Globals {
         myRand = new Random(rc.getID());
         Pathfinding.lastWander = randomDirection();
         
-        treeList = new LocationList(945, 3946);
-        plantingList = new LocationList(3947, 6948);
-        trashList = new LocationList(6949, 9950);
+        treeList = new LocationList(945, 3947);
+        plantingList = new LocationList(3948, 6950);
+        trashList = new LocationList(6951, 9953);
         
         gridStart = Messaging.recieveLocation(START_LOC_CHANNEL);
         GARDENER_UPPER_LIMIT = 5 * initialArchonLocations.length;
@@ -360,21 +361,10 @@ public class Globals {
 	
 	public static void loop_common() throws GameActionException // things that all robots do in loop
 	{
+		current_round = rc.getRoundNum();
 		donate();
 		refillQueue();
-		RobotInfo[] myBots = rc.senseNearbyRobots(BotGardener.GARDENER_PATCH_RADIUS, myTeam);
 		
-		if(rc.getType() != RobotType.GARDENER)
-		{
-			for(RobotInfo bot : myBots)
-			{
-				if(bot.getType() == RobotType.GARDENER)
-				{
-					Pathfinding.tryMove(rc.getLocation().directionTo(bot.getLocation()).opposite());
-					break;
-				}
-			}
-		}
 		locateType(RobotType.ARCHON, ARCHON_TARGETING_CHANNEL, STRIKE_LOC_CHANNEL);
 		locateType(RobotType.GARDENER, GARDENER_TARGETING_CHANNEL, SCOUT_LOC_CHANNEL);
 	}
@@ -383,17 +373,41 @@ public class Globals {
 	{
 		BotGardener.addGridLocation();
 		
-		TreeInfo[] trees = rc.senseNearbyTrees(rc.getType().sensorRadius, Team.NEUTRAL);
-		for (TreeInfo tree : trees) {
-			if (tree.getContainedRobot() != null)
+		//GET OUT OF THE WAY OF GARDENERS
+		if(!rc.hasMoved())
+		{
+			RobotInfo[] myBots = rc.senseNearbyRobots(BotGardener.GARDENER_PATCH_RADIUS, myTeam);
+			
+			if(rc.getType() != RobotType.GARDENER)
 			{
-				treeList.addLocation(tree.location);
-				if(Clock.getBytecodesLeft() < 1000)
+				for(RobotInfo bot : myBots)
+				{
+					if(bot.getType() == RobotType.GARDENER)
+					{
+						Pathfinding.tryMove(rc.getLocation().directionTo(bot.getLocation()).opposite());
+						break;
+					}
+				}
+			}
+		}
+
+		if(treeList.getLength() < LIST_HAZARD_LENGTH)
+		{
+			TreeInfo[] trees = rc.senseNearbyTrees(rc.getType().sensorRadius, Team.NEUTRAL);
+			for (TreeInfo tree : trees) {
+				if (tree.getContainedRobot() != null)
+				{
+					treeList.addLocation(tree.location);
 					break;
+				}
 			}
 		}
 		
-        Clock.yield();
+		if(current_round == rc.getRoundNum())
+			Clock.yield();
+		else
+			rc.setIndicatorDot(rc.getLocation(), 127, 0, 0);
+			
 	}
 }
 

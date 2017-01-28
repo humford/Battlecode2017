@@ -28,7 +28,7 @@ public class BotLumberjack extends Globals {
                 
                 clearTrees();
                 
-                if(!rc.hasAttacked() && rc.canSenseLocation(targetTree))
+                if(!rc.hasAttacked() && targetTree != null && rc.canSenseLocation(targetTree))
                 {
                 	TreeInfo treeToKill = rc.senseTreeAtLocation(targetTree);
                 	if(treeToKill != null && treeToKill.getTeam() != myTeam && rc.canChop(targetTree))

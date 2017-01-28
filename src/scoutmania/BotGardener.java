@@ -20,6 +20,9 @@ public class BotGardener extends Globals {
 		
 		RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
     	Messaging.broadcastDefendMeIF(enemyBots.length >= 1);
+    	
+    	if(!treesToAdd.isEmpty())
+    		treeList.addLocation(treesToAdd.remove(0));
 	}
 	
 	public static void loop() throws GameActionException {
@@ -136,7 +139,7 @@ public class BotGardener extends Globals {
 		TreeInfo[] nearbyTrees = rc.senseNearbyTrees(radius);
 		for (TreeInfo tree : nearbyTrees) {
 			if (tree.team != myTeam) 
-				treeList.addLocation(tree.location);
+				treesToAdd.add(tree.location);
 		}
 	}
 	
@@ -205,6 +208,7 @@ public class BotGardener extends Globals {
 					//System.out.println("WATERING");
 				}
 			}
+						
 			end_loop_common();
 		}
 		
@@ -318,6 +322,9 @@ public class BotGardener extends Globals {
 	}
 	
 	public static void addGridLocation() throws GameActionException {
+		if(plantingList.getLength() > LIST_HAZARD_LENGTH)
+			return;
+		
 		MapLocation botL = rc.getLocation();
 		int x = (int) Math.round((botL.x - gridStart.x) / spacing);
 		int y = (int) Math.round((botL.y - gridStart.y) / spacing);

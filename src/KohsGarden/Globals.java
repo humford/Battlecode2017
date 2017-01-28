@@ -36,6 +36,8 @@ public class Globals {
     static int LUMBERJACK_MAX = 5;
     static int ROUND_CHANGE = 500;
     
+    static MapLocation[] treesToAdd;
+    
 	
 
     public static void init(RobotController theRC) {

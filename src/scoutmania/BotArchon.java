@@ -9,6 +9,32 @@ class BotArchon extends Globals {
 	public static void makeInitialQueue() throws GameActionException
 	{
 		BuildQueue.clearQueue();
+		
+		System.out.println(initialArchonLocations.length + " " + rc.getLocation().distanceTo(initialArchonLocations[0]));
+		
+		if(initialArchonLocations.length == 1 && rc.getLocation().distanceTo(initialArchonLocations[0]) <= RobotType.ARCHON.sensorRadius)
+		{
+			System.out.println("CLOSE RUSH");
+			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.LUMBERJACK);
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+	
+			for(int i = 0; i < 2; i ++)
+			{
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.LUMBERJACK);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+			}
+		}
+		
 		if(isDense()) //DENSE
 		{
 			System.out.println("DENSE");
@@ -191,7 +217,7 @@ class BotArchon extends Globals {
                 
                 if(!rc.hasMoved()) //move back to birth location CHANGE THIS!!!!
                 {
-                	if(rc.getLocation().distanceTo(birthLoc) > 5)
+                	if(rc.getLocation().distanceTo(birthLoc) > 8)
                 	{
                 		Pathfinding.moveTo(birthLoc);
                 	}

@@ -13,13 +13,60 @@ class BotArchon extends Globals {
 			BuildQueue.enqueue(RobotType.GARDENER);
 			BuildQueue.enqueue(RobotType.GARDENER);
 			
-			LocationList locs = new LocationList(1000, 1009);
+			LocationList locs = new LocationList(1000, 9000);
 			
-			for(int i = 0; i < 5; i ++)
+			locs.addLocation(new MapLocation(5, 5));
+			
+			locs.addLocation(new MapLocation(5, 5));
+			
+			System.out.println("");
+			
+			locs.printList();
+			
+			System.out.println("");
+			
+			System.out.println("\n\n" + locs.getNearest(new MapLocation(5,5)) + "\n\n");
+			
+			locs.printList();
+			
+			System.out.println("");
+			
+			int start = Clock.getBytecodeNum();
+			
+			for(int i = 0; i < 100; i ++)
 			{
 				locs.addLocation(new MapLocation(i, i));
 			}
+			
 			locs.printList();
+			
+			System.out.println(locs.isIn(new MapLocation(0,0)));
+			
+			System.out.println("CODES: " + (Clock.getBytecodeNum() - start));
+			
+			Clock.yield();
+			
+			start = Clock.getBytecodeNum();
+			
+			locs.addLocation(new MapLocation(-1, -1));
+			
+			System.out.println("ADD CODES: " + (Clock.getBytecodeNum() - start));
+			
+			start = Clock.getBytecodeNum();
+			
+			System.out.println("\n\n" + locs.getNearest(new MapLocation(5,5)) + "\n\n");
+			
+			System.out.println("GET CODES: " + (Clock.getBytecodeNum() - start));
+			
+			Clock.yield();
+			
+			start = Clock.getBytecodeNum();
+			
+			System.out.println("\n\n" + locs.peakNearest(new MapLocation(5,5)) + "\n\n");
+			
+			System.out.println("PEAK CODES: " + (Clock.getBytecodeNum() - start));
+			
+		/*	locs.printList();
 			
 			locs.addLocation(new MapLocation(5,5));
 			
@@ -52,7 +99,7 @@ class BotArchon extends Globals {
 			
 			locs.printList();
 			
-			locs.debug();
+			//locs.debug();*/
 			
 
 		}
