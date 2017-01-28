@@ -11,6 +11,7 @@ class BotArchon extends Globals {
 		BuildQueue.clearQueue();
 		if(isDense()) //DENSE
 		{
+			System.out.println("DENSE");
 			BuildQueue.enqueue(RobotType.SCOUT);
 			BuildQueue.enqueue(RobotType.LUMBERJACK);
 			BuildQueue.enqueue(RobotType.GARDENER);
@@ -21,14 +22,57 @@ class BotArchon extends Globals {
 			{
 				BuildQueue.enqueue(RobotType.LUMBERJACK);
 				BuildQueue.enqueue(RobotType.SCOUT);
+			}
+		}
+		
+		else if(initialArchonLocations.length == 1 || rc.getLocation().distanceTo(initialArchonLocations[0]) <= MAX_RUSH_DISTANCE)
+		{
+			System.out.println("RUSH");
+			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.LUMBERJACK);
+	
+			for(int i = 0; i < 2; i ++)
+			{
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.LUMBERJACK);
 				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.SOLDIER);
 			}
 		}
 		
-		else
+		else if(rc.readBroadcastBoolean(IS_DENSITY_CHANNEL))
 		{
+			System.out.println("PART DENSE");
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.LUMBERJACK);
 			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+		
+			for(int i = 0; i < 2; i ++)
+			{
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.LUMBERJACK);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+			}
+		}
+		
+		else //OPEN
+		{
+			System.out.println("OPEN");
 			BuildQueue.enqueue(RobotType.SCOUT);
 			BuildQueue.enqueue(RobotType.SOLDIER);
 			BuildQueue.enqueue(RobotType.GARDENER);
@@ -68,18 +112,23 @@ class BotArchon extends Globals {
 			BuildQueue.enqueue(RobotType.GARDENER);
 		}
 		
+		if(isDense())
+			rc.broadcastBoolean(IS_DENSITY_CHANNEL, true);
+		
 		MapLocation bestLoc = BotGardener.getBestLocation();
-		int numTreesCanPlant = BotGardener.getOpenTreeSpotsAbout(bestLoc, rc.senseNearbyTrees());
-		System.out.println("MY: " + numTreesCanPlant + "BEST: " + rc.readBroadcast(NUM_INIT_TREES_CHANNEL));
-		
-		if(rc.readBroadcast(NUM_INIT_TREES_CHANNEL) < numTreesCanPlant)
+		if(bestLoc != null)
 		{
-			Messaging.broadcastLocation(bestLoc, START_LOC_CHANNEL);
-			rc.broadcast(NUM_INIT_TREES_CHANNEL, numTreesCanPlant);
-			rc.broadcast(BEST_ARCHON_ID_CHANNEL, rc.getID());
-		}
+			int numTreesCanPlant = BotGardener.getOpenTreeSpotsAbout(bestLoc, rc.senseNearbyTrees());
+			System.out.println("MY: " + numTreesCanPlant + " BEST: " + rc.readBroadcast(NUM_INIT_TREES_CHANNEL));
 		
-		rc.setIndicatorDot(bestLoc, 0, 0, 127);
+			if(rc.readBroadcast(NUM_INIT_TREES_CHANNEL) < numTreesCanPlant)
+			{
+				Messaging.broadcastLocation(bestLoc, START_LOC_CHANNEL);
+				rc.broadcast(NUM_INIT_TREES_CHANNEL, numTreesCanPlant);
+				rc.broadcast(BEST_ARCHON_ID_CHANNEL, rc.getID());
+			}
+			rc.setIndicatorDot(bestLoc, 0, 0, 127);
+		}
 		
 		Clock.yield();
 		
@@ -156,19 +205,19 @@ class BotArchon extends Globals {
         }
 	}
 	
-	public static boolean isDense()
+	public static boolean isDense() throws GameActionException
 	{
 		Direction dir = Direction.NORTH;
 		int count = 0;
 		
 		for(int i = 0; i < 4; i++)
 		{
-			TreeInfo[] trees = rc.senseNearbyTrees(birthLoc.add(dir, 3), 3, null);
-			if(trees.length > 0)
+			TreeInfo[] trees = rc.senseNearbyTrees(birthLoc.add(dir, 4), 3, null);
+			if(trees.length > 0 || !rc.onTheMap(birthLoc.add(dir, 4), 3))
 				count ++;
 			dir.rotateLeftDegrees(90);
 		}
 		
-		return (count >= 4);
+		return (count >= 3);
 	}
 }

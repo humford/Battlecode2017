@@ -10,6 +10,7 @@ public class Globals {
     static MapLocation gridStart;
     
     static int GARDENER_UPPER_LIMIT;
+    static final int MAX_RUSH_DISTANCE = 14;
     // Keep broadcast channels
     static final int GARDENER_COUNT_CHANNEL = 1;
     static final int GARDENER_SUM_CHANNEL = 2;
@@ -42,7 +43,8 @@ public class Globals {
     
     static final int START_LOC_CHANNEL = 100;
 	static final int NUM_INIT_TREES_CHANNEL = 102;
-	static final int BEST_ARCHON_ID_CHANNEL = 99; 
+	static final int BEST_ARCHON_ID_CHANNEL = 99;
+	static final int IS_DENSITY_CHANNEL = 98; 
     
     
     // LOCATION LISTS
@@ -340,11 +342,16 @@ public class Globals {
         	{
     			BuildQueue.enqueue(RobotType.GARDENER);
         	}
-    		else
+    		else if(!treeList.IsEmpty())
     		{
 				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.SOLDIER);
 				BuildQueue.enqueue(RobotType.LUMBERJACK);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+    		}
+    		else
+    		{
+    			BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.SOLDIER);
     		}
     	}
