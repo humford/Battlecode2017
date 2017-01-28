@@ -377,6 +377,12 @@ public class Globals {
 		locateType(RobotType.ARCHON, ARCHON_TARGETING_CHANNEL, STRIKE_LOC_CHANNEL);
 		locateType(RobotType.GARDENER, GARDENER_TARGETING_CHANNEL, SCOUT_LOC_CHANNEL);
 		BotGardener.addGridLocation();
+		
+		TreeInfo[] trees = rc.senseNearbyTrees(rc.getType().sensorRadius, Team.NEUTRAL);
+		for (TreeInfo tree : trees) {
+			if (tree.getContainedRobot() != null)
+				treeList.addLocation(tree.location);
+		}
 	}
 }
 
