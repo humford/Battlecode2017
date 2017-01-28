@@ -11,6 +11,7 @@ public class Globals {
     
     static int GARDENER_UPPER_LIMIT;
     static final int MAX_RUSH_DISTANCE = 14;
+    
     // Keep broadcast channels
     static final int GARDENER_COUNT_CHANNEL = 1;
     static final int GARDENER_SUM_CHANNEL = 2;
@@ -25,7 +26,7 @@ public class Globals {
     static final int ARCHON_TARGETING_CHANNEL = 11;
     static final int GARDENER_TARGETING_CHANNEL = 12;
     static final int DEFENSE_CHANNEL = 13;
-
+    static final int ANIT_RUSH_CHANNEL = 1;
     // Keep important numbers here
     static Team myTeam, them;
     static MapLocation initialArchonLocations[];
