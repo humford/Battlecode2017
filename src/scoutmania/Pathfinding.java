@@ -5,6 +5,15 @@ public class Pathfinding extends Globals {
 	
 	public static Direction lastWander;
 	
+	public static boolean shouldMove(Direction dir) throws GameActionException {
+		boolean can = rc.canMove(dir);
+		if (!can || rc.getType() != RobotType.TANK) return can;
+		MapLocation location = rc.getLocation().add(dir, rc.getType().strideRadius);
+		TreeInfo tree = rc.senseTreeAtLocation(location);
+		if (tree == null || tree.team != myTeam) return can;
+		return false;
+	}
+	
 	/**
      * Attempts to move in a given direction, while avoiding small obstacles and bullets directly in the path.
      *
@@ -32,7 +41,7 @@ public class Pathfinding extends Globals {
     	if(rc.hasMoved())return false;
         // First, try intended direction
     
-        if (!rc.hasMoved() && rc.canMove(dir)) {
+        if (!rc.hasMoved() && shouldMove(dir)) {
         	
             rc.move(dir);
             return true;
@@ -46,14 +55,14 @@ public class Pathfinding extends Globals {
             // Try the offset of the left side
         	Direction curDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
         	
-            if(!rc.hasMoved() && rc.canMove(curDir)) {
+            if(!rc.hasMoved() && shouldMove(curDir)) {
                 rc.move(curDir);
                 return true;
             }
             // Try the offset on the right side
         	curDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
 
-            if(!rc.hasMoved() && rc.canMove(curDir)) {
+            if(!rc.hasMoved() && shouldMove(curDir)) {
             	rc.move(curDir);
             	return true;
             }
@@ -76,7 +85,7 @@ public class Pathfinding extends Globals {
     	MapLocation loc = rc.getLocation().add(dir, rc.getType().strideRadius);
     	
     	
-        if (!rc.hasMoved() && rc.canMove(dir)) {
+        if (!rc.hasMoved() && rc.shouldMove(dir)) {
         	for(BulletInfo b : bullets)
         	{
         		if(willCollideWith(b, loc))
@@ -102,7 +111,7 @@ public class Pathfinding extends Globals {
         	Direction curDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
         	loc = rc.getLocation().add(curDir, rc.getType().strideRadius);
         	
-            if(!rc.hasMoved() && rc.canMove(curDir)) {
+            if(!rc.hasMoved() && rc.shouldMove(curDir)) {
             	
             	isSafe = true;
             	
@@ -125,7 +134,7 @@ public class Pathfinding extends Globals {
         	curDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
         	loc = rc.getLocation().add(curDir, rc.getType().strideRadius);
         	
-            if(!rc.hasMoved() && rc.canMove(curDir)) {
+            if(!rc.hasMoved() && rc.shouldMove(curDir)) {
             	
             	isSafe = true;
             	
@@ -164,7 +173,7 @@ public class Pathfinding extends Globals {
     	float currentDist;
     	MapLocation BestLocation = loc;
 
-        if (!rc.hasMoved() && rc.canMove(dir)) {
+        if (!rc.hasMoved() && shouldMove(dir)) {
         	currentDist = ClosestBulletWillHit(loc);
         	if(currentDist == -1)
         	{
@@ -187,7 +196,7 @@ public class Pathfinding extends Globals {
         	Direction curDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
         	loc = rc.getLocation().add(curDir, rc.getType().strideRadius);
         	
-            if(!rc.hasMoved() && rc.canMove(curDir)) {
+            if(!rc.hasMoved() && shouldMove(curDir)) {
             	currentDist = ClosestBulletWillHit(loc);
             	if(currentDist == -1)
             	{
@@ -204,7 +213,7 @@ public class Pathfinding extends Globals {
         	curDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
         	loc = rc.getLocation().add(curDir, rc.getType().strideRadius);
         	
-            if(!rc.hasMoved() && rc.canMove(curDir)) {
+            if(!rc.hasMoved() && shouldMove(curDir)) {
             	currentDist = ClosestBulletWillHit(loc);
             	if(currentDist == -1)
             	{
