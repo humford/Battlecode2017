@@ -10,7 +10,7 @@ public class Globals {
     static MapLocation gridStart;
     
     static int GARDENER_UPPER_LIMIT;
-    static final int MAX_RUSH_DISTANCE = 14;
+    static final int MAX_RUSH_DISTANCE = 8;
     
     // Keep broadcast channels
     static final int GARDENER_COUNT_CHANNEL = 1;

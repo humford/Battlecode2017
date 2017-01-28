@@ -25,24 +25,23 @@ class BotArchon extends Globals {
 			}
 		}
 		
-		else if(initialArchonLocations.length == 1 || rc.getLocation().distanceTo(initialArchonLocations[0]) <= MAX_RUSH_DISTANCE)
+		else if(initialArchonLocations.length == 1 && rc.getLocation().distanceTo(initialArchonLocations[0]) <= MAX_RUSH_DISTANCE)
 		{
 			System.out.println("RUSH");
 			BuildQueue.enqueue(RobotType.SOLDIER);
 			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.LUMBERJACK);
+			BuildQueue.enqueue(RobotType.GARDENER);
 			BuildQueue.enqueue(RobotType.SCOUT);
 			BuildQueue.enqueue(RobotType.GARDENER);
 			BuildQueue.enqueue(RobotType.SOLDIER);
-			BuildQueue.enqueue(RobotType.GARDENER);
 			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.LUMBERJACK);
 	
 			for(int i = 0; i < 2; i ++)
 			{
 				BuildQueue.enqueue(RobotType.GARDENER);
 				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.SOLDIER);
-				BuildQueue.enqueue(RobotType.GARDENER);
 				BuildQueue.enqueue(RobotType.LUMBERJACK);
 				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.SOLDIER);
