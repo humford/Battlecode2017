@@ -163,11 +163,12 @@ class BotArchon extends Globals {
             		plantingList.printList();
                 	treeList.debug_drawList();
             		//plantingList.debug();
+                	
+                	rc.setIndicatorDot(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL), 127, 127, 127);
+                	rc.setIndicatorDot(Messaging.recieveLocation(STRIKE_LOC_CHANNEL), 127, 0, 0);
+                	rc.setIndicatorDot(Messaging.recieveLocation(SCOUT_LOC_CHANNEL), 100, 20, 30);
             	}
             	
-            	rc.setIndicatorDot(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL), 127, 127, 127);
-            	rc.setIndicatorDot(Messaging.recieveLocation(STRIKE_LOC_CHANNEL), 127, 0, 0);
-            	rc.setIndicatorDot(Messaging.recieveLocation(SCOUT_LOC_CHANNEL), 100, 20, 30);
      	
             	//Pathfinding.wander();
             	
