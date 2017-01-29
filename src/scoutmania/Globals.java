@@ -31,6 +31,12 @@ public class Globals {
     static final int DEFENSE_CHANNEL = 13;
     static final int ANIT_RUSH_CHANNEL = 14;
     static final int CANNOT_BUILD_CHANNEL = 14;
+
+
+	static TreeSet<Integer> seenSoldiers;
+	static TreeSet<Integer> seenTanks;
+	static final int ENEMY_SOLDIER_COUNT_CHANNEL = 15;
+	static final int ENEMY_TANK_COUNT_CHANNEL = 16;
     
     // Keep important numbers here
     static Team myTeam, them;
@@ -81,6 +87,9 @@ public class Globals {
         
         gridStart = Messaging.recieveLocation(START_LOC_CHANNEL);
         GARDENER_UPPER_LIMIT = 5 * initialArchonLocations.length;
+
+		seenSoldiers = new TreeSet<Integer>();
+		seenTanks = new TreeSet<Integer>();
        
     }
 
@@ -404,6 +413,22 @@ public class Globals {
 				}
 			}
 		}
+
+		// Count enemy soldiers/tanks
+		RobotInfo[] theirBots = rc.senseNearbyRobots(rc.getType().sensorRadius, them);
+		for (RobotInfo bot : theirBots) {
+			if (bot.getType() == RobotType.SOLDIER)
+				seenSoldiers.add(bot.getID());
+			if (bot.getType() == RobotType.TANK)
+				seenTanks.add(bot.getID());
+		}
+
+		if (rc.readBroadcast(ENEMY_SOLDIER_COUNT_CHANNEL) < seenSoldiers.size())
+			rc.broadcast(ENEMY_TANK_COUNT_CHANNEL, seenSoldiers.size());
+		if (rc.readBroadcast(ENEMY_TANK_COUNT_CHANNEL) < seenTanks.size())
+			rc.broadcast(ENEMY_TANK_COUNT_CHANNEL, seenTanks.size());
+
+		System.out.println("Seen " + Integer.toString(seenSoldiers.size()) + " soldiers");
 		
 		if(current_round == rc.getRoundNum())
 			Clock.yield();
