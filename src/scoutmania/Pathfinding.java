@@ -336,6 +336,7 @@ public static PathfindingState follow_wall(MapLocation location, boolean follow_
 			lastDirection = dir;
 			return follow_left ? PathfindingState.FOLLOW_CW : PathfindingState.FOLLOW_CCW;
 		}
+		totalRotated += ROTATE_DEGREES;
 	}
 	return PathfindingState.UNKNOWN;
 }
