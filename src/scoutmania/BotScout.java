@@ -37,7 +37,7 @@ public class BotScout extends Globals {
       	  				if(rc.getLocation().distanceTo(attackSpot) < rc.getType().strideRadius)
       	  				{
       	  					System.out.println("REEEEE NORMIES");
-      	  					if(rc.canMove(attackSpot)) 
+      	  					if(rc.canMove(attackSpot) && !rc.hasMoved()) 
       	  						rc.move(attackSpot);
       	  				}
       	  				targetLoc = rc.getLocation().directionTo(b.getLocation());
