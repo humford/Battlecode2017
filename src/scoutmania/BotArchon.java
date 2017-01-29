@@ -49,6 +49,28 @@ class BotArchon extends Globals {
 			}
 		}
 		
+		
+		else if(rc.readBroadcastBoolean(IS_DENSITY_CHANNEL))
+		{
+			System.out.println("PART DENSE");
+			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.LUMBERJACK);
+			BuildQueue.enqueue(RobotType.GARDENER);
+			BuildQueue.enqueue(RobotType.SOLDIER);
+			BuildQueue.enqueue(RobotType.SCOUT);
+		
+			for(int i = 0; i < 2; i ++)
+			{
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.GARDENER);
+				BuildQueue.enqueue(RobotType.LUMBERJACK);
+				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+			}
+		}
+		
 		else if(initialArchonLocations.length == 1 && rc.getLocation().distanceTo(initialArchonLocations[0]) <= MAX_RUSH_DISTANCE)
 		{
 			System.out.println("RUSH");
@@ -72,27 +94,6 @@ class BotArchon extends Globals {
 			}
 		}
 		
-		else if(rc.readBroadcastBoolean(IS_DENSITY_CHANNEL))
-		{
-			System.out.println("PART DENSE");
-			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.LUMBERJACK);
-			BuildQueue.enqueue(RobotType.GARDENER);
-			BuildQueue.enqueue(RobotType.SOLDIER);
-			BuildQueue.enqueue(RobotType.SCOUT);
-		
-			for(int i = 0; i < 2; i ++)
-			{
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.SOLDIER);
-				BuildQueue.enqueue(RobotType.GARDENER);
-				BuildQueue.enqueue(RobotType.LUMBERJACK);
-				BuildQueue.enqueue(RobotType.SCOUT);
-				BuildQueue.enqueue(RobotType.SOLDIER);
-			}
-		}
-		
 		else //OPEN
 		{
 			System.out.println("OPEN");
@@ -100,7 +101,7 @@ class BotArchon extends Globals {
 			BuildQueue.enqueue(RobotType.SOLDIER);
 			BuildQueue.enqueue(RobotType.GARDENER);
 			BuildQueue.enqueue(RobotType.SCOUT);
-			BuildQueue.enqueue(RobotType.SCOUT);
+			BuildQueue.enqueue(RobotType.SOLDIER);
 			BuildQueue.enqueue(RobotType.GARDENER);
 			BuildQueue.enqueue(RobotType.SCOUT);
 			BuildQueue.enqueue(RobotType.LUMBERJACK);

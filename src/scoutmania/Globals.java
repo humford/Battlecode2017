@@ -12,7 +12,7 @@ public class Globals {
     static int current_round;
     
     static int GARDENER_UPPER_LIMIT;
-    static final int MAX_RUSH_DISTANCE = 35;
+    static final int MAX_RUSH_DISTANCE = 40;
     static final int LIST_HAZARD_LENGTH = 75;
     
     // Keep broadcast channels

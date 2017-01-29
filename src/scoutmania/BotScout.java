@@ -25,19 +25,22 @@ public class BotScout extends Globals {
 				
 				//stick to gardeners
 				
+				Direction targetLoc = null;
+				
 				RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
 				
       	  		for(RobotInfo b : enemyBots)
       	  		{
       	  			if(b.getType() == RobotType.GARDENER)
       	  			{
-      	  				Direction chase = rc.getLocation().directionTo(b.getLocation());
-      	  				if(rc.getLocation().distanceTo(b.getLocation()) < rc.getType().strideRadius)
+      	  				MapLocation attackSpot = b.getLocation().add(b.getLocation().directionTo(rc.getLocation()), 2.05f);
+      	  				if(rc.getLocation().distanceTo(attackSpot) < rc.getType().strideRadius)
       	  				{
       	  					System.out.println("REEEEE NORMIES");
-      	  					if(rc.canMove(b.getLocation().add(chase.rotateLeftDegrees(180), 2))) rc.move(b.getLocation().add(chase.rotateLeftDegrees(180), 2));
+      	  					if(rc.canMove(attackSpot)) 
+      	  						rc.move(attackSpot);
       	  				}
-      	  				else Pathfinding.tryMove(chase);
+      	  				targetLoc = rc.getLocation().directionTo(b.getLocation());
 
       	  				break;
       	  			}
@@ -76,7 +79,7 @@ public class BotScout extends Globals {
       	  		
       	  		existLumberjacks = false;
       	  		
-      	  		if(!rc.hasMoved() && rc.readBroadcast(GARDENER_TARGETING_CHANNEL) != -1)
+      	  		if(!rc.hasMoved() && (targetLoc != null || rc.readBroadcast(GARDENER_TARGETING_CHANNEL) != -1))
   	  			{
   	  				RobotInfo[] closeBots = rc.senseNearbyRobots(RobotType.SCOUT.bodyRadius + 3*RobotType.SCOUT.strideRadius + GameConstants.LUMBERJACK_STRIKE_RADIUS, them);
   	  				MapLocation temp = rc.getLocation();
@@ -92,9 +95,9 @@ public class BotScout extends Globals {
   	  			
   	  				if(existLumberjacks)
   	  				{
-  	  					Direction targetLoc;
   	  				
-  	  					targetLoc = rc.getLocation().directionTo(Messaging.recieveLocation(SCOUT_LOC_CHANNEL));
+  	  					if(targetLoc == null && rc.readBroadcast(GARDENER_TARGETING_CHANNEL) == -1)
+  	  						targetLoc = rc.getLocation().directionTo(Messaging.recieveLocation(SCOUT_LOC_CHANNEL));
   	  				
   	  					temp = temp.add(targetLoc, 2);
   	  					

@@ -34,12 +34,6 @@ public class BotGardener extends Globals {
 			gardener_common();
 			MapLocation location = rc.getLocation();
 			 
-			//production build away from motion
-			
-			if(plantLoc != null && !location.equals(plantLoc))
-				BuildQueue.tryBuildFromQueue(location.directionTo(plantLoc).opposite());
-			else
-				BuildQueue.tryBuildFromQueue();
 			//if very open then start building 
 			
 			if (!rc.isCircleOccupiedExceptByThisRobot(location, rc.getType().sensorRadius))
@@ -65,7 +59,7 @@ public class BotGardener extends Globals {
 			}
 			else
 			{
-				if(rc.canMove(plantLoc) && location.distanceTo(plantLoc) <= rc.getType().strideRadius)
+				if(!rc.hasMoved() && rc.canMove(plantLoc) && location.distanceTo(plantLoc) <= rc.getType().strideRadius)
 				{
 					rc.move(plantLoc);
 					macro();
@@ -93,6 +87,17 @@ public class BotGardener extends Globals {
 				}
 				
 			}
+			
+			//production build away from motion
+			
+			if(plantLoc != null && !location.equals(plantLoc))
+			{
+				BuildQueue.tryBuildFromQueue(location.directionTo(plantLoc).opposite());
+				System.out.println("ree");
+			}
+			else
+				BuildQueue.tryBuildFromQueue();
+			
 			end_loop_common();
 		}
 		macro();
@@ -217,7 +222,7 @@ public class BotGardener extends Globals {
 	public static int getOpenTreeSpotsAbout(MapLocation location, TreeInfo[] trees) throws GameActionException {
 		if (!rc.onTheMap(location)) 
 			return 0;
-		if(rc.isCircleOccupied(location, RobotType.GARDENER.bodyRadius)) 
+		if(rc.isCircleOccupiedExceptByThisRobot(location, RobotType.GARDENER.bodyRadius)) 
 			return -1;
 		MapLocation[] spots = getTreeSpotsAbout(location);
 		int ret = 0;
@@ -254,7 +259,8 @@ public class BotGardener extends Globals {
 			for (float dy = 0; dy < boxWidth; dy += gridSpacing) {
 				MapLocation l = start.translate(dx,dy);
 				float dist = l.distanceTo(location);
-				if (dist > testRadius || dist < minRadius) continue;
+				if (dist > testRadius || dist < minRadius) 
+					continue;
 				ret[k++] = l;
 			}
 		}
@@ -330,16 +336,21 @@ public class BotGardener extends Globals {
 		int y = (int) Math.round((botL.y - gridStart.y) / spacing);
 		
 		MapLocation firstGrid = gridStart.translate(x * spacing, y * spacing);
+		TreeInfo[] trees = rc.senseNearbyTrees(firstGrid, GARDENER_PATCH_RADIUS, null);
 		
 		if(rc.canSenseAllOfCircle(firstGrid, GARDENER_PATCH_RADIUS) && rc.onTheMap(firstGrid, GARDENER_PATCH_RADIUS))
 		{
-			if(!rc.isCircleOccupiedExceptByThisRobot(firstGrid, GARDENER_PATCH_RADIUS))
+			rc.setIndicatorDot(firstGrid, 100, 100, 100);
+			if(getOpenTreeSpotsAbout(firstGrid, trees) > 3 && !trashList.isIn(firstGrid))
+				plantingList.addLocation(firstGrid);
+		}
+		else
+		{
+			if(getOpenTreeSpotsAbout(botL, trees) > 4)
 			{
-				if(!trashList.isIn(firstGrid))
-				{
+				MapLocation nearestLoc = trashList.peakNearest(botL);
+				if(nearestLoc.distanceTo(botL) > 2.5f * GARDENER_PATCH_RADIUS)
 					plantingList.addLocation(firstGrid);
-					rc.setIndicatorDot(firstGrid, 0, 127, 0);
-				}
 			}
 		}
 	}

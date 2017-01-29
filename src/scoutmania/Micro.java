@@ -36,7 +36,7 @@ public class Micro extends Globals {
   {   
       RobotInfo[] bots = rc.senseNearbyRobots();
 
-      chase();
+    //  chase();
       
       if(!rc.hasMoved())
       {
@@ -97,6 +97,7 @@ public class Micro extends Globals {
   //use archon sensors how dense map is with trees
   public static void SolderMove() throws GameActionException
   {
+	  
 	  if(!rc.hasMoved())
 	  {
 		  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL))

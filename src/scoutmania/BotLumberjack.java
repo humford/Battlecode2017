@@ -25,17 +25,10 @@ public class BotLumberjack extends Globals {
                 }
 
                 
-                if((myBots.length < theirBots.length || isSoldier) && rc.canStrike())rc.strike();
+                if((myBots.length < theirBots.length || isSoldier) && rc.canStrike())
+                	rc.strike();
                 
                 clearTrees();
-                
-                if(!rc.hasAttacked() && targetTree != null && rc.canSenseLocation(targetTree))
-                {
-                	TreeInfo treeToKill = rc.senseTreeAtLocation(targetTree);
-                	if(treeToKill != null && treeToKill.getTeam() != myTeam && rc.canChop(targetTree))
-                		rc.chop(targetTree);
-                }
-        		
                 
                 if(!rc.hasAttacked())
                 {
@@ -55,11 +48,11 @@ public class BotLumberjack extends Globals {
                     		}
                     	}         
                 	}
+                	
+                	Micro.SolderMove();
                 }
                 
 
-                Micro.SolderMove();
-                
                 end_loop_common();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -108,7 +101,10 @@ public class BotLumberjack extends Globals {
 		
 		
 		if (targetTree != null) {
-			Pathfinding.moveTo(targetTree);
+			if(rc.canChop(targetTree))
+				rc.chop(targetTree);
+			else
+				Pathfinding.moveTo(targetTree);
 			rc.setIndicatorLine(rc.getLocation(), targetTree, 0, 255, 255);
 		}
 	}
