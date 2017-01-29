@@ -29,7 +29,9 @@ public class Globals {
     static final int ARCHON_TARGETING_CHANNEL = 11;
     static final int GARDENER_TARGETING_CHANNEL = 12;
     static final int DEFENSE_CHANNEL = 13;
-    static final int ANIT_RUSH_CHANNEL = 1;
+    static final int ANIT_RUSH_CHANNEL = 14;
+    static final int CANNOT_BUILD_CHANNEL = 14;
+    
     // Keep important numbers here
     static Team myTeam, them;
     static MapLocation initialArchonLocations[];
@@ -406,7 +408,7 @@ public class Globals {
 		if(current_round == rc.getRoundNum())
 			Clock.yield();
 		else
-			rc.setIndicatorDot(rc.getLocation(), 127, 0, 0);
+			System.out.println("RAN OUT OF BYECODE");
 			
 	}
 }

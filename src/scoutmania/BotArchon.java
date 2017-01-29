@@ -10,8 +10,6 @@ class BotArchon extends Globals {
 	{
 		BuildQueue.clearQueue();
 		
-		System.out.println(initialArchonLocations.length + " " + rc.getLocation().distanceTo(initialArchonLocations[0]));
-		
 		if(initialArchonLocations.length == 1 && rc.getLocation().distanceTo(initialArchonLocations[0]) <= RobotType.ARCHON.sensorRadius)
 		{
 			System.out.println("CLOSE RUSH");
@@ -157,6 +155,7 @@ class BotArchon extends Globals {
 		
 		Clock.yield();
 		
+		
 		if(rc.readBroadcast(BEST_ARCHON_ID_CHANNEL) == rc.getID())
 		{
 			System.out.println("ITS MEE");
@@ -165,6 +164,13 @@ class BotArchon extends Globals {
 			if(BuildQueue.tryBuildFromQueue(birthLoc.directionTo(bestLoc)))
         		rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, true);
 			
+			makeInitialQueue();
+		}
+		
+		else if(rc.readBroadcast(BEST_ARCHON_ID_CHANNEL) == 0) //BEAT LILMAZE BITCHES
+		{
+			for(int i = 360; !buildWhereFree(RobotType.GARDENER, i, rc.getLocation().directionTo(initialArchonLocations[0])); i+= 1);
+			rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, true);
 			makeInitialQueue();
 		}
 		
@@ -187,6 +193,7 @@ class BotArchon extends Globals {
             		System.out.println("ARC: " + rc.readBroadcast(ARCHON_TARGETING_CHANNEL) + " SCO: " + rc.readBroadcast(GARDENER_TARGETING_CHANNEL) + " DEF: " + rc.readBroadcast(DEFENSE_CHANNEL));
             		plantingList.printList();
                 	treeList.debug_drawList();
+                	System.out.println("NUM TREES TO DIE: " + treeList.getLength());
             		//plantingList.debug();
                 	
                 	rc.setIndicatorDot(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL), 127, 127, 127);
@@ -212,7 +219,26 @@ class BotArchon extends Globals {
             	
             	
             	if(BuildQueue.tryBuildFromQueue())
+            	{
+            		rc.broadcast(CANNOT_BUILD_CHANNEL, 0);
             		rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, true);
+            	}
+            	
+            	else if(rc.hasRobotBuildRequirements(BuildQueue.peak()) && rc.isBuildReady()) //IF NO SPOTS TO BUILD
+            	{
+	            	rc.broadcast(CANNOT_BUILD_CHANNEL, rc.readBroadcast(CANNOT_BUILD_CHANNEL) + 1);
+            	
+            		if(BuildQueue.peak() == RobotType.GARDENER && rc.readBroadcast(CANNOT_BUILD_CHANNEL) >= initialArchonLocations.length) //IF NO ARCHONS CAN BUILD
+            		{
+            			if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) == 0 && !rc.readBroadcastBoolean(GARDENER_INPRODUCTION_CHANNEL))
+            			{
+            				for(int i = 360; !buildWhereFree(RobotType.GARDENER, i, rc.getLocation().directionTo(initialArchonLocations[0])); i+= 1);
+            				rc.broadcastBoolean(GARDENER_INPRODUCTION_CHANNEL, true);
+            			}
+            			BuildQueue.dequeue();
+            			rc.broadcast(CANNOT_BUILD_CHANNEL, 0);
+            		}
+            	}
                 
                 
                 if(!rc.hasMoved()) //move back to birth location CHANGE THIS!!!!
