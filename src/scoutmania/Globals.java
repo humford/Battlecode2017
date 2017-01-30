@@ -371,6 +371,11 @@ public class Globals {
 				BuildQueue.enqueue(RobotType.SOLDIER);
     		}
     	}
+		int num_soldiers = rc.readBroadcast(SOLDIER_COUNT_CHANNEL);
+		int num_enemy_soldiers = rc.readBroadcast(ENEMY_SOLDIER_COUNT_CHANNEL);
+		if (num_soldiers < num_enemy_soldiers) {
+			BuildQueue.enqueue(RobotType.SOLDIER);
+		}
 	}
 	
 	public static void loop_common() throws GameActionException // things that all robots do in loop
