@@ -73,7 +73,8 @@ public class Globals {
 	public static void debug_test_map_setup() throws GameActionException {
 		System.out.println("Setting up test map");
 
-		MapLocation midMap = new MapLocation(415 + 4.234f, 110);
+		//MapLocation midMap = new MapLocation(415 + 4.234f, 110);
+		MapLocation midMap = rc.getLocation().translate(myTeam == Team.A ? 20 : -20, 0);
 		Messaging.broadcastLocation(midMap, STRIKE_LOC_CHANNEL);
 		Messaging.broadcastLocation(midMap, SCOUT_LOC_CHANNEL);
 		Messaging.broadcastLocation(midMap, DEFENSE_LOC_CHANNEL);
