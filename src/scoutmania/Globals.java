@@ -354,7 +354,7 @@ public class Globals {
 	{
 		if(BuildQueue.getLength() <= 0)
     	{
-    		if((rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT && !plantingList.IsEmpty()) || plantingList.getLength() >= 2)
+    		if((rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT && !plantingList.IsEmpty()) || (rc.readBroadcast(GARDENER_COUNT_CHANNEL) < 2*GARDENER_UPPER_LIMIT && plantingList.getLength() >= 4))
         	{
     			BuildQueue.enqueue(RobotType.GARDENER);
         	}
@@ -367,8 +367,9 @@ public class Globals {
     		else
     		{
     			BuildQueue.enqueue(RobotType.SOLDIER);
-				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.SCOUT);
     		}
     	}
 		int num_soldiers = rc.readBroadcast(SOLDIER_COUNT_CHANNEL);
