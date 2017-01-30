@@ -12,7 +12,7 @@ public class Globals {
     static int current_round;
     
     static int GARDENER_UPPER_LIMIT;
-    static final int MAX_RUSH_DISTANCE = 30;
+    static final int MAX_RUSH_DISTANCE = 40;
     static final int LIST_HAZARD_LENGTH = 75;
     
     // Keep broadcast channels
@@ -69,6 +69,15 @@ public class Globals {
     static LocationList plantingList;
    //USES CHANNELS 6951 - 9953
     static LocationList trashList;
+
+	public static void debug_test_map_setup() throws GameActionException {
+		System.out.println("Setting up test map");
+
+		MapLocation midMap = new MapLocation(415 + 4.234f, 110);
+		Messaging.broadcastLocation(midMap, STRIKE_LOC_CHANNEL);
+		Messaging.broadcastLocation(midMap, SCOUT_LOC_CHANNEL);
+		Messaging.broadcastLocation(midMap, DEFENSE_LOC_CHANNEL);
+	}
 	
 
     public static void init(RobotController theRC) throws GameActionException {
@@ -94,6 +103,8 @@ public class Globals {
 		seenSoldiers = new TreeSet<Integer>();
 		seenTanks = new TreeSet<Integer>();
        
+		if (initialArchonLocations.length == 0)
+			debug_test_map_setup();
     }
 
 
