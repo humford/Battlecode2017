@@ -30,15 +30,7 @@ public class Micro extends Globals {
 	  {
 		  if(bot.getType() == RobotType.ARCHON)
 		  {
-			  if(rc.getType() == RobotType.SOLDIER || rc.getType() == RobotType.TANK)
-			  {
-				  Direction chase = rc.getLocation().directionTo(bot.getLocation());
-				  Pathfinding.moveTo(myLoc.add(chase.opposite(), rc.getType().bodyRadius + bot.getType().bodyRadius));
-				  break;
-			  }
-			  
-			  else
-				  continue;
+			  continue;
 		  }
 		  else if(myLoc.distanceTo(bot.getLocation()) > MAX_CHASE_DIST)
 		  {
