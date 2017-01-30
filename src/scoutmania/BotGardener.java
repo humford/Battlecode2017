@@ -349,7 +349,7 @@ public class BotGardener extends Globals {
 			if(getOpenTreeSpotsAbout(botL, trees) > 4)
 			{
 				MapLocation nearestLoc = trashList.peakNearest(botL);
-				if(nearestLoc.distanceTo(botL) > 2.5f * GARDENER_PATCH_RADIUS)
+				if(nearestLoc != null && nearestLoc.distanceTo(botL) > 2.5f * GARDENER_PATCH_RADIUS)
 					plantingList.addLocation(firstGrid);
 			}
 		}

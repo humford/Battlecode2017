@@ -351,7 +351,7 @@ public class Globals {
 	{
 		if(BuildQueue.getLength() <= 0)
     	{
-    		if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT && !plantingList.IsEmpty())
+    		if((rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT && !plantingList.IsEmpty()) || plantingList.getLength() >= 2)
         	{
     			BuildQueue.enqueue(RobotType.GARDENER);
         	}
