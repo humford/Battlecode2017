@@ -131,7 +131,8 @@ public class Micro extends Globals {
 	  
 	  if(!rc.hasMoved())
 	  {
-		  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL))
+		  RobotInfo[] enemies = rc.senseNearbyRobots(-1, them);
+		  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL) && enemies.length == 0)
   		  	Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
   			
 		  else
