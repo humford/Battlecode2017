@@ -9,6 +9,7 @@ class BotArchon extends Globals {
 	public static void makeInitialQueue() throws GameActionException
 	{
 		BuildQueue.clearQueue();
+		TreeInfo[] trees = rc.senseNearbyTrees();
 		
 		if(initialArchonLocations.length == 1 && rc.getLocation().distanceTo(initialArchonLocations[0]) <= RobotType.ARCHON.sensorRadius)
 		{
@@ -71,7 +72,7 @@ class BotArchon extends Globals {
 			}
 		}
 		
-		else if(initialArchonLocations.length == 1 && rc.getLocation().distanceTo(initialArchonLocations[0]) <= MAX_RUSH_DISTANCE)
+		else if((initialArchonLocations.length == 1 && rc.getLocation().distanceTo(initialArchonLocations[0]) <= MAX_RUSH_DISTANCE) || trees.length == 0)
 		{
 			System.out.println("RUSH");
 			BuildQueue.enqueue(RobotType.SOLDIER);
