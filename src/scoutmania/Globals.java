@@ -20,6 +20,9 @@ public class Globals {
     static final int GARDENER_SUM_CHANNEL = 2;
     static final int GARDENER_INPRODUCTION_CHANNEL = 4;
     
+    static final int SOLDIER_COUNT_CHANNEL = 1;
+    static final int SOLDIER_SUM_CHANNEL = 2;
+    
     //LOC_CHANNELS use next integer channel as well
     static final int STRIKE_LOC_CHANNEL = 5;
     static final int DEFENSE_LOC_CHANNEL = 7;

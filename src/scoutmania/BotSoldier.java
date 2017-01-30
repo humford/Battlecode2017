@@ -7,6 +7,8 @@ public class BotSoldier extends Globals {
             try {
             	loop_common();
             	
+            	rc.broadcast(SOLDIER_SUM_CHANNEL, rc.readBroadcast(SOLDIER_SUM_CHANNEL) + 1);
+            	
             	boolean existLumberjacks = false;
       	  		
       	  		if(!rc.hasMoved())

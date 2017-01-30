@@ -61,7 +61,7 @@ public class Micro extends Globals {
   {   
       RobotInfo[] bots = rc.senseNearbyRobots();
 
-    //  chase();
+      chase();
       
       if(!rc.hasMoved())
       {
