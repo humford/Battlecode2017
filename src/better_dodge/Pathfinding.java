@@ -181,7 +181,7 @@ private static PathfindingState tryMove(Direction dir, float degreeOffset, int c
 	MapLocation loc = rc.getLocation().add(dir, rc.getType().strideRadius);
 
 	BulletInfo[] bullets = rc.senseNearbyBullets();
-	if (bullets.length > 2)
+	if (bullets.length > 2 && !hasDodged)
 		Micro.dodge(bullets);
 	
 	float furthestHittingBullet = 0;

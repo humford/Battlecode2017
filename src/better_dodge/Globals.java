@@ -70,6 +70,8 @@ public class Globals {
    //USES CHANNELS 6951 - 9953
     static LocationList trashList;
 
+	static boolean hasDodged = false;
+
 	public static void debug_test_map_setup() throws GameActionException {
 		System.out.println("Setting up test map");
 
@@ -393,6 +395,7 @@ public class Globals {
 	
 	public static void loop_common() throws GameActionException // things that all robots do in loop
 	{
+		hasDodged = false;
 		current_round = rc.getRoundNum();
 		donate();
 		refillQueue();

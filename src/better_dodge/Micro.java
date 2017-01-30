@@ -138,6 +138,7 @@ public class Micro extends Globals {
       for (int i = 0; i < bullets.length; i++) {
     	  dodgeLocations[i] = getDodgeLocation(bullets[i]);
       }
+	  hasDodged = true;
       Pathfinding.moveTo(Globals.averageLocations(dodgeLocations));
   }
   
