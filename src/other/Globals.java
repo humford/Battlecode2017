@@ -366,6 +366,7 @@ public class Globals {
     			BuildQueue.enqueue(RobotType.SOLDIER);
 				BuildQueue.enqueue(RobotType.SCOUT);
 				BuildQueue.enqueue(RobotType.SOLDIER);
+				BuildQueue.enqueue(RobotType.SOLDIER);
     		}
     	}
 	}

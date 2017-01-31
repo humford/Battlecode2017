@@ -186,7 +186,7 @@ public class BuildQueue extends Globals{
 		if(BuildQueue.getLength() > 0)
         {
         	if(rc.hasRobotBuildRequirements(BuildQueue.peak()) && rc.isBuildReady())
-        	{
+        	{        			
     			if(buildWhereFree(BuildQueue.peak(), 12, dir))
     			{
     				BuildQueue.dequeue();

@@ -4,10 +4,10 @@ import battlecode.common.*;
 // FOLLOW_CW is following in a state where the robot is turning clockwise
 // against a wall
 enum PathfindingState {
-UNKNOWN,
-DIRECT,
-FOLLOW_CW,
-FOLLOW_CCW
+	UNKNOWN,
+	DIRECT,
+	FOLLOW_CW,
+	FOLLOW_CCW
 }
 
 public class Pathfinding extends Globals {
@@ -19,8 +19,8 @@ public static boolean shouldMove(Direction dir) throws GameActionException {
 	if (!can || rc.getType() != RobotType.TANK) 
 		return can;
 	MapLocation location = rc.getLocation().add(dir, rc.getType().strideRadius);
-	TreeInfo tree = rc.senseTreeAtLocation(location);
-	if (tree == null)
+	TreeInfo[] trees = rc.senseNearbyTrees(location, rc.getType().bodyRadius, myTeam);
+	if (trees.length > 0)
 		return true;
 	return false;
 }
@@ -96,7 +96,7 @@ private static boolean tryMoveWithoutBulletDetection(Direction dir, float degree
 	MapLocation loc = rc.getLocation().add(dir, rc.getType().strideRadius);
 	
 	
-	if (!rc.hasMoved() && rc.shouldMove(dir)) {
+	if (!rc.hasMoved() && rc.canMove(dir)) {
 		for(BulletInfo b : bullets)
 		{
 			if(willCollideWith(b, loc))
@@ -122,7 +122,7 @@ private static boolean tryMoveWithoutBulletDetection(Direction dir, float degree
 		Direction curDir = dir.rotateLeftDegrees(degreeOffset*currentCheck);
 		loc = rc.getLocation().add(curDir, rc.getType().strideRadius);
 		
-		if(!rc.hasMoved() && rc.shouldMove(curDir)) {
+		if(!rc.hasMoved() && rc.canMove(curDir)) {
 			
 			isSafe = true;
 			
@@ -145,7 +145,7 @@ private static boolean tryMoveWithoutBulletDetection(Direction dir, float degree
 		curDir = dir.rotateRightDegrees(degreeOffset*currentCheck);
 		loc = rc.getLocation().add(curDir, rc.getType().strideRadius);
 		
-		if(!rc.hasMoved() && rc.shouldMove(curDir)) {
+		if(!rc.hasMoved() && rc.canMove(curDir)) {
 			
 			isSafe = true;
 			

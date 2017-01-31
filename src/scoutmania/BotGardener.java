@@ -173,13 +173,17 @@ public class BotGardener extends Globals {
 		init();
 		while (true) {
 			gardener_common();
-        	
+			if(rc.canMove(myLocation) && !rc.hasMoved())
+        		rc.move(myLocation);
 			//production 
 			
 			if(BuildQueue.getLength() > 0)
             {
             	if(rc.canBuildRobot(BuildQueue.peak(), productionDirs))
             	{
+            		if(BuildQueue.peak() == RobotType.TANK && rc.canMove(productionDirs) && !rc.hasMoved())
+            			rc.move(productionDirs);
+            		
             		rc.buildRobot(BuildQueue.dequeue(), productionDirs);
             	}
             	else
