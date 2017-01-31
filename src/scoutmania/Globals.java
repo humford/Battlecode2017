@@ -63,12 +63,14 @@ public class Globals {
     
     
     // LOCATION LISTS
-    //USES CHANNELS 0945 - 3947
+    //USES CHANNELS 0945 - 1847
     static LocationList treeList;
-    //USES CHANNELS 3948 - 6950
+    //USES CHANNELS 1848 - 2750
     static LocationList plantingList;
-   //USES CHANNELS 6951 - 9953
+    //USES CHANNELS 2751 - 3653
     static LocationList trashList;
+    //USES CHANNELS 3654 - 4556
+    static LocationList helpList;
 	
 
     public static void init(RobotController theRC) throws GameActionException {
@@ -84,9 +86,10 @@ public class Globals {
         myRand = new Random(rc.getID());
         Pathfinding.lastWander = randomDirection();
         
-        treeList = new LocationList(945, 3947);
-        plantingList = new LocationList(3948, 6950);
-        trashList = new LocationList(6951, 9953);
+        treeList = new LocationList(945, 1847);
+        plantingList = new LocationList(1848, 2750);
+        trashList = new LocationList(2751, 3653);
+        helpList = new LocationList(3654, 4556);
         
         gridStart = Messaging.recieveLocation(START_LOC_CHANNEL);
         GARDENER_UPPER_LIMIT = 5 * initialArchonLocations.length;

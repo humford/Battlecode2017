@@ -197,8 +197,9 @@ class BotArchon extends Globals {
             		BuildQueue.printQueue();
             		System.out.println("NUM GARD: " + rc.readBroadcast(GARDENER_COUNT_CHANNEL));
             		System.out.println("ARC: " + rc.readBroadcast(ARCHON_TARGETING_CHANNEL) + " SCO: " + rc.readBroadcast(GARDENER_TARGETING_CHANNEL) + " DEF: " + rc.readBroadcast(DEFENSE_CHANNEL));
-            		plantingList.printList();
-                	treeList.debug_drawList();
+            		plantingList.debug_drawList(0, 127, 0);
+            		helpList.debug_drawList(127, 127, 0);
+                	treeList.debug_drawList(127, 0, 127);
                 	System.out.println("NUM TREES TO DIE: " + treeList.getLength());
             		//plantingList.debug();
                 	

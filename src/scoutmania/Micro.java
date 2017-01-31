@@ -119,20 +119,39 @@ public class Micro extends Globals {
   //use archon sensors how dense map is with trees
   public static void SolderMove() throws GameActionException
   {
+	  MapLocation myLoc = rc.getLocation();
+	  RobotInfo[] enemies = rc.senseNearbyRobots(-1, them);
+	  if(enemies.length > 0 && helpList.getLength() < LIST_HAZARD_LENGTH)
+  		helpList.addLocationWithDist(enemies[0].getLocation(), RobotType.SOLDIER.sensorRadius);
+	  
+	  else
+		  helpList.getNearest(myLoc);
+
 	  
 	  if(!rc.hasMoved())
 	  {
-		  RobotInfo[] enemies = rc.senseNearbyRobots(-1, them);
-		  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL) && enemies.length == 0)
-  		  	Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
-  			
+		  MapLocation nearest = helpList.peakNearest(myLoc);
+		  
+		  if(nearest != null && myLoc.distanceTo(nearest) < 3*RobotType.SOLDIER.sensorRadius)
+		  {
+			  Pathfinding.moveTo(nearest);
+			  System.out.println(nearest.toString());
+		  }
+		  
 		  else
-	      {
-		  	if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1) 
-		  		Pathfinding.wander();
-	    	else
-	    	  	Pathfinding.moveTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL));
-	      }
+		  {
+			  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL) && enemies.length == 0 && rc.getType() != RobotType.TANK)
+	  		  	Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
+	  			
+			  else
+		      {
+			  	if(rc.readBroadcast(ARCHON_TARGETING_CHANNEL) == -1) 
+			  		Pathfinding.wander();
+		    	else
+		    	  	Pathfinding.moveTo(Messaging.recieveLocation(STRIKE_LOC_CHANNEL));
+		      }
+
+		  }
 	  }
   }
 }

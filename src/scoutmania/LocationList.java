@@ -78,6 +78,58 @@ public class LocationList extends Globals {
 		}
 	}
 	
+	public void addLocationWithDist(MapLocation loc, float distance) throws GameActionException
+	{
+		int head = getHead();
+		if(head == 0)
+		{
+			head = start_limit;
+			rc.broadcast(HEAD_CHANNEL, head);
+			Messaging.broadcastLocation(loc, head);
+			rc.broadcast(head + 2, 0);
+			rc.broadcast(LENGTH_CHANNEL, getLength() + 1);
+		}
+		else
+		{
+			int ptrchannel = head + 2;
+			
+			while(head != 0)
+			{
+				//if(head > end_limit || head < start_limit)
+				//	return;
+				
+				MapLocation curLoc = Messaging.recieveLocation(head);
+				if(curLoc != null)
+				{
+					if(loc.distanceTo(curLoc) < distance)
+						return;
+				}
+				
+				ptrchannel = head + 2;
+				head = rc.readBroadcast(head + 2);
+			}
+			
+			int channel = ptrchannel + 1;
+			if(channel + 2 > end_limit)
+				channel = start_limit;
+			
+			for(int i = 0; i < length; i += 3)
+			{
+				if(rc.readBroadcast(channel) == 0 && rc.readBroadcast(channel + 1) == 0 && rc.readBroadcast(channel + 2) == 0)
+				{
+					rc.broadcast(ptrchannel, channel);
+					Messaging.broadcastLocation(loc, channel);
+					rc.broadcast(channel + 2, 0);
+					rc.broadcast(LENGTH_CHANNEL, getLength() + 1);
+					return;
+				}
+				channel += 3;
+				if(channel + 2 > end_limit)
+					channel = start_limit;
+			}
+		}
+	}
+	
 	
 	
 	public MapLocation getNearest(MapLocation loc) throws GameActionException
@@ -218,7 +270,7 @@ public class LocationList extends Globals {
 		}
 	}
 	
-	public void debug_drawList() throws GameActionException
+	public void debug_drawList(int r, int g, int b) throws GameActionException
 	{
 		int head = getHead();
 		int ptrchannel = head + 2;
@@ -232,7 +284,7 @@ public class LocationList extends Globals {
 			if(curLoc == null)
 				return;
 			
-			rc.setIndicatorDot(curLoc, 255, 0, 255);
+			rc.setIndicatorDot(curLoc, r, g, b);
 			
 			head = rc.readBroadcast(ptrchannel);
 			ptrchannel = head + 2;
