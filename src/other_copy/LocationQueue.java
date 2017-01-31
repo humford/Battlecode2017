@@ -1,4 +1,4 @@
-package other;
+package other_copy;
 import battlecode.common.*;
 
 public class LocationQueue extends Globals {

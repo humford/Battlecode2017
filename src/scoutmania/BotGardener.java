@@ -168,6 +168,27 @@ public class BotGardener extends Globals {
 		}
 		return ret;
 	}
+
+	static boolean isDirOpen(MapLocation location, Direction dir) throws GameActionException {
+		return !rc.isCircleOccupiedExceptByThisRobot(location.add(dir, RobotType.GARDENER.bodyRadius + RobotType.SOLDIER.bodyRadius), RobotType.SOLDIER.bodyRadius);
+	}
+
+	static Direction[] getOpenDirs() throws GameActionException {
+		MapLocation myLocation = rc.getLocation();
+		Direction[] ret = new Direction[6];
+		int k = 0;
+		if (isDirOpen(myLocation, productionDirs))
+			ret[k++] = productionDirs;
+
+		if (treeDirs == null)
+			treeDirs = getTreeDirs();
+
+		for (Direction dir : treeDirs) {
+			if (isDirOpen(myLocation, dir))
+				ret[k++] = dir;
+		}
+		return ret;
+	}
 	
 	static void macro() throws GameActionException {
 		init();
@@ -175,36 +196,29 @@ public class BotGardener extends Globals {
 			gardener_common();
 			if(rc.canMove(myLocation) && !rc.hasMoved())
         		rc.move(myLocation);
+
 			//production 
-			
+			Direction[] openDirs = getOpenDirs();
 			if(BuildQueue.getLength() > 0)
             {
-            	if(rc.canBuildRobot(BuildQueue.peak(), productionDirs))
-            	{
-            		if(BuildQueue.peak() == RobotType.TANK && rc.canMove(productionDirs) && !rc.hasMoved())
-            			rc.move(productionDirs);
+				for (Direction dir : openDirs) {
+					if (dir == null) continue;
+            		if(rc.canBuildRobot(BuildQueue.peak(), dir))
+            		{
+            			if(BuildQueue.peak() == RobotType.TANK && rc.canMove(dir) && !rc.hasMoved())
+            				rc.move(dir);
             		
-            		rc.buildRobot(BuildQueue.dequeue(), productionDirs);
-            	}
-            	else
-            		BuildQueue.tryBuildFromQueue();
+            			rc.buildRobot(BuildQueue.dequeue(), dir);
+            		}
+            		else
+            			BuildQueue.tryBuildFromQueue();
+				}
             }
 			 
 			// Plant missing trees
-			for (int i = 0; i < 5; i++) {
-				MapLocation treeSpot = getTreeSpot(i);
-				//System.out.println("Looking at tree in spot " + treeSpot.toString());
-				if (rc.isLocationOccupiedByTree(treeSpot)){
-					//System.out.println("Occupied");
-					continue;
-				}
-				if (rc.canPlantTree(treeDirs[i])) {
-					//System.out.println("Planting tree in direcion " + Integer.toString(i));
-					rc.plantTree(treeDirs[i]);
-					break;
-				}
+			if (openDirs[1] != null && rc.canPlantTree(openDirs[1])) {
+				rc.plantTree(openDirs[1]);
 			}
-	
 			
 			// Water the lowest health tree
 			TreeInfo lowHealthTree = getLowHealthTree();

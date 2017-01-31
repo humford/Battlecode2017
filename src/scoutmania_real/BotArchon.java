@@ -1,4 +1,4 @@
-package scoutmania;
+package scoutmania_real;
 import battlecode.common.*;
 
 class BotArchon extends Globals {

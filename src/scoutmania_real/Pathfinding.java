@@ -1,4 +1,4 @@
-package scoutmania;
+package scoutmania_real;
 import battlecode.common.*;
 
 // FOLLOW_CW is following in a state where the robot is turning clockwise
