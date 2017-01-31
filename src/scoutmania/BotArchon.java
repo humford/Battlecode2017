@@ -1,6 +1,5 @@
 package scoutmania;
 import battlecode.common.*;
-import other.Pathfinding;
 
 class BotArchon extends Globals {
 	
