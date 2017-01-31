@@ -3,11 +3,11 @@ import battlecode.common.*;
 
 public class BuildQueue extends Globals{
 	
-	public static int POINTER_CHANNEL = 498;
-	public static int LENGTH_CHANNEL = 499;
+	public static final int POINTER_CHANNEL = 498;
+	public static final int LENGTH_CHANNEL = 499;
 	
-	public static int low_endpoint = 500;
-	public static int up_endpoint = 600;
+	public static final  int low_endpoint = 500;
+	public static final int up_endpoint = 600;
 	
 	
 	private static int robotInt(RobotType type) throws GameActionException, Exception
@@ -80,9 +80,13 @@ public class BuildQueue extends Globals{
 	
 	private static void decrement() throws GameActionException
 	{
-		int pointer = rc.readBroadcast(POINTER_CHANNEL);
-		rc.broadcast(POINTER_CHANNEL, pointer + 1);
-		int length = rc.readBroadcast(LENGTH_CHANNEL);
+		int pointer = getPointer();
+		if(pointer + 1 >= up_endpoint)
+			rc.broadcast(POINTER_CHANNEL, low_endpoint);
+		else
+			rc.broadcast(POINTER_CHANNEL, pointer + 1);
+		
+		int length = getLength();
 		rc.broadcast(LENGTH_CHANNEL, length - 1);
 	}
 	
@@ -139,11 +143,13 @@ public class BuildQueue extends Globals{
 	public static void printQueue()
 	{
 		try{
+			System.out.println("LEN: " + getLength());
+			
 			for(int i = getPointer(); i < getPointer() + getLength(); i++)
 			{
 				System.out.print(rc.readBroadcast(i));
-				System.out.println("");
 			}
+			System.out.println("");
 		}
 		
 		catch(Exception e)
@@ -151,5 +157,43 @@ public class BuildQueue extends Globals{
 			System.out.println("BAD QUEUE");
 			e.printStackTrace();
 		}
+	}
+	
+	public static void clearQueue() throws GameActionException
+	{
+		rc.broadcast(LENGTH_CHANNEL, 0);
+		rc.broadcast(BuildQueue.POINTER_CHANNEL, BuildQueue.low_endpoint);
+	}
+	
+	public static boolean tryBuildFromQueue() throws GameActionException
+	{
+		if(BuildQueue.getLength() > 0)
+        {
+        	if(rc.hasRobotBuildRequirements(BuildQueue.peak()) && rc.isBuildReady())
+        	{
+    			if(buildWhereFree(BuildQueue.peak(), 12, Direction.NORTH))
+    			{
+    				BuildQueue.dequeue();
+    				return true;
+    			}
+        	}
+        }
+		return false;
+	}
+	
+	public static boolean tryBuildFromQueue(Direction dir) throws GameActionException
+	{
+		if(BuildQueue.getLength() > 0)
+        {
+        	if(rc.hasRobotBuildRequirements(BuildQueue.peak()) && rc.isBuildReady())
+        	{
+    			if(buildWhereFree(BuildQueue.peak(), 12, dir))
+    			{
+    				BuildQueue.dequeue();
+    				return true;
+    			}
+        	}
+        }
+		return false;
 	}
 }

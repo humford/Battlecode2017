@@ -118,7 +118,11 @@ public class BotGardener extends Globals {
 	
 	public static Direction[] getTreeDirs() throws GameActionException {
 		Direction[] ret = new Direction[5];
-		Direction dir = rc.getLocation().directionTo(initialArchonLocations[0]).rotateLeftDegrees(60);
+		Direction dir;
+		if (initialArchonLocations.length > 0)
+			dir = rc.getLocation().directionTo(initialArchonLocations[0]).rotateLeftDegrees(60);
+		else
+			dir = Direction.EAST;
 		for (int i = 0; i < 5; i++) {
 			ret[i] = dir;
 			dir = dir.rotateLeftDegrees(60);
