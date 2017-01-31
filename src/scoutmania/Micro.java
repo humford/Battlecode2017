@@ -89,11 +89,10 @@ public class Micro extends Globals {
             	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
             	  break;
               }
-    		  
-              if(rc.hasAttacked())
-            	  fireOffSet = (fireOffSet + 1) % 2;
-          }      
+          }
       }
+	  if(rc.hasAttacked())
+    	  fireOffSet = (fireOffSet + 1) % 2;
   }
   
   static boolean trySidestep(BulletInfo bullet) throws GameActionException{
