@@ -1,4 +1,4 @@
-package scoutmania;
+package other;
 import battlecode.common.*;
 
 public class LocationList extends Globals {

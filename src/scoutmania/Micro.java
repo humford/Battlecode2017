@@ -63,7 +63,7 @@ public class Micro extends Globals {
     	  if (b.getTeam() != myTeam) {
     		  Direction towards = rc.getLocation().directionTo(b.getLocation());
     		  
-    		  if(rc.canFirePentadShot() && PentadShotOpen(b))
+    		  if(rc.canFirePentadShot() && PentadShotOpen(b) && bots.length >= 2)
 			  {
 				  if(fireOffSet == 0)
             		  towards = towards.rotateLeftDegrees(3.75f);

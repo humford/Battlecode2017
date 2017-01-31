@@ -357,6 +357,7 @@ public class Globals {
     		if((rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT && !plantingList.IsEmpty()) || (rc.readBroadcast(GARDENER_COUNT_CHANNEL) < 2*GARDENER_UPPER_LIMIT && plantingList.getLength() >= 4))
         	{
     			BuildQueue.enqueue(RobotType.GARDENER);
+    			BuildQueue.enqueue(RobotType.SOLDIER);
         	}
     		else if(!treeList.IsEmpty())
     		{
@@ -387,6 +388,14 @@ public class Globals {
 		
 		locateType(RobotType.ARCHON, ARCHON_TARGETING_CHANNEL, STRIKE_LOC_CHANNEL);
 		locateType(RobotType.GARDENER, GARDENER_TARGETING_CHANNEL, SCOUT_LOC_CHANNEL);
+		
+		TreeInfo[] trees = rc.senseNearbyTrees();
+    	for (TreeInfo t : trees) {
+    		if(rc.canShake(t.getLocation()) && t.containedBullets > 0){
+    			rc.shake(t.getLocation());
+    			break;
+    		}
+    	}
 	}
 	
 	public static void end_loop_common() throws GameActionException // things that all robots do at end of loop
