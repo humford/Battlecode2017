@@ -33,7 +33,7 @@ public static boolean shouldMove(Direction dir) throws GameActionException {
  * @throws GameActionException
  */
 public static PathfindingState tryMove(Direction dir) throws GameActionException {
-	return tryMove(dir,5,24);
+	return tryMove(dir,7.5f,16);
 }
 
 
