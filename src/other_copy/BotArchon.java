@@ -1,4 +1,4 @@
-package other;
+package other_copy;
 import battlecode.common.*;
 
 class BotArchon extends Globals {

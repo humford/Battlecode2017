@@ -1,4 +1,4 @@
-package scoutmania;
+package scoutmania_real;
 import battlecode.common.*;
 
 public class BuildQueue extends Globals{
