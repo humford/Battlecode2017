@@ -115,6 +115,7 @@ public class Micro extends Globals {
   
   //If three robots sense each other then stop firing trishots, start firing singleshots
   
+  static MapLocation helpTarget;
   
   //use archon sensors how dense map is with trees
   public static void SolderMove() throws GameActionException
@@ -124,18 +125,17 @@ public class Micro extends Globals {
 	  if(enemies.length > 0 && helpList.getLength() < LIST_HAZARD_LENGTH)
   		helpList.addLocationWithDist(enemies[0].getLocation(), RobotType.SOLDIER.sensorRadius);
 	  
-	  else
+	  else if(helpTarget != null && myLoc.distanceTo(helpTarget) < RobotType.SOLDIER.sensorRadius)
 		  helpList.getNearest(myLoc);
 
 	  
 	  if(!rc.hasMoved())
 	  {
-		  MapLocation nearest = helpList.peakNearest(myLoc);
+		  helpTarget = helpList.peakNearest(myLoc);
 		  
-		  if(nearest != null && myLoc.distanceTo(nearest) < 3*RobotType.SOLDIER.sensorRadius)
+		  if(helpTarget != null && myLoc.distanceTo(helpTarget) < 3*RobotType.SOLDIER.sensorRadius)
 		  {
-			  Pathfinding.moveTo(nearest);
-			  System.out.println(nearest.toString());
+			  Pathfinding.tryMove(myLoc.directionTo(helpTarget));
 		  }
 		  
 		  else
