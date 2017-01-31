@@ -1,5 +1,6 @@
 package scoutmania;
 import battlecode.common.*;
+import other.Pathfinding;
 
 class BotArchon extends Globals {
 	
@@ -206,14 +207,23 @@ class BotArchon extends Globals {
                 	rc.setIndicatorDot(Messaging.recieveLocation(SCOUT_LOC_CHANNEL), 100, 20, 30);
             	}
             	
-     	
-            	//Pathfinding.wander();
             	
             	Micro.dodge();
             	
             	RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
             	Messaging.broadcastDefendMeIF(enemyBots.length >= 1);
-                
+            	if(!rc.hasMoved())
+      	  		{
+      	  			MapLocation temp = rc.getLocation();
+      	  			for(RobotInfo bot : enemyBots)
+      	  			{
+      	  				temp = temp.add(rc.getLocation().directionTo(bot.getLocation()).opposite(), 2);
+	  					rc.setIndicatorDot(bot.getLocation(), 127, 0, 0);
+      	  			}
+      	  			if(enemyBots.length > 0)
+      	  				Pathfinding.tryMove(rc.getLocation().directionTo(temp));
+      	  		}
+            	
             	if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) == 0 && BuildQueue.peak() != RobotType.GARDENER && !rc.readBroadcastBoolean(GARDENER_INPRODUCTION_CHANNEL))
             	{
             		BuildQueue.clearQueue();
