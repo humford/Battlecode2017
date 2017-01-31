@@ -211,18 +211,20 @@ class BotArchon extends Globals {
             	
             	Micro.dodge();
             	
+            	MapLocation myLoc = rc.getLocation();
+            	
             	RobotInfo[] enemyBots = rc.senseNearbyRobots(-1, them);
             	Messaging.broadcastDefendMeIF(enemyBots.length >= 1);
             	if(!rc.hasMoved())
       	  		{
-      	  			MapLocation temp = rc.getLocation();
+      	  			MapLocation temp = myLoc;
       	  			for(RobotInfo bot : enemyBots)
       	  			{
-      	  				temp = temp.add(rc.getLocation().directionTo(bot.getLocation()).opposite(), 2);
+      	  				temp = temp.add(myLoc.directionTo(bot.getLocation()).opposite(), 2);
 	  					rc.setIndicatorDot(bot.getLocation(), 127, 0, 0);
       	  			}
-      	  			if(enemyBots.length > 0)
-      	  				Pathfinding.tryMove(rc.getLocation().directionTo(temp));
+      	  			if(enemyBots.length > 0 && temp != myLoc)
+      	  				Pathfinding.tryMove(myLoc.directionTo(temp));
       	  		}
             	
             	if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) == 0 && BuildQueue.peak() != RobotType.GARDENER && !rc.readBroadcastBoolean(GARDENER_INPRODUCTION_CHANNEL))
