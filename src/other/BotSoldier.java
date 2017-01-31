@@ -1,4 +1,4 @@
-package scoutmania;
+package other;
 import battlecode.common.*;
 
 public class BotSoldier extends Globals {
@@ -6,8 +6,6 @@ public class BotSoldier extends Globals {
 		while (true) {
             try {
             	loop_common();
-            	
-            	rc.broadcast(SOLDIER_SUM_CHANNEL, rc.readBroadcast(SOLDIER_SUM_CHANNEL) + 1);
             	
             	boolean existLumberjacks = false;
       	  		

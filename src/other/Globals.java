@@ -1,4 +1,4 @@
-package scoutmania;
+package other;
 import battlecode.common.*;
 import java.util.*;
 
@@ -12,16 +12,13 @@ public class Globals {
     static int current_round;
     
     static int GARDENER_UPPER_LIMIT;
-    static final int MAX_RUSH_DISTANCE = 25;
+    static final int MAX_RUSH_DISTANCE = 40;
     static final int LIST_HAZARD_LENGTH = 75;
     
     // Keep broadcast channels
     static final int GARDENER_COUNT_CHANNEL = 1;
     static final int GARDENER_SUM_CHANNEL = 2;
     static final int GARDENER_INPRODUCTION_CHANNEL = 4;
-    
-    static final int SOLDIER_COUNT_CHANNEL = 1;
-    static final int SOLDIER_SUM_CHANNEL = 2;
     
     //LOC_CHANNELS use next integer channel as well
     static final int STRIKE_LOC_CHANNEL = 5;
@@ -354,10 +351,9 @@ public class Globals {
 	{
 		if(BuildQueue.getLength() <= 0)
     	{
-    		if((rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT && !plantingList.IsEmpty()) || (rc.readBroadcast(GARDENER_COUNT_CHANNEL) < 2*GARDENER_UPPER_LIMIT && plantingList.getLength() >= 4))
+    		if(rc.readBroadcast(GARDENER_COUNT_CHANNEL) < GARDENER_UPPER_LIMIT && !plantingList.IsEmpty())
         	{
     			BuildQueue.enqueue(RobotType.GARDENER);
-    			BuildQueue.enqueue(RobotType.SOLDIER);
         	}
     		else if(!treeList.IsEmpty())
     		{
@@ -368,16 +364,10 @@ public class Globals {
     		else
     		{
     			BuildQueue.enqueue(RobotType.SOLDIER);
-				BuildQueue.enqueue(RobotType.SOLDIER);
-				BuildQueue.enqueue(RobotType.SOLDIER);
 				BuildQueue.enqueue(RobotType.SCOUT);
+				BuildQueue.enqueue(RobotType.SOLDIER);
     		}
     	}
-		int num_soldiers = rc.readBroadcast(SOLDIER_COUNT_CHANNEL);
-		int num_enemy_soldiers = rc.readBroadcast(ENEMY_SOLDIER_COUNT_CHANNEL);
-		if (num_soldiers < num_enemy_soldiers) {
-			BuildQueue.enqueue(RobotType.SOLDIER);
-		}
 	}
 	
 	public static void loop_common() throws GameActionException // things that all robots do in loop
@@ -388,14 +378,6 @@ public class Globals {
 		
 		locateType(RobotType.ARCHON, ARCHON_TARGETING_CHANNEL, STRIKE_LOC_CHANNEL);
 		locateType(RobotType.GARDENER, GARDENER_TARGETING_CHANNEL, SCOUT_LOC_CHANNEL);
-		
-		TreeInfo[] trees = rc.senseNearbyTrees();
-    	for (TreeInfo t : trees) {
-    		if(rc.canShake(t.getLocation()) && t.containedBullets > 0){
-    			rc.shake(t.getLocation());
-    			break;
-    		}
-    	}
 	}
 	
 	public static void end_loop_common() throws GameActionException // things that all robots do at end of loop

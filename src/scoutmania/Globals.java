@@ -20,8 +20,8 @@ public class Globals {
     static final int GARDENER_SUM_CHANNEL = 2;
     static final int GARDENER_INPRODUCTION_CHANNEL = 4;
     
-    static final int SOLDIER_COUNT_CHANNEL = 1;
-    static final int SOLDIER_SUM_CHANNEL = 2;
+    static final int SOLDIER_COUNT_CHANNEL = 17;
+    static final int SOLDIER_SUM_CHANNEL = 18;
     
     //LOC_CHANNELS use next integer channel as well
     static final int STRIKE_LOC_CHANNEL = 5;
@@ -69,16 +69,6 @@ public class Globals {
     static LocationList plantingList;
    //USES CHANNELS 6951 - 9953
     static LocationList trashList;
-
-	public static void debug_test_map_setup() throws GameActionException {
-		System.out.println("Setting up test map");
-
-		//MapLocation midMap = new MapLocation(415 + 4.234f, 110);
-		MapLocation midMap = rc.getLocation().translate(myTeam == Team.A ? 20 : -20, 0);
-		Messaging.broadcastLocation(midMap, STRIKE_LOC_CHANNEL);
-		Messaging.broadcastLocation(midMap, SCOUT_LOC_CHANNEL);
-		Messaging.broadcastLocation(midMap, DEFENSE_LOC_CHANNEL);
-	}
 	
 
     public static void init(RobotController theRC) throws GameActionException {
@@ -104,8 +94,6 @@ public class Globals {
 		seenSoldiers = new TreeSet<Integer>();
 		seenTanks = new TreeSet<Integer>();
        
-		if (initialArchonLocations.length == 0)
-			debug_test_map_setup();
     }
 
 

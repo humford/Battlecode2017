@@ -9,7 +9,7 @@ public class BotTank extends Globals {
             	
             	Micro.SoldierFight();
                
-            	end_loop_common();
+                Clock.yield();
             } catch (Exception e) {
                 e.printStackTrace();
             }

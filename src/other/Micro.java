@@ -1,10 +1,10 @@
-package scoutmania;
+package other;
 import battlecode.common.*;
 
 public class Micro extends Globals {
-		
-  public static final int MIN_CHASE_DIST = 4;
-  public static final int MAX_CHASE_DIST = 6;
+  
+ 
+  
   //First scout always faces outward, makes sure the penta shot does not hit the archons
   //
   public static void firstScoutShots(){}
@@ -25,35 +25,18 @@ public class Micro extends Globals {
   public static void chase() throws GameActionException
   {
 	  RobotInfo[] bots = rc.senseNearbyRobots(-1, them);
-	  MapLocation myLoc = rc.getLocation();
-	  for(RobotInfo bot : bots)
+	  if(bots.length > 0)
 	  {
-		  if(bot.getType() == RobotType.ARCHON)
-		  {
-			  continue;
-		  }
-		  else if(myLoc.distanceTo(bot.getLocation()) > MAX_CHASE_DIST)
-		  {
-			  Direction chase = rc.getLocation().directionTo(bot.getLocation());
-			  Pathfinding.tryMove(chase);
-			  break;
-		  }
-		  else if(myLoc.distanceTo(bot.getLocation()) < MIN_CHASE_DIST)
-		  {
-			  Direction chase = rc.getLocation().directionTo(bot.getLocation()).opposite();
-			  Pathfinding.tryMove(chase);
-			  break;
-		  }
+		  Direction chase = rc.getLocation().directionTo(bots[0].getLocation());
+		  Pathfinding.tryMove(chase);
 	  }
   }
-  
-  static int fireOffSet = 0;
   
   public static void SoldierFight() throws GameActionException
   {   
       RobotInfo[] bots = rc.senseNearbyRobots();
 
-      chase();
+    //  chase();
       
       if(!rc.hasMoved())
       {
@@ -62,37 +45,31 @@ public class Micro extends Globals {
       for (RobotInfo b : bots) {
     	  if (b.getTeam() != myTeam) {
     		  Direction towards = rc.getLocation().directionTo(b.getLocation());
-    		  
-    		  if(rc.canFirePentadShot() && PentadShotOpen(b) && bots.length >= 2)
-			  {
-				  if(fireOffSet == 0)
-            		  towards = towards.rotateLeftDegrees(3.75f);
-            	  else if(fireOffSet == 1)
-            		  towards = towards.rotateRightDegrees(3.75f);
-				  rc.firePentadShot(towards);
-			  	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
-			  	  break;
-			  }
-    		  else if(rc.canFireTriadShot() && TriadShotOpen(b))
+    		  switch(Micro.isCondensed())
               {
-            	  if(fireOffSet == 0)
-            		  towards = towards.rotateLeftDegrees(5f);
-            	  else if(fireOffSet == 1)
-            		  towards = towards.rotateRightDegrees(5f);
-            	  rc.fireTriadShot(towards);
-            	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
-            	  break;
+    		  case -1:
+    			  if(rc.canFirePentadShot() && PentadShotOpen(b))
+    			  {
+    				  rc.firePentadShot(towards);
+    			  	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
+    			  }
+    		  case 0:
+                  if(rc.canFireTriadShot() && TriadShotOpen(b))
+                  {
+                	  rc.fireTriadShot(towards);
+                	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
+                  }
+              case 1:
+                  if(rc.canFireSingleShot() && SingleShotOpen(b))
+                  {
+                	  rc.fireSingleShot(towards);
+                	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
+                  }
+                  break; //FALL THROUGH UNTIL CAN FIRE
               }
-    		  else if(rc.canFireSingleShot() && SingleShotOpen(b))
-              {
-            	  rc.fireSingleShot(towards);
-            	  rc.setIndicatorLine(rc.getLocation(), b.getLocation(), 127, 0, 0);
-            	  break;
-              }
-    		  
               if(rc.hasAttacked())
-            	  fireOffSet = (fireOffSet + 1) % 2;
-          }      
+            	  break;
+           }      
       }
   }
   
@@ -123,8 +100,7 @@ public class Micro extends Globals {
 	  
 	  if(!rc.hasMoved())
 	  {
-		  RobotInfo[] enemies = rc.senseNearbyRobots(-1, them);
-		  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL) && enemies.length == 0)
+		  if(rc.readBroadcastBoolean(DEFENSE_CHANNEL))
   		  	Pathfinding.moveTo(Messaging.recieveLocation(DEFENSE_LOC_CHANNEL));
   			
 		  else

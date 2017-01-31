@@ -1,15 +1,14 @@
-package scoutmania;
+package other;
 import battlecode.common.*;
 
 class BotArchon extends Globals {
 	
 	public static final boolean ARCHON_DEBUG_MODE = true;
-	public static int last_gardener_num = 0, last_soldier_num = 0;
+	public static int last_gardener_num = 0;
 	
 	public static void makeInitialQueue() throws GameActionException
 	{
 		BuildQueue.clearQueue();
-		TreeInfo[] trees = rc.senseNearbyTrees();
 		
 		if(initialArchonLocations.length == 1 && rc.getLocation().distanceTo(initialArchonLocations[0]) <= RobotType.ARCHON.sensorRadius)
 		{
@@ -72,7 +71,7 @@ class BotArchon extends Globals {
 			}
 		}
 		
-		else if(initialArchonLocations.length == 1   && (rc.getLocation().distanceTo(initialArchonLocations[0]) <= MAX_RUSH_DISTANCE || trees.length == 0))
+		else if(initialArchonLocations.length == 1 && rc.getLocation().distanceTo(initialArchonLocations[0]) <= MAX_RUSH_DISTANCE)
 		{
 			System.out.println("RUSH");
 			BuildQueue.enqueue(RobotType.SOLDIER);
@@ -187,9 +186,6 @@ class BotArchon extends Globals {
             	
             	rc.broadcast(GARDENER_COUNT_CHANNEL, rc.readBroadcast(GARDENER_SUM_CHANNEL) - last_gardener_num);
             	last_gardener_num = rc.readBroadcast(GARDENER_SUM_CHANNEL);
-            	
-            	rc.broadcast(SOLDIER_COUNT_CHANNEL, rc.readBroadcast(SOLDIER_SUM_CHANNEL) - last_soldier_num);
-            	last_soldier_num = rc.readBroadcast(SOLDIER_SUM_CHANNEL);
             	
             	if(ARCHON_DEBUG_MODE)
             	{
