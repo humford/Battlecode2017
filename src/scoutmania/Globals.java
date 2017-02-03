@@ -342,11 +342,12 @@ public class Globals {
 	{
 		if(rc.getTeamBullets() > VICTORY_CASH_CUTOFF)
     	{
-    		int x = (int)rc.getTeamBullets() - VICTORY_CASH_CUTOFF;
-    		rc.donate(x - x%10);
+    		float x = rc.getTeamBullets() - VICTORY_CASH_CUTOFF;
+			int points = (int)(x / rc.getVictoryPointCost());
+    		rc.donate(points * rc.getVictoryPointCost());
     	}
 		
-		if(((int) rc.getTeamBullets())/10 + rc.getTeamVictoryPoints() > GameConstants.VICTORY_POINTS_TO_WIN)
+		if(rc.getTeamBullets()/rc.getVictoryPointCost() + rc.getTeamVictoryPoints() > GameConstants.VICTORY_POINTS_TO_WIN)
 		{
 			rc.donate(rc.getTeamBullets());
 		}
