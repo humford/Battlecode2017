@@ -351,6 +351,9 @@ public class Globals {
 		{
 			rc.donate(rc.getTeamBullets());
 		}
+
+		if (rc.getRoundNum() == GameConstants.GAME_DEFAULT_ROUNDS - 1)
+			rc.donate(rc.getTeamBullets());
 		
 	}
 	
