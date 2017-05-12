@@ -3,7 +3,7 @@
 The "MIT Rejects Society" entry for the 2017 Battlecode Competition, run by MIT.
 
 
-##The Team 
+## The Team 
 * Ryan Abbott (Columbia '20)
 * Benjamin Church (Columbia '20)
 * Henry Williams (Masters '18)
