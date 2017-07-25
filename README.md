@@ -8,3 +8,5 @@ The "MIT Rejects Society" entry for the 2017 Battlecode Competition, run by MIT.
 * Benjamin Church (Columbia '20)
 * Henry Williams (Masters '18)
 * Koh Yamakawa (Columbia '20)
+
+&copy; 2017
