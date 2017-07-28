@@ -1,6 +1,6 @@
 # Battlecode2017
 
-The "MIT Rejects Society" entry for the 2017 Battlecode Competition, run by MIT. Ranked 11th in prelims, named a finalist team. Outstanding issue with being unable to buy points after update. 
+The "MIT Rejects Society" entry for the 2017 Battlecode Competition, run by MIT. Ranked 11th in prelims, named a finalist team. Outstanding issue with being unable to buy points after update. To be continued in 2018.
 
 
 ## The Team 
